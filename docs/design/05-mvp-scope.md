@@ -152,7 +152,9 @@ BigWuXia 的 MVP（Minimum Viable Product）是一个**轻量级战斗循环验�
 - **敌方单位**: 8 只（5 只普通兵 + 2 只弓箭手 + 1 只 BOSS）
   - 普通兵（Red Warrior）×5: HP 15 ATK 5 DEF 3 SPD 4 MOV 3
   - 弓箭手（Red Archer）×2: HP 12 ATK 6 DEF 2 SPD 5 MOV 3，攻击范围 2-3 格
-  - BOSS（Black Warrior，北莽将领）×1: HP 35 ATK 10 DEF 6 SPD 6 MOV 4，技能"横扫千军"（十字 2 格 AOE）
+  - **BOSS：杨元赞**（北莽南朝大将军，使大刀）×1: HP 35 ATK 10 DEF 6 SPD 6 MOV 4，技能"横扫千军"（以自身为中心十字 2 格 AOE）
+    - Sprite 选型: Red Warrior 改色（深红/暗金，S6 polish 阶段处理）+ 节点 scale=1.15 视觉放大
+    - 详见 [01-game-design.md](./01-game-design.md) §11.2.1 BOSS 设定
 - **胜利条件**: 击败 BOSS（可选：击败所有敌人）
 - **预计时长**: 8-12 回合（15-20 分钟）
 

@@ -97,13 +97,13 @@ BigWuXia 的 3 个可玩角色和敌方单位全部映射到 Tiny Swords Units �
 |---|---|---|---|---|
 | **普通兵（近战）** | `Units/Red Units/Warrior/` | **红色**（敌方主色） | Idle/Run/Attack1 | 低血量低攻击（HP 15 ATK 5） |
 | **弓箭手** | `Units/Red Units/Archer/` | 红色 | Idle/Run/Shoot + Arrow.png | 远程单位（range 2-3） |
-| **BOSS（黑甲武将）** | `Units/Black Units/Warrior/` | **黑色**（精英色） | Idle/Run/Attack1/Attack2 + 技能 | 高血量高攻击（HP 35 ATK 10） |
+| **BOSS（杨元赞，北莽大将军）** | `Units/Red Units/Warrior/` + **modulate 深红/暗金改色** | 红（改色后偏暗金） | Idle/Run/Attack1/Attack2（重刀姿态，AOE 技能）/Guard | HP 35 ATK 10；节点 scale=1.15 视觉放大；详见 [01-game-design.md](./01-game-design.md) §11.2.1 |
 | **友军/中立** | `Units/Yellow Units/Warrior/` | 黄色 | （MVP 不用，后续版本） | 预留 |
 
 **阵营配色方案**：
 - 玩家: Blue
 - 敌方普通兵: Red
-- 敌方精英/BOSS: Black
+- 敌方精英/BOSS: Red 改色（深红/暗金）+ scale 放大（Black Warrior sprite 留作后续版本扩展用）
 - 友军/中立: Yellow
 - 特殊角色（李淳罡）: Purple
 
@@ -273,7 +273,7 @@ anime art style, clean background, 512x512
    - `Units/Purple Units/Warrior/` → `resources/sprites/units/purple_warrior/`
    - `Units/Red Units/Warrior/` → `resources/sprites/units/red_warrior/`
    - `Units/Red Units/Archer/` → `resources/sprites/units/red_archer/`
-   - `Units/Black Units/Warrior/` → `resources/sprites/units/black_warrior/`
+   - （BOSS 杨元赞复用 red_warrior，靠 modulate 改色 + scale 放大区分；MVP 不拷贝 Black Units）
    - `Terrain/Tileset/Tilemap_color1.png` → `resources/sprites/terrain/`
    - `UI Elements/` 整个目录 → `resources/sprites/ui/`
    - `Particle FX/` 整个目录 → `resources/sprites/vfx/`
