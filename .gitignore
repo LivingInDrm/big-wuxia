@@ -1,0 +1,27 @@
+# Godot 4.x
+.godot/
+.import/
+.export/
+export_presets.cfg
+
+# Build
+export/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temp
+*.tmp
+*.log
+
+# Screenshots（截图作为验收证据提交，所以 screenshots/ 下的 png 要被追踪；
+# 但临时调试图可放 tools/screenshots/_tmp/ 下忽略）
+tools/screenshots/_tmp/

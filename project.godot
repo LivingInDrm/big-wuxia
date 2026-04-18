@@ -1,0 +1,35 @@
+; Engine configuration file.
+; BigWuXia - 大武侠 SRPG (MVP)
+;
+; 重要约定（Manager 级）：
+; - config_version 必须为 5（Godot 4.x，不是 6，参考 godot-dev skill P0 规则）
+; - Autoload: GameState / GameBalance / SceneManager（D2 决策：S1 阶段不创建 AudioBus）
+; - 分辨率: 1366×768（窗口模式，见 docs/design/06-sprint-plan.md §S1.2）
+
+config_version=5
+
+[application]
+
+config/name="BigWuXia"
+config/description="大武侠 SRPG - 雪中悍刀行世界观"
+run/main_scene="res://scenes/main_menu/main_menu.tscn"
+config/features=PackedStringArray("4.6", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[autoload]
+
+GameState="*res://autoload/game_state.gd"
+GameBalance="*res://autoload/game_balance.gd"
+SceneManager="*res://autoload/scene_manager.gd"
+
+[display]
+
+window/size/viewport_width=1366
+window/size/viewport_height=768
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
