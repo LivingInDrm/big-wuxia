@@ -3,12 +3,13 @@ extends Control
 ##
 ## 职责：显示游戏标题 + 开始游戏 / 退出 按钮。
 ## 依赖：Autoload SceneManager（切场景）/ GameState（重置）。
-## 参考：docs/design/06-sprint-plan.md §Sprint 1
+## 参考：docs/design/06-sprint-plan.md §Sprint 1 / §Sprint 2
 ##
-## S1 约定：S2 起才有 CharacterSelect 场景；此阶段点击"开始游戏"会 push_warning
-## 并保持在主菜单，不崩溃。
+## S2 变更：
+##   "开始游戏"目标由 CharacterSelect（尚未实现）改为 Battle（S2 已实现）。
+##   CharacterSelect 会在 S3 引入 Unit 后加回来，届时再插回菜单链路。
 
-const CHARACTER_SELECT_SCENE := "res://scenes/character_select/character_select.tscn"
+const BATTLE_SCENE := "res://scenes/battle/battle.tscn"
 
 @onready var start_button: Button = %StartButton
 @onready var quit_button: Button = %QuitButton
@@ -20,9 +21,8 @@ func _ready() -> void:
 
 
 func _on_start_pressed() -> void:
-	# S1 阶段：CharacterSelect 场景尚未存在，SceneManager 会 push_warning 并保持在主菜单
 	GameState.reset()
-	SceneManager.change_scene_to_file(CHARACTER_SELECT_SCENE)
+	SceneManager.change_scene_to_file(BATTLE_SCENE)
 
 
 func _on_quit_pressed() -> void:

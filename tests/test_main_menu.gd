@@ -17,7 +17,7 @@ extends SceneTree
 ## - 通过 monkey-patch SceneManager 捕获调用（记录调用参数），而非真正退出引擎
 
 const SCENE_PATH := "res://scenes/main_menu/main_menu.tscn"
-const EXPECTED_CHARACTER_SELECT := "res://scenes/character_select/character_select.tscn"
+const EXPECTED_TARGET_SCENE := "res://scenes/battle/battle.tscn"  # S2 改指向 Battle（原 CharacterSelect 推迟到 S3）
 
 var _pass: int = 0
 var _fail: int = 0
@@ -77,8 +77,8 @@ func _run() -> void:
 		await process_frame
 		_assert(_change_scene_calls.size() == 1, "T3a 点击 StartButton 触发 1 次 change_scene_to_file")
 		if _change_scene_calls.size() >= 1:
-			_assert(_change_scene_calls[0] == EXPECTED_CHARACTER_SELECT,
-				"T3b change_scene_to_file 参数为 %s（实际=%s）" % [EXPECTED_CHARACTER_SELECT, _change_scene_calls[0]])
+			_assert(_change_scene_calls[0] == EXPECTED_TARGET_SCENE,
+				"T3b change_scene_to_file 参数为 %s（实际=%s）" % [EXPECTED_TARGET_SCENE, _change_scene_calls[0]])
 
 	_finish()
 

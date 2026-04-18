@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TerrainTileData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/tile_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+tile_id = "forest"
+display_name = "林地"
+movement_cost = 2
+dodge_bonus = 0.15
+is_obstacle = false
