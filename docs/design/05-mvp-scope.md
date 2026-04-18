@@ -74,6 +74,8 @@ BigWuXia 的 MVP（Minimum Viable Product）是一个**轻量级战斗循环验�
 | 13 | **天气系统** | 无天气影响战斗 |
 | 14 | **多语言** | MVP 只支持中文 |
 | 15 | **云存档** | 无联网功能 |
+| 16 | **音效 / BGM** | Manager D2 决策 ✅ 已确认（见 [07-risks-unknowns.md](./07-risks-unknowns.md) §3 D2）：MVP 不做，节省约 2 天，MVP 为纯静音游戏；Post-MVP 补充主菜单 BGM / 战斗 BGM / 攻击·治疗·UI 点击音效（来源 freesound.org CC0） |
+| 17 | **角色立绘替换**（AI 生成 512×512 立绘替换 Sprite 头像） | Manager D3 决策 ✅ 已确认（见 [07-risks-unknowns.md](./07-risks-unknowns.md) §3 D3）：MVP 不做，节省约 1 天，用 Tiny Swords sprite 头像 Idle 首帧裁剪作为占位；Post-MVP 用 Stable Diffusion 生成徐凤年 / 姜泥 / 李淳罡立绘并替换 CharacterSelect / BattleUI / Victory 场景头像 |
 
 ### 2.3 MVP 边界总结
 

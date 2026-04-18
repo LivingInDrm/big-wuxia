@@ -11,7 +11,7 @@
 | S3 | 单位系统 + 回合切换 | 2 天 | Unit 场景 + TurnManager + 3 角色 + 敌人 |
 | S4 | 移动/攻击范围 + 基础战斗 | 2 天 | BFS 移动 + 普攻 + 伤害结算 + 死亡 |
 | S5 | 技能系统 + 地形/克制 + 胜负判定 | 2 天 | 6 个技能 + 地形修正 + Victory/Defeat |
-| S6 | 2 关卡 + polish（字体/特效/音效）+ E2E 通关 | 2 天 | 教程关 + 正式关 + 美术达标 |
+| S6 | 2 关卡 + polish（字体/特效）+ E2E 通关 | 2 天 | 教程关 + 正式关 + 美术达标（音效/BGM + 立绘替换 → Post-MVP，按 D2/D3 决策剔除） |
 
 **总工作量**: 10-12 天（按每天 6-8 小时工作计算）
 
@@ -577,11 +577,13 @@
 
 ---
 
-## Sprint 6: 2 关卡 + polish（字体/特效/音效）+ E2E 通关
+## Sprint 6: 2 关卡 + polish（字体/特效）+ E2E 通关
 
 ### S6.1 目标
 
-完成 2 个关卡（教程关 + 正式关）、美术 polish（字体/特效/音效）、E2E 通关测试，达到 MVP DoD。
+完成 2 个关卡（教程关 + 正式关）、美术 polish（字体 / 特效）、E2E 通关测试，达到 MVP DoD。
+
+> **Manager 决策（2026-04-18）**：D2 音效 / BGM 与 D3 角色立绘替换均 **不做**，列入 Post-MVP 待办（见 [07-risks-unknowns.md](./07-risks-unknowns.md) §3 D2/D3）。
 
 ### S6.2 范围
 
@@ -611,20 +613,12 @@
    - 点击"确认出战"按钮 → GameState.selected_characters = ["xu_fengnian", "jiang_ni", "li_chungang"]
    - → SceneManager.change_scene_to_file("res://scenes/battle/battle.tscn")
 6. **美术 polish**：
-   - **角色立绘替换**（可选，如 S6 时间紧可延后）：
-     - 用 AI 生成徐凤年/姜泥/李淳罡立绘（512×512）
-     - 替换 UI 头像（Human Avatars 占位 → 立绘）
+   - **角色立绘替换**: **不做**（Manager D3 决策 2026-04-18，Post-MVP 待办；MVP 用 Tiny Swords sprite Idle 首帧裁剪作为头像占位）
    - **技能特效**：
      - 刀气/剑气：复用 Tiny Swords `Particle FX/Fire_01.png` 改色（蓝/金）
      - 治疗光效：`Monk/Heal_Effect.png` 改色（绿 → 金）
      - 剑开天门：叠加 Explosion_01 + 自定义剑气粒子（GPUParticles2D）
-   - **音效/BGM**（可选，如时间紧可省略）：
-     - 主菜单 BGM：古琴/古风音乐（循环）
-     - 战斗 BGM：紧张武侠配乐
-     - 攻击音效：刀剑碰撞
-     - 治疗音效：清脆钟声
-     - UI 点击音：竹简展开
-     - 来源：freesound.org（CC0 授权）
+   - **音效/BGM**: **不做**（Manager D2 决策 2026-04-18，Post-MVP 待办；MVP 为纯静音游戏）
 7. **E2E 通关测试**：
    - 人工盲跑测试：
      - 启动游戏 → 主菜单 → 点"教程" → 通关教程关（5 分钟内）
@@ -670,8 +664,8 @@
 - 教程关实现 + 教学提示：2 小时
 - 正式关实现（BOSS）：2 小时
 - CharacterSelect 场景：1 小时
-- 美术 polish（立绘/特效）：3 小时
-- 音效/BGM（可选）：2 小时
+- 美术 polish（技能特效；立绘替换已按 D3 决策剔除）：3 小时
+- 音效/BGM：**不做**（D2 决策 2026-04-18，0 小时）
 - E2E 通关测试 + bug 修复：3 小时
 
 ---
