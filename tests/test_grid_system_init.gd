@@ -6,7 +6,7 @@ extends SceneTree
 ##
 ## 覆盖场景：
 ##   T1  Battle 场景可加载 + 实例化不 push_error
-##   T2  GridSystem 自 TerrainLayer 初始化后 tile_count() == 120 （12×10）
+##   T2  GridSystem 自 TerrainLayer 初始化后 tile_count() == 64 （8×8）
 ##   T3  (0, 0) 格子非空（has_tile / get_tile 非 null）
 ##   T4  (0, 0) 地形 tile_id == "grass" （S2 定稿：全 grass 平原）
 ##   T5  (0, 4) 地形 tile_id == "grass" （全图均为 grass）
@@ -58,9 +58,9 @@ func _run() -> void:
 		return
 	_pass_test("T1c BattleController.get_grid() 返回非 null")
 
-	# T2: tile_count == 120
+	# T2: tile_count == 64
 	var count: int = grid.tile_count()
-	_assert(count == 120, "T2 grid.tile_count() == 120 (实际=%d)" % count)
+	_assert(count == 64, "T2 grid.tile_count() == 64 (实际=%d)" % count)
 
 	# T3: (0, 0) 非空
 	_assert(grid.has_tile(Vector2i(0, 0)), "T3a has_tile((0,0)) == true")

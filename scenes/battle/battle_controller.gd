@@ -26,20 +26,10 @@ extends Node2D
 const UNIT_SCENE: PackedScene = preload("res://scenes/unit/unit.tscn")
 const SKILL_EXECUTOR = preload("res://scripts/systems/skill_executor.gd")
 const VFX = preload("res://scripts/systems/vfx.gd")
-const UNIT_PATH_FMT := "res://resources/data/units/%s.tres"
 const TILE_PX := 64
-const MAP_COLS := 12
-const MAP_ROWS := 10
-
-## 教程关布阵（05-mvp §3.1）
-const UNIT_LAYOUT := [
-	{"id": "xu_fengnian",    "pos": Vector2i(2, 2), "faction": "player"},
-	{"id": "jiang_ni",       "pos": Vector2i(2, 4), "faction": "player"},
-	{"id": "li_chungang",    "pos": Vector2i(2, 6), "faction": "player"},
-	{"id": "enemy_soldier",  "pos": Vector2i(6, 1), "faction": "enemy"},
-	{"id": "enemy_soldier",  "pos": Vector2i(6, 3), "faction": "enemy"},
-	{"id": "enemy_soldier",  "pos": Vector2i(6, 6), "faction": "enemy"},
-]
+const TERRAIN_SET_ID := 0
+const GRASS_TERRAIN_ID := 0
+const DEFAULT_LEVEL_ID := "level_01"
 
 enum SelectState { IDLE, UNIT_SELECTED, MOVED_AWAIT_ACTION, SKILL_TARGETING }
 
@@ -54,6 +44,8 @@ var grid: GridSystem
 var enemy_ai: EnemyAI
 var player_units: Array[Unit] = []
 var enemy_units: Array[Unit] = []
+var current_level_data
+var map_bounds: Rect2i = Rect2i(Vector2i.ZERO, Vector2i.ONE)
 
 var select_state: SelectState = SelectState.IDLE
 var selected_unit: Unit = null
@@ -69,6 +61,7 @@ var _battle_ended: bool = false
 func _ready() -> void:
 	print("[BattleController] ready")
 
+	current_level_data = _resolve_level_data()
 	_paint_map()
 
 	grid = GridSystem.new()
@@ -80,10 +73,7 @@ func _ready() -> void:
 
 	enemy_ai = EnemyAI.new(grid, null)
 
-	# 居中相机
-	var map_w := MAP_COLS * TILE_PX
-	var map_h := MAP_ROWS * TILE_PX
-	camera.position = Vector2(map_w / 2.0, map_h / 2.0)
+	_center_camera()
 
 	# 回合信号
 	turn_manager.turn_started.connect(_on_turn_started)
@@ -93,42 +83,30 @@ func _ready() -> void:
 
 
 func _paint_map() -> void:
-	const TERRAIN_SET_ID := 0
-	const GRASS_TERRAIN_ID := 0
+	terrain_layer.clear()
 	var cells: Array[Vector2i] = []
-	for x in MAP_COLS:
-		for y in MAP_ROWS:
-			cells.append(Vector2i(x, y))
+	if current_level_data != null:
+		for coord in current_level_data.map_layout:
+			cells.append(coord)
+	if cells.is_empty():
+		for x in 8:
+			for y in 8:
+				cells.append(Vector2i(x, y))
+	map_bounds = _compute_bounds(cells)
 	terrain_layer.set_cells_terrain_connect(cells, TERRAIN_SET_ID, GRASS_TERRAIN_ID, true)
 	print("[BattleController] painted %d cells via terrain_connect (grass)" % cells.size())
 
 
 func _spawn_units() -> void:
-	for entry in UNIT_LAYOUT:
-		var id: String = entry["id"]
-		var pos: Vector2i = entry["pos"]
-		var faction: String = entry["faction"]
-
-		var data: UnitData = load(UNIT_PATH_FMT % id)
-		if data == null:
-			push_error("[BattleController] UnitData load failed: %s" % id)
-			continue
-
-		var unit: Unit = UNIT_SCENE.instantiate()
-		unit.setup(data, pos)
-		units_container.add_child(unit)
-		unit.unit_selected.connect(_on_unit_clicked)
-		unit.unit_died.connect(_on_unit_died)
-
-		# 登记 occupant
-		var t: GridTile = grid.get_tile(pos) if grid != null else null
-		if t != null:
-			t.occupant = unit
-
-		if faction == "player":
-			player_units.append(unit)
-		else:
-			enemy_units.append(unit)
+	player_units.clear()
+	enemy_units.clear()
+	if current_level_data == null:
+		push_error("[BattleController] LevelData unavailable")
+		return
+	for entry in current_level_data.player_units:
+		_spawn_unit_entry(entry, false)
+	for entry in current_level_data.enemy_units:
+		_spawn_unit_entry(entry, true)
 
 	print("[BattleController] spawned %d player + %d enemy units" % [
 		player_units.size(), enemy_units.size()])
@@ -428,11 +406,7 @@ func _restore_after_skill_cancel() -> void:
 func _check_battle_end() -> bool:
 	if _battle_ended:
 		return true
-	var enemy_alive := 0
-	for unit in enemy_units:
-		if unit != null and is_instance_valid(unit) and unit.current_hp > 0:
-			enemy_alive += 1
-	if enemy_alive == 0:
+	if _is_victory_reached():
 		_battle_ended = true
 		trigger_victory()
 		return true
@@ -477,6 +451,14 @@ func get_enemy_ai() -> EnemyAI:
 	return enemy_ai
 
 
+func get_level_data():
+	return current_level_data
+
+
+func get_map_bounds() -> Rect2i:
+	return map_bounds
+
+
 ## 测试辅助：强制选中一个己方单位（不经过 input）
 func debug_select(unit: Unit) -> void:
 	_select_unit(unit)
@@ -491,3 +473,89 @@ func debug_move(unit: Unit, target: Vector2i) -> void:
 
 func debug_attack(attacker: Unit, defender: Unit) -> void:
 	await _execute_attack(attacker, defender)
+
+
+func _resolve_level_data():
+	var level_id := GameState.current_level
+	if level_id == "":
+		level_id = DEFAULT_LEVEL_ID
+		GameState.start_level(level_id)
+	var level = GameBalance.get_level_data(level_id)
+	if level == null:
+		push_error("[BattleController] Missing LevelData: %s" % level_id)
+	return level
+
+
+func _spawn_unit_entry(entry: Dictionary, is_enemy: bool) -> void:
+	var unit_id := String(entry.get("unit_id", ""))
+	var spawn_coord = entry.get("spawn_coord", Vector2i.ZERO)
+	if unit_id == "" or not (spawn_coord is Vector2i):
+		push_error("[BattleController] Invalid unit entry: %s" % [entry])
+		return
+	var data := GameBalance.get_unit_data(unit_id) as UnitData
+	if data == null:
+		push_error("[BattleController] UnitData load failed: %s" % unit_id)
+		return
+
+	var unit: Unit = UNIT_SCENE.instantiate()
+	unit.setup(data, spawn_coord)
+	units_container.add_child(unit)
+	unit.unit_selected.connect(_on_unit_clicked)
+	unit.unit_died.connect(_on_unit_died)
+
+	var tile: GridTile = grid.get_tile(spawn_coord) if grid != null else null
+	if tile != null:
+		tile.occupant = unit
+
+	if is_enemy:
+		enemy_units.append(unit)
+	else:
+		player_units.append(unit)
+
+
+func _center_camera() -> void:
+	var center_x := (float(map_bounds.position.x) + float(map_bounds.size.x) / 2.0) * TILE_PX
+	var center_y := (float(map_bounds.position.y) + float(map_bounds.size.y) / 2.0) * TILE_PX
+	camera.position = Vector2(center_x, center_y)
+
+
+func _compute_bounds(cells: Array[Vector2i]) -> Rect2i:
+	if cells.is_empty():
+		return Rect2i(Vector2i.ZERO, Vector2i.ONE)
+	var min_x := cells[0].x
+	var min_y := cells[0].y
+	var max_x := cells[0].x
+	var max_y := cells[0].y
+	for coord in cells:
+		min_x = mini(min_x, coord.x)
+		min_y = mini(min_y, coord.y)
+		max_x = maxi(max_x, coord.x)
+		max_y = maxi(max_y, coord.y)
+	return Rect2i(
+		Vector2i(min_x, min_y),
+		Vector2i(max_x - min_x + 1, max_y - min_y + 1)
+	)
+
+
+func _is_victory_reached() -> bool:
+	if current_level_data == null:
+		return false
+	if current_level_data.victory_condition == "kill_boss":
+		return not _is_boss_alive()
+	for unit in enemy_units:
+		if unit != null and is_instance_valid(unit) and unit.current_hp > 0:
+			return false
+	return true
+
+
+func _is_boss_alive() -> bool:
+	if current_level_data == null or current_level_data.boss_id == "":
+		return false
+	for unit in enemy_units:
+		if unit == null or not is_instance_valid(unit):
+			continue
+		if unit.current_hp <= 0 or unit.unit_data == null:
+			continue
+		if unit.unit_data.unit_id == current_level_data.boss_id:
+			return true
+	return false

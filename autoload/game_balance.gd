@@ -23,6 +23,7 @@ func _load_all_resources() -> void:
 	_load_dir("res://resources/data/units", units, "unit_id")
 	_load_dir("res://resources/data/skills", skills, "skill_id")
 	_load_dir("res://resources/data/tiles", tiles, "tile_id")
+	_load_dir("res://resources/data/levels", levels, "level_id")
 
 
 func get_unit_data(unit_id: String) -> Resource:
@@ -39,6 +40,15 @@ func get_tile_data(tile_id: String) -> Resource:
 
 func get_level_data(level_id: String) -> Resource:
 	return levels.get(level_id)
+
+
+func get_all_levels() -> Array[Resource]:
+	var out: Array[Resource] = []
+	var ids := levels.keys()
+	ids.sort()
+	for level_id in ids:
+		out.append(levels[level_id])
+	return out
 
 
 func _load_dir(dir_path: String, target: Dictionary, id_prop: String) -> void:

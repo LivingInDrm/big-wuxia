@@ -22,6 +22,10 @@ func complete_level(level_name: String) -> void:
 	level_completed.emit(level_name)
 
 
+func is_level_completed(level_name: String) -> bool:
+	return level_name in completed_levels
+
+
 func reset() -> void:
 	current_level = ""
 	selected_characters = []
