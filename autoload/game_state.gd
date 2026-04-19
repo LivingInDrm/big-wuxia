@@ -5,11 +5,14 @@ extends Node
 ## 依赖：无。
 ## 参考：docs/design/02-architecture.md §3.1
 
+const Inventory = preload("res://scripts/core/inventory.gd")
+
 signal level_completed(level_name: String)
 
 var current_level: String = ""
 var selected_characters: Array[String] = []
 var completed_levels: Array[String] = []
+var inventory: Inventory = Inventory.new()
 
 
 func start_level(level_name: String) -> void:
@@ -30,3 +33,4 @@ func reset() -> void:
 	current_level = ""
 	selected_characters = []
 	completed_levels = []
+	inventory = Inventory.new()
