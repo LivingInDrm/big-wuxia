@@ -108,9 +108,9 @@ func _run() -> void:
 	await process_frame
 	_assert(enemy_a.current_hp < enemy_pre_hp,
 		"T9a 敌兵 hp 下降 (前=%d 后=%d)" % [enemy_pre_hp, enemy_a.current_hp])
-	# dmg = max(1, xu.atk - enemy.def) = max(1, 8-2) = 6
-	_assert(enemy_pre_hp - enemy_a.current_hp == 6,
-		"T9b dmg=6 (实际=%d)" % (enemy_pre_hp - enemy_a.current_hp))
+	# dmg = max(1, attack(16) - defense(7)) = 9
+	_assert(enemy_pre_hp - enemy_a.current_hp == 9,
+		"T9b dmg=9 (实际=%d)" % (enemy_pre_hp - enemy_a.current_hp))
 
 	_finish()
 

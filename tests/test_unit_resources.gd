@@ -94,7 +94,7 @@ func _check_turn_mp_regen() -> void:
 	turn_manager._next_turn()
 	await process_frame
 
-	_assert(xu.current_mp == 4, "T4b 徐凤年 turn 2 集气 +4 (实际=%d)" % xu.current_mp)
+	_assert(xu.current_mp == 6, "T4b 徐凤年 turn 2 集气 +6 (实际=%d)" % xu.current_mp)
 
 	battle.queue_free()
 	await process_frame

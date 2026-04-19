@@ -89,9 +89,9 @@ func _run() -> void:
 
 	_assert(enemy_a.current_hp < enemy_init_hp,
 		"T3a 点击敌兵后 HP 应下降 (前=%d 后=%d)" % [enemy_init_hp, enemy_a.current_hp])
-	# dmg = max(1, xu.atk - enemy.def) = max(1, 8-2) = 6
-	_assert(enemy_init_hp - enemy_a.current_hp == 6,
-		"T3b dmg=6 (实际=%d)" % (enemy_init_hp - enemy_a.current_hp))
+	# dmg = max(1, attack(16) - defense(7)) = 9
+	_assert(enemy_init_hp - enemy_a.current_hp == 9,
+		"T3b dmg=9 (实际=%d)" % (enemy_init_hp - enemy_a.current_hp))
 	_assert(xu.acted, "T3c 徐凤年攻击后 acted=true")
 
 	# === 步骤 4：点击已 acted 的己方单位应无反应 ===

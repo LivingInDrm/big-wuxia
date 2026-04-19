@@ -12,6 +12,7 @@ class_name Unit
 const TILE_PX := 64
 const VFX = preload("res://scripts/systems/vfx.gd")
 const AttributeSet = preload("res://scripts/core/attribute_set.gd")
+const AttributeResolver = preload("res://scripts/systems/attribute_resolver.gd")
 
 @export var unit_data: UnitData
 
@@ -300,8 +301,7 @@ func get_current_mov() -> int:
 
 
 func get_qi_regen_amount() -> int:
-	var attributes := _get_attributes()
-	return int(attributes.agility * 0.5)
+	return int(AttributeResolver.get_qi_speed(self)["total"])
 
 
 func set_move_buff(amount: int) -> void:
