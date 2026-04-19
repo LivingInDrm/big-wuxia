@@ -2,33 +2,112 @@ extends SceneTree
 
 const UIColors := preload("res://resources/ui/colors.gd")
 const THEME_PATH := "res://resources/ui/theme/main_ui_theme.tres"
-const STYLEBOX_PATHS := [
-	"res://resources/ui/styleboxes/panel_primary.tres",
-	"res://resources/ui/styleboxes/panel_modal.tres",
-	"res://resources/ui/styleboxes/panel_tooltip.tres",
-	"res://resources/ui/styleboxes/slot_frame.tres",
-	"res://resources/ui/styleboxes/button_blue_normal.tres",
-	"res://resources/ui/styleboxes/button_blue_pressed.tres",
-	"res://resources/ui/styleboxes/button_blue_hover.tres",
-	"res://resources/ui/styleboxes/button_blue_disabled.tres",
-	"res://resources/ui/styleboxes/button_red_normal.tres",
-	"res://resources/ui/styleboxes/button_red_pressed.tres",
-	"res://resources/ui/styleboxes/button_red_hover.tres",
-	"res://resources/ui/styleboxes/button_red_disabled.tres",
+
+# 每个外部 StyleBox 完整期望值（与 main_ui_theme.tres 中内嵌 SubResource 的"真值"一致）。
+# 注：test_theme_sync.gd 额外校验外部 ↔ 内嵌逐字段一致，这里负责和"数值语义"对齐。
+const STYLEBOX_EXPECT := {
+	"res://resources/ui/styleboxes/panel_primary.tres": {
+		"texture_margin": 32.0,
+		"content_margin": [44.0, 36.0, 44.0, 36.0],  # L T R B
+		"modulate": Color(1, 1, 1, 1),
+	},
+	"res://resources/ui/styleboxes/panel_modal.tres": {
+		"texture_margin": 32.0,
+		"content_margin": [50.0, 42.0, 50.0, 42.0],
+		"modulate": Color(1, 1, 1, 1),
+	},
+	"res://resources/ui/styleboxes/panel_tooltip.tres": {
+		"texture_margin": 32.0,
+		"content_margin": [28.0, 24.0, 28.0, 24.0],
+		"modulate": Color(1, 1, 1, 1),
+	},
+	"res://resources/ui/styleboxes/slot_frame.tres": {
+		"texture_margin": 24.0,
+		"content_margin": [18.0, 18.0, 18.0, 18.0],
+		"modulate": Color(1, 1, 1, 1),
+	},
+	"res://resources/ui/styleboxes/button_blue_normal.tres": {
+		"texture_margin": 32.0,
+		"content_margin": [52.0, 28.0, 52.0, 34.0],
+		"modulate": Color(1, 1, 1, 1),
+	},
+	"res://resources/ui/styleboxes/button_blue_pressed.tres": {
+		"texture_margin": 32.0,
+		"content_margin": [52.0, 34.0, 52.0, 28.0],
+		"modulate": Color(1, 1, 1, 1),
+	},
+	"res://resources/ui/styleboxes/button_blue_hover.tres": {
+		"texture_margin": 32.0,
+		"content_margin": [52.0, 28.0, 52.0, 34.0],
+		"modulate": Color(1.1, 1.1, 1.1, 1),
+	},
+	"res://resources/ui/styleboxes/button_blue_disabled.tres": {
+		"texture_margin": 32.0,
+		"content_margin": [52.0, 28.0, 52.0, 34.0],
+		"modulate": Color(0.6, 0.6, 0.6, 0.7),
+	},
+	"res://resources/ui/styleboxes/button_red_normal.tres": {
+		"texture_margin": 32.0,
+		"content_margin": [52.0, 28.0, 52.0, 34.0],
+		"modulate": Color(1, 1, 1, 1),
+	},
+	"res://resources/ui/styleboxes/button_red_pressed.tres": {
+		"texture_margin": 32.0,
+		"content_margin": [52.0, 34.0, 52.0, 28.0],
+		"modulate": Color(1, 1, 1, 1),
+	},
+	"res://resources/ui/styleboxes/button_red_hover.tres": {
+		"texture_margin": 32.0,
+		"content_margin": [52.0, 28.0, 52.0, 34.0],
+		"modulate": Color(1.1, 1.1, 1.1, 1),
+	},
+	"res://resources/ui/styleboxes/button_red_disabled.tres": {
+		"texture_margin": 32.0,
+		"content_margin": [52.0, 28.0, 52.0, 34.0],
+		"modulate": Color(0.6, 0.6, 0.6, 0.7),
+	},
+}
+
+# Theme 内嵌 stylebox：(name, theme_type, 对应的外部 .tres 路径)
+# 内嵌真值 = 外部 .tres 期望（与 test_theme_sync.gd 的 SYNC_MAP 对齐）
+const THEME_STYLEBOXES := [
+	["normal", "Button", "res://resources/ui/styleboxes/button_blue_normal.tres"],
+	["hover", "Button", "res://resources/ui/styleboxes/button_blue_hover.tres"],
+	["pressed", "Button", "res://resources/ui/styleboxes/button_blue_pressed.tres"],
+	["disabled", "Button", "res://resources/ui/styleboxes/button_blue_disabled.tres"],
+	["normal", "danger", "res://resources/ui/styleboxes/button_red_normal.tres"],
+	["hover", "danger", "res://resources/ui/styleboxes/button_red_hover.tres"],
+	["pressed", "danger", "res://resources/ui/styleboxes/button_red_pressed.tres"],
+	["disabled", "danger", "res://resources/ui/styleboxes/button_red_disabled.tres"],
+	["panel", "PanelContainer", "res://resources/ui/styleboxes/panel_primary.tres"],
+	["panel", "modal", "res://resources/ui/styleboxes/panel_modal.tres"],
+	["panel", "slot", "res://resources/ui/styleboxes/slot_frame.tres"],
+	["panel", "tooltip", "res://resources/ui/styleboxes/panel_tooltip.tres"],
 ]
-const STYLEBOX_MARGINS := {
-	"res://resources/ui/styleboxes/panel_primary.tres": 32.0,
-	"res://resources/ui/styleboxes/panel_modal.tres": 32.0,
-	"res://resources/ui/styleboxes/panel_tooltip.tres": 32.0,
-	"res://resources/ui/styleboxes/slot_frame.tres": 24.0,
-	"res://resources/ui/styleboxes/button_blue_normal.tres": 32.0,
-	"res://resources/ui/styleboxes/button_blue_pressed.tres": 32.0,
-	"res://resources/ui/styleboxes/button_blue_hover.tres": 32.0,
-	"res://resources/ui/styleboxes/button_blue_disabled.tres": 32.0,
-	"res://resources/ui/styleboxes/button_red_normal.tres": 32.0,
-	"res://resources/ui/styleboxes/button_red_pressed.tres": 32.0,
-	"res://resources/ui/styleboxes/button_red_hover.tres": 32.0,
-	"res://resources/ui/styleboxes/button_red_disabled.tres": 32.0,
+
+# Label variations 与期望字号（对照 docs/design/13-ui-theme-guide.md）。
+const LABEL_VARIATIONS := {
+	"Label": 22,   # 默认 Label = body 层级
+	"display": 80,
+	"title": 48,
+	"section": 30,
+	"body": 22,
+	"caption": 17,
+	"micro": 13,
+}
+
+# Type Variation → 期望 base_type
+const VARIATION_BASES := {
+	"display": "Label",
+	"title": "Label",
+	"section": "Label",
+	"body": "Label",
+	"caption": "Label",
+	"micro": "Label",
+	"danger": "Button",
+	"modal": "PanelContainer",
+	"tooltip": "PanelContainer",
+	"slot": "PanelContainer",
 }
 
 var _pass: int = 0
@@ -42,56 +121,70 @@ func _init() -> void:
 func _run() -> void:
 	print("[test_theme_loads] ==== BEGIN ====")
 
-	var theme := load(THEME_PATH)
+	var theme := load(THEME_PATH) as Theme
 	_assert(theme != null, "main_ui_theme.tres 可加载")
 	if theme == null:
 		print("[test_theme_loads] ==== END ==== pass=%d fail=%d" % [_pass, _fail])
 		quit(1)
 		return
 
-	for path in STYLEBOX_PATHS:
+	# 外部 stylebox .tres：完整字段断言
+	for path in STYLEBOX_EXPECT.keys():
 		var sb := load(path) as StyleBoxTexture
 		_assert(sb != null, "StyleBox 可加载: %s" % path)
-		_assert(
-			sb.axis_stretch_horizontal == StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH,
-			"%s 横向 axis_stretch = STRETCH" % path
-		)
-		_assert(
-			sb.axis_stretch_vertical == StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH,
-			"%s 纵向 axis_stretch = STRETCH" % path
-		)
-		_assert(
-			sb.texture_margin_left == STYLEBOX_MARGINS[path],
-			"%s texture_margin_left = %s" % [path, STYLEBOX_MARGINS[path]]
-		)
-		_assert(
-			sb.texture_margin_top == STYLEBOX_MARGINS[path],
-			"%s texture_margin_top = %s" % [path, STYLEBOX_MARGINS[path]]
-		)
-		_assert(
-			sb.texture_margin_right == STYLEBOX_MARGINS[path],
-			"%s texture_margin_right = %s" % [path, STYLEBOX_MARGINS[path]]
-		)
-		_assert(
-			sb.texture_margin_bottom == STYLEBOX_MARGINS[path],
-			"%s texture_margin_bottom = %s" % [path, STYLEBOX_MARGINS[path]]
+		if sb == null:
+			continue
+		var exp: Dictionary = STYLEBOX_EXPECT[path]
+		_assert_stylebox_full(sb, path, exp["texture_margin"], exp["content_margin"], exp["modulate"])
+
+	# Theme 内嵌 stylebox：按 (type, name) 直接对照外部 .tres 的期望真值
+	for entry in THEME_STYLEBOXES:
+		var sb_name: String = entry[0]
+		var theme_type: String = entry[1]
+		var ext_path: String = entry[2]
+		var label := "Theme %s/%s" % [theme_type, sb_name]
+		var sb := theme.get_stylebox(sb_name, theme_type) as StyleBoxTexture
+		_assert(sb != null, "%s 可访问" % label)
+		if sb == null:
+			continue
+		var exp: Dictionary = STYLEBOX_EXPECT[ext_path]
+		_assert_stylebox_full(
+			sb, label, exp["texture_margin"], exp["content_margin"], exp["modulate"]
 		)
 
-	_assert_theme_stylebox(theme.get_stylebox("normal", "Button") as StyleBoxTexture, "Theme Button normal", 32.0)
-	_assert_theme_stylebox(theme.get_stylebox("hover", "Button") as StyleBoxTexture, "Theme Button hover", 32.0)
-	_assert_theme_stylebox(theme.get_stylebox("pressed", "Button") as StyleBoxTexture, "Theme Button pressed", 32.0)
-	_assert_theme_stylebox(theme.get_stylebox("disabled", "Button") as StyleBoxTexture, "Theme Button disabled", 32.0)
-	_assert_theme_stylebox(theme.get_stylebox("normal", "danger") as StyleBoxTexture, "Theme danger normal", 32.0)
-	_assert_theme_stylebox(theme.get_stylebox("hover", "danger") as StyleBoxTexture, "Theme danger hover", 32.0)
-	_assert_theme_stylebox(theme.get_stylebox("pressed", "danger") as StyleBoxTexture, "Theme danger pressed", 32.0)
-	_assert_theme_stylebox(theme.get_stylebox("disabled", "danger") as StyleBoxTexture, "Theme danger disabled", 32.0)
-	_assert_theme_stylebox(theme.get_stylebox("panel", "PanelContainer") as StyleBoxTexture, "Theme PanelContainer panel", 32.0)
-	_assert_theme_stylebox(theme.get_stylebox("panel", "modal") as StyleBoxTexture, "Theme modal panel", 32.0)
-	_assert_theme_stylebox(theme.get_stylebox("panel", "slot") as StyleBoxTexture, "Theme slot panel", 24.0)
-	_assert_theme_stylebox(theme.get_stylebox("panel", "tooltip") as StyleBoxTexture, "Theme tooltip panel", 32.0)
+	# Label / variations font_size + font_color
+	for type_name in LABEL_VARIATIONS.keys():
+		var expected_size: int = LABEL_VARIATIONS[type_name]
+		_assert(
+			theme.get_font_size("font_size", type_name) == expected_size,
+			"%s font_size = %d" % [type_name, expected_size]
+		)
+		_assert(
+			theme.get_color("font_color", type_name) == UIColors.INK_BROWN,
+			"%s font_color = INK_BROWN" % type_name
+		)
 
+	# Button default 四态 font_color
+	_assert_button_font_colors(theme, "Button", "默认蓝色按钮")
+	# danger 四态 font_color
+	_assert_button_font_colors(theme, "danger", "红色危险按钮")
+
+	# Button / danger 默认字号（22）
+	_assert(theme.get_font_size("font_size", "Button") == 22, "Button font_size = 22")
+	_assert(theme.get_font_size("font_size", "danger") == 22, "danger font_size = 22")
+
+	# Type Variation base_type
+	for variation in VARIATION_BASES.keys():
+		var expected_base: String = VARIATION_BASES[variation]
+		var actual_base := String(theme.get_type_variation_base(variation))
+		_assert(
+			actual_base == expected_base,
+			"variation %s base_type = %s (actual=%s)" % [variation, expected_base, actual_base]
+		)
+
+	# UIColors 常量
 	_assert(UIColors.PAPER_GOLD == Color("#E7C98A"), "UIColors.PAPER_GOLD 常量值正确")
-	_assert(UIColors.INK_BROWN == Color("#3A2518"), "UIColors 常量可访问")
+	_assert(UIColors.INK_BROWN == Color("#3A2518"), "UIColors.INK_BROWN 常量值正确")
 
 	print("[test_theme_loads] ==== END ==== pass=%d fail=%d" % [_pass, _fail])
 	quit(0 if _fail == 0 else 1)
@@ -106,32 +199,62 @@ func _assert(cond: bool, label: String) -> void:
 		push_error("[FAIL] %s" % label)
 
 
-func _assert_theme_stylebox(sb: StyleBoxTexture, label: String, expected_margin: float) -> void:
-	_assert(sb != null, "%s 可访问" % label)
-	if sb == null:
-		return
+func _assert_eq(label: String, field: String, actual: Variant, expected: Variant) -> void:
+	if actual == expected:
+		_pass += 1
+		print("[PASS] %s :: %s = %s" % [label, field, str(expected)])
+	else:
+		_fail += 1
+		push_error("[FAIL] %s :: %s  actual=%s  expected=%s" % [
+			label, field, str(actual), str(expected)
+		])
 
-	_assert(
-		sb.axis_stretch_horizontal == StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH,
-		"%s 横向 axis_stretch = STRETCH" % label
-	)
-	_assert(
-		sb.axis_stretch_vertical == StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH,
-		"%s 纵向 axis_stretch = STRETCH" % label
-	)
-	_assert(
-		sb.texture_margin_left == expected_margin,
-		"%s texture_margin_left = %s" % [label, expected_margin]
-	)
-	_assert(
-		sb.texture_margin_top == expected_margin,
-		"%s texture_margin_top = %s" % [label, expected_margin]
-	)
-	_assert(
-		sb.texture_margin_right == expected_margin,
-		"%s texture_margin_right = %s" % [label, expected_margin]
-	)
-	_assert(
-		sb.texture_margin_bottom == expected_margin,
-		"%s texture_margin_bottom = %s" % [label, expected_margin]
-	)
+
+func _assert_stylebox_full(
+	sb: StyleBoxTexture,
+	label: String,
+	expected_texture_margin: float,
+	expected_content_margin: Array,
+	expected_modulate: Color,
+) -> void:
+	# axis_stretch
+	_assert_eq(label, "axis_stretch_horizontal",
+		sb.axis_stretch_horizontal, StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH)
+	_assert_eq(label, "axis_stretch_vertical",
+		sb.axis_stretch_vertical, StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH)
+
+	# texture_margin（四边统一期望值）
+	_assert_eq(label, "texture_margin_left", sb.texture_margin_left, expected_texture_margin)
+	_assert_eq(label, "texture_margin_top", sb.texture_margin_top, expected_texture_margin)
+	_assert_eq(label, "texture_margin_right", sb.texture_margin_right, expected_texture_margin)
+	_assert_eq(label, "texture_margin_bottom", sb.texture_margin_bottom, expected_texture_margin)
+
+	# content_margin（LTRB），允许空表示跳过该项
+	if expected_content_margin.size() == 4:
+		_assert_eq(label, "content_margin_left",
+			sb.get_content_margin(SIDE_LEFT), float(expected_content_margin[0]))
+		_assert_eq(label, "content_margin_top",
+			sb.get_content_margin(SIDE_TOP), float(expected_content_margin[1]))
+		_assert_eq(label, "content_margin_right",
+			sb.get_content_margin(SIDE_RIGHT), float(expected_content_margin[2]))
+		_assert_eq(label, "content_margin_bottom",
+			sb.get_content_margin(SIDE_BOTTOM), float(expected_content_margin[3]))
+
+	# modulate_color
+	_assert_eq(label, "modulate_color", sb.modulate_color, expected_modulate)
+
+
+func _assert_button_font_colors(theme: Theme, type_name: String, label: String) -> void:
+	_assert_eq(label, "%s font_color" % type_name,
+		theme.get_color("font_color", type_name), UIColors.INK_BROWN)
+	_assert_eq(label, "%s font_hover_color" % type_name,
+		theme.get_color("font_hover_color", type_name), UIColors.INK_BROWN)
+	_assert_eq(label, "%s font_pressed_color" % type_name,
+		theme.get_color("font_pressed_color", type_name), UIColors.PAPER_GOLD)
+
+	# font_disabled_color：期望 = INK_BROWN 带 0.55 透明度
+	var expected_disabled := UIColors.INK_BROWN
+	expected_disabled.a = 0.55
+	var actual_disabled := theme.get_color("font_disabled_color", type_name)
+	_assert_eq(label, "%s font_disabled_color" % type_name,
+		actual_disabled, expected_disabled)
