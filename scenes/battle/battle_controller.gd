@@ -1,18 +1,24 @@
 extends Node2D
-## BattleController —— 战斗场景主控（Sprint 3）
+## BattleController —— 战斗场景主控（Sprint 4）
 ##
-## 职责（S3）：
-##   - 程序化铺设 12×10 grass 战场地图（S2 遗留）
-##   - 实例化 GridSystem 并从 TerrainLayer 初始化
-##   - 在 UnitsContainer 下放置 3 玩家 + 3 敌兵（教程关初始位置）
-##   - 连接 TurnManager 信号 → 驱动 BattleUI 文字更新
-##   - 启动战斗 start_battle()
+## S3 职责（保留）：
+##   - 程序化铺 12×10 grass 地图
+##   - 初始化 GridSystem，放置 3 玩家 + 3 敌兵
+##   - 驱动 TurnManager + BattleUI
 ##
-## 地图为什么用代码而非 .tscn 存：
-##   .tscn 的 tile_map_data 是 PackedByteArray（不可读不可 diff），且 Terrain autotile
-##   只需要一行 API 即可铺设，代码表达更清晰。后续有正式关卡时改为从 .tres level 资源读。
+## S4 新增：
+##   - 玩家输入：点击己方 → 显示 move_range → 点可达格 → 移动 + 显示 attack_range
+##     → 点范围内敌方 → 攻击；点自己 / 点外面 = 取消
+##   - CombatSystem 伤害结算
+##   - EnemyAI 依次执行敌方回合
+##   - 所有己方 acted → 自动 _start_enemy_phase；敌方全 acted → _next_turn
 ##
-## 后续 Sprint：S4 输入+范围 / S5 战斗结算 / S6 AI+胜负
+## 阶段内部状态：
+##   IDLE               无选中（等玩家选）
+##   UNIT_SELECTED      选中己方，显示 move_range（玩家需点击目的地或取消）
+##   MOVED_AWAIT_ACTION 已移动，显示 attack_range（玩家点敌人攻击 或 点空结束回合）
+##
+## S5 留给：技能 / 地形闪避 / 胜负判定
 
 const UNIT_SCENE: PackedScene = preload("res://scenes/unit/unit.tscn")
 const UNIT_PATH_FMT := "res://resources/data/units/%s.tres"
@@ -20,8 +26,7 @@ const TILE_PX := 64
 const MAP_COLS := 12
 const MAP_ROWS := 10
 
-## 教程关单位布阵（id + grid_pos + 阵营）
-## 参考 docs/design/05-mvp-scope.md §3.1 教程关布阵
+## 教程关布阵（05-mvp §3.1）
 const UNIT_LAYOUT := [
 	{"id": "xu_fengnian",    "pos": Vector2i(2, 2), "faction": "player"},
 	{"id": "jiang_ni",       "pos": Vector2i(2, 4), "faction": "player"},
@@ -31,16 +36,24 @@ const UNIT_LAYOUT := [
 	{"id": "enemy_soldier",  "pos": Vector2i(6, 6), "faction": "enemy"},
 ]
 
+enum SelectState { IDLE, UNIT_SELECTED, MOVED_AWAIT_ACTION }
+
 @onready var terrain_layer: TileMapLayer = $TerrainLayer
-@onready var highlight_layer: TileMapLayer = $HighlightLayer
+@onready var range_overlay: RangeOverlay = $RangeOverlay
 @onready var units_container: Node2D = $UnitsContainer
 @onready var camera: Camera2D = $Camera2D
 @onready var turn_manager: TurnManager = $TurnManager
 @onready var ui: BattleUI = $UI
 
 var grid: GridSystem
+var enemy_ai: EnemyAI
 var player_units: Array[Unit] = []
 var enemy_units: Array[Unit] = []
+
+var select_state: SelectState = SelectState.IDLE
+var selected_unit: Unit = null
+var current_move_range: Array[Vector2i] = []
+var current_attack_range: Array[Vector2i] = []
 
 
 func _ready() -> void:
@@ -55,22 +68,19 @@ func _ready() -> void:
 
 	_spawn_units()
 
-	# 居中相机到地图中点
+	enemy_ai = EnemyAI.new(grid, null)
+
+	# 居中相机
 	var map_w := MAP_COLS * TILE_PX
 	var map_h := MAP_ROWS * TILE_PX
 	camera.position = Vector2(map_w / 2.0, map_h / 2.0)
 
-	# 接入回合管理
+	# 回合信号
 	turn_manager.turn_started.connect(_on_turn_started)
 	turn_manager.phase_changed.connect(_on_phase_changed)
 	turn_manager.start_battle()
 
 
-## 用 grass Terrain（autotile）一次性铺设 12×10 全平原。
-##
-## TileSet 状态（见 resources/data/tiles/main_tileset.tres）：
-##   terrain_set_0 / terrain_0 = "grass"
-##   16 tiles(0..3, 0..3) 的 peering bits 覆盖 16 autotile 形状
 func _paint_map() -> void:
 	const TERRAIN_SET_ID := 0
 	const GRASS_TERRAIN_ID := 0
@@ -82,7 +92,6 @@ func _paint_map() -> void:
 	print("[BattleController] painted %d cells via terrain_connect (grass)" % cells.size())
 
 
-## 按 UNIT_LAYOUT 放置 6 个单位到 UnitsContainer 下。
 func _spawn_units() -> void:
 	for entry in UNIT_LAYOUT:
 		var id: String = entry["id"]
@@ -97,6 +106,13 @@ func _spawn_units() -> void:
 		var unit: Unit = UNIT_SCENE.instantiate()
 		unit.setup(data, pos)
 		units_container.add_child(unit)
+		unit.unit_selected.connect(_on_unit_clicked)
+		unit.unit_died.connect(_on_unit_died)
+
+		# 登记 occupant
+		var t: GridTile = grid.get_tile(pos) if grid != null else null
+		if t != null:
+			t.occupant = unit
 
 		if faction == "player":
 			player_units.append(unit)
@@ -107,16 +123,173 @@ func _spawn_units() -> void:
 		player_units.size(), enemy_units.size()])
 
 
+# ============ 输入处理 ============
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		# 全局左键：如果不是点 Unit（Unit 自己 emit unit_selected），
+		# 那就是点空格 → 走移动/取消逻辑
+		var world: Vector2 = get_global_mouse_position()
+		var coord := Vector2i(int(world.x / TILE_PX), int(world.y / TILE_PX))
+		_on_cell_clicked(coord)
+
+
+func _on_unit_clicked(unit: Unit) -> void:
+	if turn_manager.current_phase == TurnManager.Phase.ENEMY_TURN:
+		return
+	# 玩家点击单位：
+	# - 如果当前选中状态，并且点到范围内敌人 → 攻击
+	if select_state == SelectState.MOVED_AWAIT_ACTION and unit.unit_data.is_enemy \
+			and current_attack_range.has(unit.current_position):
+		await _execute_attack(selected_unit, unit)
+		return
+
+	# - 如果 IDLE 且点自己单位 → 选中
+	if select_state == SelectState.IDLE and not unit.unit_data.is_enemy and not unit.acted:
+		_select_unit(unit)
+		return
+
+	# 其他：取消选择
+	_cancel_selection()
+
+
+func _on_cell_clicked(coord: Vector2i) -> void:
+	if turn_manager.current_phase == TurnManager.Phase.ENEMY_TURN:
+		return
+	match select_state:
+		SelectState.UNIT_SELECTED:
+			if current_move_range.has(coord):
+				await _execute_move(selected_unit, coord)
+			else:
+				_cancel_selection()
+		SelectState.MOVED_AWAIT_ACTION:
+			# 点空格 = 结束该单位回合
+			_finish_unit_action(selected_unit)
+
+
+# ============ 选择 / 移动 / 攻击 ============
+
+func _select_unit(unit: Unit) -> void:
+	selected_unit = unit
+	select_state = SelectState.UNIT_SELECTED
+	unit.set_selected(true)
+	current_move_range = grid.get_move_range(unit.current_position, unit.unit_data.mov, true)
+	range_overlay.clear()
+	range_overlay.show_move_range(current_move_range)
+	ui.set_message("选中 %s — 点击高亮格移动" % unit.unit_data.unit_name)
+
+
+func _cancel_selection() -> void:
+	if selected_unit != null:
+		selected_unit.set_selected(false)
+	selected_unit = null
+	select_state = SelectState.IDLE
+	current_move_range.clear()
+	current_attack_range.clear()
+	range_overlay.clear()
+	ui.set_message("")
+
+
+func _execute_move(unit: Unit, target: Vector2i) -> void:
+	var from := unit.current_position
+	var path := grid.find_path(from, target, true)
+	if path.is_empty():
+		return
+	range_overlay.clear()
+	# 更新 occupant（移前清旧，移后设新）
+	var from_tile: GridTile = grid.get_tile(from)
+	if from_tile != null:
+		from_tile.occupant = null
+	await unit.move_along_path(path)
+	var to_tile: GridTile = grid.get_tile(unit.current_position)
+	if to_tile != null:
+		to_tile.occupant = unit
+
+	# 显示攻击范围
+	current_attack_range = grid.get_attack_range(
+		unit.current_position, unit.unit_data.weapon_range)
+	range_overlay.show_attack_range(current_attack_range)
+	select_state = SelectState.MOVED_AWAIT_ACTION
+	ui.set_message("选择攻击目标或点击空格结束")
+
+
+func _execute_attack(attacker: Unit, defender: Unit) -> void:
+	range_overlay.clear()
+	await attacker.play_attack(defender.position)
+	CombatSystem.resolve_attack(attacker, defender)
+	ui.set_message("%s → %s 造成伤害" % [attacker.unit_data.unit_name, defender.unit_data.unit_name])
+	_finish_unit_action(attacker)
+
+
+func _finish_unit_action(unit: Unit) -> void:
+	if unit == null:
+		_cancel_selection()
+		return
+	unit.set_acted(true)
+	unit.set_selected(false)
+	selected_unit = null
+	select_state = SelectState.IDLE
+	current_move_range.clear()
+	current_attack_range.clear()
+	range_overlay.clear()
+	ui.set_message("")
+
+	# 所有己方 acted → 切敌方
+	if _all_acted(player_units):
+		await get_tree().create_timer(0.25).timeout
+		turn_manager._start_enemy_phase()
+
+
+# ============ 回合流转 ============
+
 func _on_turn_started(turn_num: int) -> void:
 	print("[BattleController] turn_started: %d" % turn_num)
 	ui.set_turn(turn_num, TurnManager.phase_label(turn_manager.current_phase))
+	# 新回合重置 acted
+	for u in player_units:
+		u.set_acted(false)
 
 
 func _on_phase_changed(phase: TurnManager.Phase) -> void:
 	ui.set_turn(turn_manager.current_turn, TurnManager.phase_label(phase))
+	if phase == TurnManager.Phase.ENEMY_TURN:
+		_run_enemy_phase()
 
 
-## Debug / 测试辅助
+func _run_enemy_phase() -> void:
+	_cancel_selection()
+	for enemy in enemy_units.duplicate():
+		if enemy == null or not is_instance_valid(enemy) or enemy.current_hp <= 0:
+			continue
+		await enemy_ai.take_turn(enemy, player_units)
+		await get_tree().create_timer(0.2).timeout
+	# 结束敌方回合 → 下一回合
+	turn_manager._next_turn()
+
+
+func _on_unit_died(unit: Unit) -> void:
+	var t: GridTile = grid.get_tile(unit.current_position)
+	if t != null and t.occupant == unit:
+		t.occupant = null
+	if unit.unit_data != null and unit.unit_data.is_enemy:
+		enemy_units.erase(unit)
+	else:
+		player_units.erase(unit)
+
+
+func _all_acted(units: Array[Unit]) -> bool:
+	for u in units:
+		if u == null or not is_instance_valid(u):
+			continue
+		if u.current_hp <= 0:
+			continue
+		if not u.acted:
+			return false
+	return true
+
+
+# ============ 测试访问 API ============
+
 func get_grid() -> GridSystem:
 	return grid
 
@@ -131,3 +304,23 @@ func get_player_units() -> Array[Unit]:
 
 func get_enemy_units() -> Array[Unit]:
 	return enemy_units
+
+
+func get_enemy_ai() -> EnemyAI:
+	return enemy_ai
+
+
+## 测试辅助：强制选中一个己方单位（不经过 input）
+func debug_select(unit: Unit) -> void:
+	_select_unit(unit)
+
+
+func debug_move(unit: Unit, target: Vector2i) -> void:
+	selected_unit = unit
+	select_state = SelectState.UNIT_SELECTED
+	current_move_range = grid.get_move_range(unit.current_position, unit.unit_data.mov, true)
+	await _execute_move(unit, target)
+
+
+func debug_attack(attacker: Unit, defender: Unit) -> void:
+	await _execute_attack(attacker, defender)

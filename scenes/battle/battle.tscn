@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://bwxbattle0001"]
+[gd_scene load_steps=6 format=3 uid="uid://bwxbattle0001"]
 
 [ext_resource type="Script" uid="uid://blvsyhdtf4xme" path="res://scenes/battle/battle_controller.gd" id="1_ctrl"]
 [ext_resource type="TileSet" uid="uid://cwhuiu6wui754" path="res://resources/data/tiles/main_tileset.tres" id="2_ts"]
 [ext_resource type="Script" uid="uid://bdjc3p15ycvfo" path="res://scripts/systems/turn_manager.gd" id="3_tm"]
 [ext_resource type="Script" uid="uid://bj2t2msp745ms" path="res://scenes/battle/battle_ui.gd" id="4_ui"]
+[ext_resource type="Script" uid="uid://dwoqnif0l0rnn" path="res://scenes/battle/range_overlay.gd" id="5_ov"]
 
 [node name="Battle" type="Node2D"]
 script = ExtResource("1_ctrl")
@@ -11,9 +12,8 @@ script = ExtResource("1_ctrl")
 [node name="TerrainLayer" type="TileMapLayer" parent="."]
 tile_set = ExtResource("2_ts")
 
-[node name="HighlightLayer" type="TileMapLayer" parent="."]
-modulate = Color(1, 1, 1, 0.5)
-tile_set = ExtResource("2_ts")
+[node name="RangeOverlay" type="Node2D" parent="."]
+script = ExtResource("5_ov")
 
 [node name="UnitsContainer" type="Node2D" parent="."]
 

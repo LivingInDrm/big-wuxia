@@ -1,21 +1,19 @@
 extends Node
 class_name GridSystem
-## GridSystem —— 战斗网格系统（Sprint 2 基础版，不含 BFS/A*）
+## GridSystem —— 战斗网格系统
 ##
 ## 职责：
 ##   - 从 TileMapLayer 读取每格的 tile_id（Custom Data Layer），匹配 TerrainTileData .tres
 ##   - 维护 tiles: Dictionary[Vector2i, GridTile]
-##   - 提供基础查询：get_tile / is_walkable / is_occupied / get_all_coords
-##
-## 不做（留给 Sprint 4）：
-##   - BFS 移动范围
-##   - A* 寻路
-##   - 攻击范围计算
+##   - 基础查询：get_tile / is_walkable / is_occupied / get_all_coords
+##   - S4 算法：get_move_range (Dijkstra) / get_attack_range (Chebyshev 环) / get_path (A*)
 ##
 ## 使用：
 ##   var grid := GridSystem.new()
 ##   grid.init_from_tilemap(tilemap_layer)
-##   var tile: GridTile = grid.get_tile(Vector2i(3, 5))
+##   var reachable := grid.get_move_range(from, mov_budget)
+##   var targets := grid.get_attack_range(pos, 1)
+##   var path := grid.get_path(from, to)
 ##
 ## 参考：docs/design/04-tech-stack.md §1 & §4
 
@@ -127,3 +125,168 @@ func get_all_coords() -> Array[Vector2i]:
 
 func tile_count() -> int:
 	return tiles.size()
+
+
+## ============ 范围 / 寻路算法（S4） ============
+
+const _DIRS_4 := [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
+
+
+## 根据移动点数预算，从 from 出发可达的全部格子（不含 from 本身）。
+##
+## Dijkstra（因为 movement_cost 可不同）。
+## - 障碍格 (is_obstacle) 直接跳过
+## - 其他单位占用的格子不能落脚，但可以穿过（默认规则）——S5 可改为敌方单位阻挡
+## - 返回 Array[Vector2i]，按最小 cost 顺序
+##
+## treat_occupied_as_block=true 时，其他单位占用的格子被视为不可穿过（供 AI 用保守路径）。
+func get_move_range(from: Vector2i, budget: int,
+		treat_occupied_as_block: bool = false) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	if not tiles.has(from) or budget <= 0:
+		return result
+
+	var dist: Dictionary = {from: 0}
+	# 简单 O(N^2) Dijkstra：节点数 <=120，完全够用
+	var frontier: Array[Vector2i] = [from]
+	while not frontier.is_empty():
+		# 取当前 dist 最小的
+		var best_idx := 0
+		for i in range(1, frontier.size()):
+			if dist[frontier[i]] < dist[frontier[best_idx]]:
+				best_idx = i
+		var cur: Vector2i = frontier[best_idx]
+		frontier.remove_at(best_idx)
+		var cur_cost: int = dist[cur]
+
+		for d in _DIRS_4:
+			var nxt: Vector2i = cur + d
+			if not tiles.has(nxt):
+				continue
+			var t: GridTile = tiles[nxt]
+			if t.terrain == null or t.terrain.is_obstacle:
+				continue
+			if treat_occupied_as_block and t.is_occupied():
+				continue
+			var step_cost: int = max(1, t.terrain.movement_cost)
+			var new_cost: int = cur_cost + step_cost
+			if new_cost > budget:
+				continue
+			if not dist.has(nxt) or new_cost < dist[nxt]:
+				dist[nxt] = new_cost
+				frontier.append(nxt)
+
+	for coord in dist.keys():
+		if coord == from:
+			continue
+		# 终点必须可落脚（不被占用），但中途可以穿过
+		var t2: GridTile = tiles[coord]
+		if t2.is_occupied():
+			continue
+		result.append(coord)
+	return result
+
+
+## 攻击范围：Chebyshev 距离 = weapon_range 的环（含射程 1..weapon_range）。
+## S4 简化：只要求 Chebyshev 距离 ∈ [1, weapon_range]，不考虑地形遮挡。
+func get_attack_range(from: Vector2i, weapon_range: int) -> Array[Vector2i]:
+	var result: Array[Vector2i] = []
+	if weapon_range <= 0:
+		return result
+	for dx in range(-weapon_range, weapon_range + 1):
+		for dy in range(-weapon_range, weapon_range + 1):
+			if dx == 0 and dy == 0:
+				continue
+			var d: int = max(abs(dx), abs(dy))  # Chebyshev
+			if d > weapon_range:
+				continue
+			var coord := from + Vector2i(dx, dy)
+			if not tiles.has(coord):
+				continue
+			result.append(coord)
+	return result
+
+
+## A* 寻路：from → to，返回格子序列（含 to，不含 from）。
+## 找不到时返回空 []。
+## 与 get_move_range 规则一致：障碍不可穿，其他单位默认可穿（treat_occupied_as_block 控制）。
+##
+## 注意：避免与 Node.get_path() 冲突，方法名用 find_path。
+func find_path(from: Vector2i, to: Vector2i,
+		treat_occupied_as_block: bool = false) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	if from == to or not tiles.has(from) or not tiles.has(to):
+		return out
+
+	var open_set: Array[Vector2i] = [from]
+	var came_from: Dictionary = {}
+	var g_score: Dictionary = {from: 0}
+	var f_score: Dictionary = {from: _heuristic(from, to)}
+
+	while not open_set.is_empty():
+		# 取 f_score 最小
+		var best_idx := 0
+		for i in range(1, open_set.size()):
+			if f_score.get(open_set[i], INF) < f_score.get(open_set[best_idx], INF):
+				best_idx = i
+		var cur: Vector2i = open_set[best_idx]
+		if cur == to:
+			return _reconstruct_path(came_from, cur)
+		open_set.remove_at(best_idx)
+
+		for d in _DIRS_4:
+			var nxt: Vector2i = cur + d
+			if not tiles.has(nxt):
+				continue
+			var t: GridTile = tiles[nxt]
+			if t.terrain == null or t.terrain.is_obstacle:
+				continue
+			if treat_occupied_as_block and t.is_occupied() and nxt != to:
+				continue
+			var step_cost: int = max(1, t.terrain.movement_cost)
+			var tentative_g: int = g_score[cur] + step_cost
+			if tentative_g < g_score.get(nxt, INF):
+				came_from[nxt] = cur
+				g_score[nxt] = tentative_g
+				f_score[nxt] = tentative_g + _heuristic(nxt, to)
+				if not open_set.has(nxt):
+					open_set.append(nxt)
+
+	return out
+
+
+func _heuristic(a: Vector2i, b: Vector2i) -> int:
+	return abs(a.x - b.x) + abs(a.y - b.y)  # Manhattan（4 邻格）
+
+
+func _reconstruct_path(came_from: Dictionary, current: Vector2i) -> Array[Vector2i]:
+	var path: Array[Vector2i] = [current]
+	while came_from.has(current):
+		current = came_from[current]
+		path.insert(0, current)
+	# 去掉起点
+	if path.size() > 0:
+		path.pop_front()
+	return path
+
+
+## 便捷：找 occupant 所在 coord（O(N)）
+func find_unit_coord(unit: Node) -> Vector2i:
+	for coord in tiles.keys():
+		var t: GridTile = tiles[coord]
+		if t.occupant == unit:
+			return coord
+	return Vector2i(-1, -1)
+
+
+## 返回所有敌方或己方单位的 coord（用于 AI 搜最近目标）
+func get_units_by_enemy_flag(is_enemy: bool) -> Array[Vector2i]:
+	var out: Array[Vector2i] = []
+	for coord in tiles.keys():
+		var t: GridTile = tiles[coord]
+		if t.occupant == null:
+			continue
+		# occupant 是 Unit，访问 unit_data.is_enemy
+		if t.occupant.unit_data != null and t.occupant.unit_data.is_enemy == is_enemy:
+			out.append(coord)
+	return out
