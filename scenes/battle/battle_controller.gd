@@ -127,9 +127,12 @@ func _spawn_units() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		# 全局左键：如果不是点 Unit（Unit 自己 emit unit_selected），
-		# 那就是点空格 → 走移动/取消逻辑
-		var world: Vector2 = get_global_mouse_position()
+		# 全局左键：Unit 自己在 _on_area_input 里会 set_input_as_handled，
+		# 所以能走到这里的都是"点空格"。
+		# 用 event.position（视口坐标）→ canvas_transform 逆变换得到世界坐标，
+		# 避免依赖 get_global_mouse_position() 的缓存（测试场景下可能为 0）
+		var mb := event as InputEventMouseButton
+		var world: Vector2 = get_viewport().get_canvas_transform().affine_inverse() * mb.position
 		var coord := Vector2i(int(world.x / TILE_PX), int(world.y / TILE_PX))
 		_on_cell_clicked(coord)
 

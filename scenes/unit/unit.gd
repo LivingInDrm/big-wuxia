@@ -178,3 +178,7 @@ func _die() -> void:
 func _on_area_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		unit_selected.emit(self)
+		# 关键：消费事件，避免继续冒泡到 BattleController._unhandled_input
+		# 否则"点击敌兵"会同时被当成"点击空格"从而立刻 _finish_unit_action，
+		# 导致攻击动画未播放 + 状态瞬间回 IDLE（用户感知为"无响应"）
+		get_viewport().set_input_as_handled()
