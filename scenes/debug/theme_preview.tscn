@@ -308,7 +308,7 @@ autowrap_mode = 3
 [node name="@VBoxContainer@69" type="VBoxContainer" parent="." unique_id=1796063328]
 layout_mode = 0
 offset_left = 36.0
-offset_top = 586.0
+offset_top = 548.0
 offset_right = 296.0
 offset_bottom = 734.0
 theme_override_constants/separation = 12
@@ -347,9 +347,9 @@ autowrap_mode = 3
 [node name="@VBoxContainer@70" type="VBoxContainer" parent="." unique_id=509342559]
 layout_mode = 0
 offset_left = 316.0
-offset_top = 586.0
-offset_right = 876.0
-offset_bottom = 784.0
+offset_top = 548.0
+offset_right = 886.0
+offset_bottom = 734.0
 theme_override_constants/separation = 12
 
 [node name="@Label@43" type="Label" parent="@VBoxContainer@70" unique_id=237845052]
@@ -368,7 +368,7 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="@ColorRect@44" type="ColorRect" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@46" unique_id=595103704]
-custom_minimum_size = Vector2(92, 56)
+custom_minimum_size = Vector2(100, 60)
 layout_mode = 2
 color = Color(0.90588236, 0.7882353, 0.5411765, 1)
 
@@ -383,7 +383,7 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="@ColorRect@47" type="ColorRect" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@49" unique_id=1691278364]
-custom_minimum_size = Vector2(92, 56)
+custom_minimum_size = Vector2(100, 60)
 layout_mode = 2
 color = Color(0.22745098, 0.14509805, 0.09411765, 1)
 
@@ -398,7 +398,7 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="@ColorRect@50" type="ColorRect" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@52" unique_id=1655151659]
-custom_minimum_size = Vector2(92, 56)
+custom_minimum_size = Vector2(100, 60)
 layout_mode = 2
 color = Color(0.1254902, 0.078431375, 0.050980393, 1)
 
@@ -413,7 +413,7 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="@ColorRect@53" type="ColorRect" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@55" unique_id=595520362]
-custom_minimum_size = Vector2(92, 56)
+custom_minimum_size = Vector2(100, 60)
 layout_mode = 2
 color = Color(0.30588236, 0.43137255, 0.4862745, 1)
 
@@ -428,7 +428,7 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="@ColorRect@56" type="ColorRect" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@58" unique_id=8705481]
-custom_minimum_size = Vector2(92, 56)
+custom_minimum_size = Vector2(100, 60)
 layout_mode = 2
 color = Color(0.6039216, 0.29411766, 0.24705882, 1)
 
@@ -443,7 +443,7 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="@ColorRect@59" type="ColorRect" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@61" unique_id=1409574280]
-custom_minimum_size = Vector2(92, 56)
+custom_minimum_size = Vector2(100, 60)
 layout_mode = 2
 color = Color(0.43137255, 0.54509807, 0.2901961, 1)
 
@@ -456,7 +456,7 @@ horizontal_alignment = 1
 [node name="@VBoxContainer@71" type="VBoxContainer" parent="." unique_id=1370460427]
 layout_mode = 0
 offset_left = 900.0
-offset_top = 586.0
+offset_top = 548.0
 offset_right = 1330.0
 offset_bottom = 734.0
 theme_override_constants/separation = 12
