@@ -50,6 +50,39 @@ static func get_qi_speed(unit) -> Dictionary:
 	return _build_result(base, attribute, specialty, equip, technique, status)
 
 
+static func get_hit(unit) -> Dictionary:
+	var attrs := _get_attributes(unit)
+	var base := 75
+	var attribute := attrs.agility
+	var specialty := int(_get_specialty_for_weapon(unit) * 0.5)
+	var equip := 0
+	var technique := 0
+	var status := 0
+	return _build_result(base, attribute, specialty, equip, technique, status)
+
+
+static func get_dodge(unit, terrain_dodge_bonus: int = 0) -> Dictionary:
+	var attrs := _get_attributes(unit)
+	var qinggong_total: int = int(get_qinggong(unit)["total"])
+	var base := 5
+	var attribute := int(attrs.agility * 0.5 + qinggong_total * 0.3)
+	var specialty := 0
+	var equip := 0
+	var technique := 0
+	var status := terrain_dodge_bonus
+	return _build_result(base, attribute, specialty, equip, technique, status)
+
+
+static func get_crit(unit) -> Dictionary:
+	var base := 5
+	var attribute := 0
+	var specialty := 0
+	var equip := 0
+	var technique := 0
+	var status := 0
+	return _build_result(base, attribute, specialty, equip, technique, status)
+
+
 static func _build_result(base: int, attribute: int, specialty: int, equip: int,
 		technique: int, status: int) -> Dictionary:
 	var sources := {
