@@ -1,8 +1,8 @@
 extends RefCounted
 class_name VFX
 
-const DAMAGE_NUMBER_FONT_SIZE := 28
-const DAMAGE_NUMBER_OUTLINE := 2
+const DAMAGE_NUMBER_FONT_SIZE := 32
+const DAMAGE_NUMBER_OUTLINE := 3
 const DAMAGE_NUMBER_TRAVEL := 60.0
 const DAMAGE_NUMBER_DURATION := 0.8
 
@@ -27,13 +27,13 @@ static func spawn_damage_number(parent: Node, world_pos: Vector2, amount: Varian
 	var tree := parent.get_tree()
 	var screen_pos: Vector2 = viewport.get_canvas_transform() * world_pos
 	var overlay := CanvasLayer.new()
-	overlay.layer = 100
+	overlay.layer = 200
 	tree.root.add_child(overlay)
 
 	var label := Label.new()
 	label.text = _format_damage_text(amount, is_heal)
-	label.position = screen_pos + Vector2(-72, -36)
-	label.size = Vector2(144, 48)
+	label.position = screen_pos + Vector2(-96, -44)
+	label.size = Vector2(192, 64)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
