@@ -1,0 +1,258 @@
+[gd_scene format=3 uid="uid://b86mnsbjlwm7i"]
+
+[ext_resource type="Theme" path="res://resources/ui/theme/main_ui_theme.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://tools/generated/wuxia_elements_r2/main_panel.png" id="2_main_panel"]
+[ext_resource type="Texture2D" path="res://tools/generated/wuxia_elements_r2/tooltip_panel.png" id="3_tooltip_panel"]
+[ext_resource type="Texture2D" path="res://tools/generated/wuxia_elements_r2/slot_frame.png" id="4_slot_frame"]
+[ext_resource type="Texture2D" path="res://tools/generated/wuxia_elements_r2/button_regular.png" id="5_button_regular"]
+[ext_resource type="Texture2D" path="res://tools/generated/wuxia_elements_r2/button_pressed.png" id="6_button_pressed"]
+[ext_resource type="Texture2D" path="res://tools/generated/wuxia_elements_r2/button_danger.png" id="7_button_danger"]
+[ext_resource type="Texture2D" path="res://tools/generated/wuxia_elements_r2/bar_base.png" id="8_bar_base"]
+[ext_resource type="Texture2D" path="res://tools/generated/wuxia_elements_r2/avatar_frame.png" id="9_avatar_frame"]
+
+[node name="Root" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 24
+
+[node name="TitleLabel" type="Label" parent="ScrollContainer/VBox"]
+layout_mode = 2
+theme_type_variation = &"title"
+text = "NinePatchRect 切片编辑 · 选中节点 → Inspector → Patch Margin 调值 → 拖控件角手柄看拉伸效果"
+
+[node name="InstructionsLabel" type="Label" parent="ScrollContainer/VBox"]
+layout_mode = 2
+theme_type_variation = &"body"
+text = "操作方式：\n1. 在节点树选中某个 NP_xxx\n2. Inspector → Axis Stretch 下方有 Patch Margin 四个字段（Left/Top/Right/Bottom）\n3. 拖数值观察四角装饰是否完整（装饰被拉伸说明数值太小）\n4. 在 2D 视图里拉控件的角手柄改控件尺寸，看中心平铺区有没有变形\n5. 满意后把最终四个数字告诉 Manager"
+autowrap_mode = 3
+
+[node name="Section_MainPanel" type="VBoxContainer" parent="ScrollContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/VBox/Section_MainPanel"]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "1. main_panel (1536×1024)"
+
+[node name="Hint" type="Label" parent="ScrollContainer/VBox/Section_MainPanel"]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "推荐初始 patch_margin: left=180 top=140 right=180 bottom=140（仅供起点，请按实际切）"
+autowrap_mode = 3
+
+[node name="NP_MainPanel" type="NinePatchRect" parent="ScrollContainer/VBox/Section_MainPanel"]
+custom_minimum_size = Vector2(800, 400)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_main_panel")
+patch_margin_left = 180
+patch_margin_top = 140
+patch_margin_right = 180
+patch_margin_bottom = 140
+
+[node name="Divider_01" type="HSeparator" parent="ScrollContainer/VBox"]
+layout_mode = 2
+
+[node name="Section_TooltipPanel" type="VBoxContainer" parent="ScrollContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/VBox/Section_TooltipPanel"]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "2. tooltip_panel (1024×1024)"
+
+[node name="Hint" type="Label" parent="ScrollContainer/VBox/Section_TooltipPanel"]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "推荐起点: 120/120/120/120"
+
+[node name="NP_TooltipPanel" type="NinePatchRect" parent="ScrollContainer/VBox/Section_TooltipPanel"]
+custom_minimum_size = Vector2(600, 400)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("3_tooltip_panel")
+patch_margin_left = 120
+patch_margin_top = 120
+patch_margin_right = 120
+patch_margin_bottom = 120
+
+[node name="Divider_02" type="HSeparator" parent="ScrollContainer/VBox"]
+layout_mode = 2
+
+[node name="Section_SlotFrame" type="VBoxContainer" parent="ScrollContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/VBox/Section_SlotFrame"]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "3. slot_frame (1024×1024)"
+
+[node name="Hint" type="Label" parent="ScrollContainer/VBox/Section_SlotFrame"]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "推荐起点: 150/150/150/150"
+
+[node name="NP_SlotFrame" type="NinePatchRect" parent="ScrollContainer/VBox/Section_SlotFrame"]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("4_slot_frame")
+patch_margin_left = 150
+patch_margin_top = 150
+patch_margin_right = 150
+patch_margin_bottom = 150
+
+[node name="Divider_03" type="HSeparator" parent="ScrollContainer/VBox"]
+layout_mode = 2
+
+[node name="Section_ButtonRegular" type="VBoxContainer" parent="ScrollContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/VBox/Section_ButtonRegular"]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "4. button_regular (1024×512)"
+
+[node name="Hint" type="Label" parent="ScrollContainer/VBox/Section_ButtonRegular"]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "推荐起点: 160/88/160/88"
+
+[node name="NP_ButtonRegular" type="NinePatchRect" parent="ScrollContainer/VBox/Section_ButtonRegular"]
+custom_minimum_size = Vector2(500, 120)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_button_regular")
+patch_margin_left = 160
+patch_margin_top = 88
+patch_margin_right = 160
+patch_margin_bottom = 88
+
+[node name="Divider_04" type="HSeparator" parent="ScrollContainer/VBox"]
+layout_mode = 2
+
+[node name="Section_ButtonPressed" type="VBoxContainer" parent="ScrollContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/VBox/Section_ButtonPressed"]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "5. button_pressed (1024×512)"
+
+[node name="Hint" type="Label" parent="ScrollContainer/VBox/Section_ButtonPressed"]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "推荐起点: 160/88/160/88"
+
+[node name="NP_ButtonPressed" type="NinePatchRect" parent="ScrollContainer/VBox/Section_ButtonPressed"]
+custom_minimum_size = Vector2(500, 120)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("6_button_pressed")
+patch_margin_left = 160
+patch_margin_top = 88
+patch_margin_right = 160
+patch_margin_bottom = 88
+
+[node name="Divider_05" type="HSeparator" parent="ScrollContainer/VBox"]
+layout_mode = 2
+
+[node name="Section_ButtonDanger" type="VBoxContainer" parent="ScrollContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/VBox/Section_ButtonDanger"]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "6. button_danger (1024×512)"
+
+[node name="Hint" type="Label" parent="ScrollContainer/VBox/Section_ButtonDanger"]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "推荐起点: 160/88/160/88"
+
+[node name="NP_ButtonDanger" type="NinePatchRect" parent="ScrollContainer/VBox/Section_ButtonDanger"]
+custom_minimum_size = Vector2(500, 120)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("7_button_danger")
+patch_margin_left = 160
+patch_margin_top = 88
+patch_margin_right = 160
+patch_margin_bottom = 88
+
+[node name="Divider_06" type="HSeparator" parent="ScrollContainer/VBox"]
+layout_mode = 2
+
+[node name="Section_BarBase" type="VBoxContainer" parent="ScrollContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/VBox/Section_BarBase"]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "7. bar_base (1536×256)"
+
+[node name="Hint" type="Label" parent="ScrollContainer/VBox/Section_BarBase"]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "推荐起点: 96/40/96/40"
+
+[node name="NP_BarBase" type="NinePatchRect" parent="ScrollContainer/VBox/Section_BarBase"]
+custom_minimum_size = Vector2(600, 80)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("8_bar_base")
+patch_margin_left = 96
+patch_margin_top = 40
+patch_margin_right = 96
+patch_margin_bottom = 40
+
+[node name="Divider_07" type="HSeparator" parent="ScrollContainer/VBox"]
+layout_mode = 2
+
+[node name="Section_AvatarFrame" type="VBoxContainer" parent="ScrollContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="ScrollContainer/VBox/Section_AvatarFrame"]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "8. avatar_frame (1024×1024)"
+
+[node name="Hint" type="Label" parent="ScrollContainer/VBox/Section_AvatarFrame"]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "推荐起点: 132/132/132/132"
+
+[node name="NP_AvatarFrame" type="NinePatchRect" parent="ScrollContainer/VBox/Section_AvatarFrame"]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("9_avatar_frame")
+patch_margin_left = 132
+patch_margin_top = 132
+patch_margin_right = 132
+patch_margin_bottom = 132
