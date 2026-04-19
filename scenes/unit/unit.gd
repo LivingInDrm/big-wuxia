@@ -11,6 +11,7 @@ class_name Unit
 
 const TILE_PX := 64
 const VFX = preload("res://scripts/systems/vfx.gd")
+const AttributeSet = preload("res://scripts/core/attribute_set.gd")
 
 @export var unit_data: UnitData
 
@@ -22,6 +23,9 @@ const VFX = preload("res://scripts/systems/vfx.gd")
 @onready var area: Area2D = $Area2D
 
 var current_hp: int = 0
+var max_hp: int = 0
+var current_mp: int = 0
+var max_mp: int = 0
 var current_position: Vector2i = Vector2i.ZERO
 var acted: bool = false
 var facing: int = 1
@@ -40,6 +44,10 @@ signal skill_state_changed(unit: Unit)
 func setup(data: UnitData, grid_pos: Vector2i = Vector2i.ZERO) -> void:
 	unit_data = data
 	current_position = grid_pos
+	if is_inside_tree():
+		_initialize_runtime_resources()
+		_refresh_health_bar()
+		_load_skills()
 
 
 func _ready() -> void:
@@ -56,8 +64,8 @@ func _ready() -> void:
 	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("idle"):
 		anim_sprite.play("idle")
 
-	# 血量
-	current_hp = unit_data.max_hp
+	# 运行时资源
+	_initialize_runtime_resources()
 	_refresh_health_bar()
 	_load_skills()
 
@@ -81,10 +89,10 @@ func _ready() -> void:
 func _refresh_health_bar() -> void:
 	if unit_data == null:
 		return
-	health_bar.max_value = unit_data.max_hp
+	health_bar.max_value = max_hp
 	health_bar.value = current_hp
-	hp_label.text = "%d/%d" % [current_hp, unit_data.max_hp]
-	var ratio := float(current_hp) / float(unit_data.max_hp) if unit_data.max_hp > 0 else 0.0
+	hp_label.text = "%d/%d" % [current_hp, max_hp]
+	var ratio := float(current_hp) / float(max_hp) if max_hp > 0 else 0.0
 	var bar_color: Color
 	if ratio > 0.5:
 		bar_color = Color(0.3, 0.85, 0.35)   # 绿
@@ -128,12 +136,35 @@ func heal(amount: int) -> void:
 	if unit_data == null or amount <= 0 or current_hp <= 0:
 		return
 	var prev_hp := current_hp
-	current_hp = min(unit_data.max_hp, current_hp + amount)
+	current_hp = min(max_hp, current_hp + amount)
 	_refresh_health_bar()
 	var actual := current_hp - prev_hp
 	if actual > 0:
 		var parent_node := get_parent() if get_parent() != null else self
 		VFX.spawn_damage_number(parent_node, global_position + Vector2(0, -56), actual, true)
+
+
+func get_max_hp() -> int:
+	return max_hp
+
+
+func get_max_mp() -> int:
+	return max_mp
+
+
+func consume_mp(amount: int) -> bool:
+	if amount <= 0:
+		return true
+	if current_mp < amount:
+		return false
+	current_mp -= amount
+	return true
+
+
+func restore_mp(amount: int) -> void:
+	if amount <= 0:
+		return
+	current_mp = min(max_mp, current_mp + amount)
 
 
 ## 沿 path 逐格 tween 过去（每格 0.15s）。Coroutine：await unit.move_along_path(...)。
@@ -268,6 +299,11 @@ func get_current_mov() -> int:
 	return unit_data.mov + temp_move_bonus if unit_data != null else temp_move_bonus
 
 
+func get_qi_regen_amount() -> int:
+	var attributes := _get_attributes()
+	return int(attributes.agility * 0.5)
+
+
 func set_move_buff(amount: int) -> void:
 	temp_move_bonus = max(temp_move_bonus, amount)
 	skill_state_changed.emit(self)
@@ -301,3 +337,17 @@ func _on_hurt_feedback_finished(base_pos: Vector2) -> void:
 	_hurt_feedback_running = false
 	_refresh_sprite_modulate()
 	hurt_finished.emit(self)
+
+
+func _initialize_runtime_resources() -> void:
+	var attributes := _get_attributes()
+	max_hp = attributes.base_hp + attributes.constitution * 10 + 1 * 5
+	max_mp = attributes.base_mp + attributes.constitution * 2 + attributes.insight * 3
+	current_hp = max_hp
+	current_mp = 0
+
+
+func _get_attributes() -> AttributeSet:
+	if unit_data != null and unit_data.attributes != null:
+		return unit_data.attributes
+	return AttributeSet.new()

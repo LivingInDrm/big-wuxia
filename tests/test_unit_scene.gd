@@ -6,7 +6,7 @@ extends SceneTree
 ## 覆盖：
 ##   T1  unit.tscn 可加载
 ##   T2  instantiate + setup(data) + add_child 后 _ready 正确初始化：
-##        - current_hp == max_hp
+##        - current_hp == get_max_hp()
 ##        - anim_sprite.animation == "idle"
 ##        - anim_sprite.modulate == unit_data.modulate
 ##        - facing 初始按阵营设置
@@ -50,8 +50,11 @@ func _run() -> void:
 	root.add_child(u)
 	await process_frame
 
-	_assert(u.current_hp == data_xu.max_hp,
-		"T2a current_hp == max_hp (实际=%d, 期望=%d)" % [u.current_hp, data_xu.max_hp])
+	_assert(u.current_hp == u.get_max_hp(),
+		"T2a current_hp == get_max_hp() (实际=%d, 期望=%d)" % [u.current_hp, u.get_max_hp()])
+	_assert(u.current_mp == 0, "T2a2 current_mp 初始为 0")
+	_assert(u.get_max_hp() == 105, "T2a3 徐凤年运行时 max_hp=105 (实际=%d)" % u.get_max_hp())
+	_assert(u.get_max_mp() == 42, "T2a4 徐凤年运行时 max_mp=42 (实际=%d)" % u.get_max_mp())
 	_assert(u.anim_sprite != null, "T2b anim_sprite 非 null")
 	if u.anim_sprite != null:
 		_assert(u.anim_sprite.animation == &"idle",
@@ -61,9 +64,9 @@ func _run() -> void:
 		_assert(u.anim_sprite.flip_h == false,
 			"T2d2 玩家 flip_h=false (实际=%s)" % u.anim_sprite.flip_h)
 	_assert(u.facing == 1, "T2d3 玩家 facing=1 (实际=%d)" % u.facing)
-	_assert(u.health_bar.max_value == float(data_xu.max_hp),
+	_assert(u.health_bar.max_value == float(u.get_max_hp()),
 		"T2e health_bar.max_value")
-	_assert(u.health_bar.value == float(data_xu.max_hp),
+	_assert(u.health_bar.value == float(u.get_max_hp()),
 		"T2f health_bar.value 初始 = max_hp")
 
 	# T3: HP 染色（通过手动改 current_hp 再刷新）
@@ -101,7 +104,7 @@ func _run() -> void:
 	_assert(u.anim_sprite.flip_h == false, "T6c 攻击右侧后 idle 保持朝右")
 
 	# T7: hurt feedback
-	u.current_hp = data_xu.max_hp
+	u.current_hp = u.get_max_hp()
 	u._refresh_health_bar()
 	var expected_base := data_xu.modulate
 	var pre_hurt_pos := u.position
@@ -129,7 +132,7 @@ func _run() -> void:
 
 
 func _check_hp_color(u: Unit, ratio: float, expected: Color, msg: String) -> void:
-	u.current_hp = int(round(u.unit_data.max_hp * ratio))
+	u.current_hp = int(round(u.get_max_hp() * ratio))
 	u._refresh_health_bar()
 	var fg: StyleBoxFlat = u.health_bar.get_theme_stylebox("fill") as StyleBoxFlat
 	_assert(fg != null, "%s fill stylebox 非 null" % msg)

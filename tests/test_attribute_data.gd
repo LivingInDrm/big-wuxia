@@ -34,7 +34,7 @@ func _run() -> void:
 	})
 	_check("li_chungang", {
 		"constitution": 7, "strength": 9, "agility": 8, "insight": 10, "fortune": 4,
-		"base_hp": 30, "base_mp": 20, "derived_max_hp": 105,
+		"base_hp": 30, "base_mp": 10, "derived_max_hp": 105,
 	})
 	_check("enemy_soldier", {
 		"constitution": 5, "strength": 5, "agility": 4, "insight": 3, "fortune": 2,

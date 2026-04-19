@@ -76,13 +76,13 @@ func _run() -> void:
 
 	var xu: Unit = battle.get_player_units()[0]
 	_assert(xu.unit_data.unit_id == "xu_fengnian", "T7 setup: 第一玩家是徐凤年")
-	_assert(xu.current_hp == 28, "T7a 初始 hp=28")
+	_assert(xu.current_hp == 105, "T7a 初始 hp=105")
 
 	# T7: take_damage
 	xu.take_damage(10)
 	await process_frame
-	_assert(xu.current_hp == 18, "T7b take_damage(10) → hp=18 (实际=%d)" % xu.current_hp)
-	_assert(xu.health_bar.value == 18.0, "T7c health_bar.value=18")
+	_assert(xu.current_hp == 95, "T7b take_damage(10) → hp=95 (实际=%d)" % xu.current_hp)
+	_assert(xu.health_bar.value == 95.0, "T7c health_bar.value=95")
 
 	# T8: debug_move
 	var enemy_a: Unit = battle.get_enemy_units()[0]

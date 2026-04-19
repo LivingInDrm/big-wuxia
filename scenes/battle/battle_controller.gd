@@ -289,6 +289,8 @@ func _on_turn_started(turn_num: int) -> void:
 		u.set_acted(false)
 		u.clear_temp_buffs()
 		u.tick_cooldowns()
+		if turn_num > 1:
+			u.restore_mp(u.get_qi_regen_amount())
 
 
 func _on_phase_changed(phase: TurnManager.Phase) -> void:
@@ -467,7 +469,7 @@ func debug_select(unit: Unit) -> void:
 func debug_move(unit: Unit, target: Vector2i) -> void:
 	selected_unit = unit
 	select_state = SelectState.UNIT_SELECTED
-	current_move_range = grid.get_move_range(unit.current_position, unit.unit_data.mov, true)
+	current_move_range = grid.get_move_range(unit.current_position, unit.get_current_mov(), true)
 	await _execute_move(unit, target)
 
 
