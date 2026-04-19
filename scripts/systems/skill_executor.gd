@@ -1,6 +1,14 @@
 extends RefCounted
 class_name SkillExecutor
 
+const VFX = preload("res://scripts/systems/vfx.gd")
+const DUST_VFX: SpriteFrames = preload("res://resources/sprites/vfx/dust.tres")
+const FIRE_VFX: SpriteFrames = preload("res://resources/sprites/vfx/fire.tres")
+const EXPLOSION_VFX: SpriteFrames = preload("res://resources/sprites/vfx/explosion.tres")
+const HEAL_VFX: SpriteFrames = preload("res://resources/sprites/vfx/heal.tres")
+const FIRE_LIFETIME := 0.45
+const LINE_VFX_STEP_DELAY := 0.05
+
 
 static func get_targetable_cells(caster: Unit, skill, grid: GridSystem) -> Array[Vector2i]:
 	var out: Array[Vector2i] = []
@@ -74,9 +82,8 @@ static func execute_skill(caster: Unit, skill, target_pos: Vector2i, grid: GridS
 		return affected_units
 
 	var affected_cells: Array[Vector2i] = get_affected_cells(caster, skill, target_pos, grid)
-	var flash_color := Color(1.0, 0.85, 0.4, 1.0) if skill.effect_type == 0 \
-		else Color(0.55, 1.0, 0.8, 1.0)
-	await caster.play_skill(skill.animation_key, _coord_to_world(target_pos), flash_color)
+	await caster.play_skill(skill.animation_key, _coord_to_world(target_pos))
+	await _spawn_skill_vfx(caster, skill, target_pos, affected_cells)
 
 	for coord in affected_cells:
 		var tile: GridTile = grid.get_tile(coord)
@@ -89,7 +96,11 @@ static func execute_skill(caster: Unit, skill, target_pos: Vector2i, grid: GridS
 			0:
 				if unit.unit_data.is_enemy == caster.unit_data.is_enemy:
 					continue
-				CombatSystem.resolve_attack(caster, unit, grid, skill)
+				var result: Dictionary = CombatSystem.calculate_attack(caster, unit, grid, skill)
+				if result.hit:
+					unit.take_damage(result.damage)
+				else:
+					_spawn_miss_number(unit)
 				affected_units.append(unit)
 			1:
 				if unit.unit_data.is_enemy != caster.unit_data.is_enemy:
@@ -105,6 +116,53 @@ static func execute_skill(caster: Unit, skill, target_pos: Vector2i, grid: GridS
 	skill.spend_use()
 	caster.skill_state_changed.emit(caster)
 	return affected_units
+
+
+static func _spawn_skill_vfx(caster: Unit, skill, target_pos: Vector2i,
+		affected_cells: Array[Vector2i]) -> void:
+	if caster == null or skill == null:
+		return
+	var parent_node := caster.get_parent() if caster.get_parent() != null else caster
+	match String(skill.skill_id):
+		"chun_qiu_dao_fa", "nei_gong_zhang", "jian_qi":
+			_spawn_damage_dust(parent_node, target_pos)
+		"liang_xiu_qing_she":
+			for coord in affected_cells:
+				_spawn_fire(parent_node, coord, 0.6)
+		"jian_qi_ru_lei":
+			for coord in affected_cells:
+				_spawn_fire(parent_node, coord, 0.8)
+				await caster.get_tree().create_timer(LINE_VFX_STEP_DELAY).timeout
+		"jian_kai_tian_men":
+			VFX.spawn_at(parent_node, EXPLOSION_VFX, _coord_to_world(target_pos), 1.5)
+			for coord in affected_cells:
+				_spawn_fire(parent_node, coord, 0.8)
+		"hui_chun_shu":
+			VFX.spawn_at(parent_node, HEAL_VFX, _coord_to_world(target_pos) + Vector2(0, -32), 0.75)
+		"qing_gong":
+			VFX.spawn_at(parent_node, DUST_VFX, caster.global_position + Vector2(0, 12), 1.0)
+
+
+static func _spawn_damage_dust(parent_node: Node, target_pos: Vector2i) -> void:
+	var world_pos := _coord_to_world(target_pos) + Vector2(0, 16)
+	if parent_node == null:
+		return
+	VFX.spawn_at(parent_node, DUST_VFX, world_pos, 1.0)
+
+
+static func _spawn_fire(parent_node: Node, coord: Vector2i, scale: float) -> void:
+	if parent_node == null:
+		return
+	var sprite := VFX.spawn_at(parent_node, FIRE_VFX, _coord_to_world(coord) + Vector2(0, 8), scale)
+	parent_node.get_tree().create_timer(FIRE_LIFETIME).timeout.connect(
+		sprite.queue_free,
+		CONNECT_ONE_SHOT
+	)
+
+
+static func _spawn_miss_number(unit: Unit) -> void:
+	var parent_node := unit.get_parent() if unit.get_parent() != null else unit
+	VFX.spawn_damage_number(parent_node, unit.global_position + Vector2(0, -40), "MISS", false)
 
 
 static func _coord_to_world(coord: Vector2i) -> Vector2:

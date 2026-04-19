@@ -25,6 +25,7 @@ extends Node2D
 
 const UNIT_SCENE: PackedScene = preload("res://scenes/unit/unit.tscn")
 const SKILL_EXECUTOR = preload("res://scripts/systems/skill_executor.gd")
+const VFX = preload("res://scripts/systems/vfx.gd")
 const UNIT_PATH_FMT := "res://resources/data/units/%s.tres"
 const TILE_PX := 64
 const MAP_COLS := 12
@@ -260,6 +261,8 @@ func _execute_attack(attacker: Unit, defender: Unit) -> void:
 		ui.set_message("%s → %s 造成 %d 伤害" % [
 			attacker.unit_data.unit_name, defender.unit_data.unit_name, result.damage])
 	else:
+		var parent_node := defender.get_parent() if defender.get_parent() != null else defender
+		VFX.spawn_damage_number(parent_node, defender.global_position + Vector2(0, -40), "MISS", false)
 		ui.set_message("%s 的攻击落空" % attacker.unit_data.unit_name)
 	_finish_unit_action(attacker)
 

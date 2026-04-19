@@ -10,6 +10,7 @@ class_name Unit
 ##   也可以在编辑器里预设 unit_data 再 add_child，_ready 一样处理。
 
 const TILE_PX := 64
+const VFX = preload("res://scripts/systems/vfx.gd")
 
 @export var unit_data: UnitData
 
@@ -108,10 +109,14 @@ func set_acted(on: bool) -> void:
 
 ## 扣血 + 更新 HP 条；HP<=0 触发 unit_died 信号并启动死亡动画。
 func take_damage(amount: int) -> void:
+	var prev_hp := current_hp
 	if amount < 0:
 		amount = 0
 	current_hp = max(0, current_hp - amount)
 	_refresh_health_bar()
+	if amount > 0 and prev_hp > 0:
+		var parent_node := get_parent() if get_parent() != null else self
+		VFX.spawn_damage_number(parent_node, global_position + Vector2(0, -40), amount, false)
 	if current_hp <= 0:
 		_die()
 		return
@@ -122,8 +127,13 @@ func take_damage(amount: int) -> void:
 func heal(amount: int) -> void:
 	if unit_data == null or amount <= 0 or current_hp <= 0:
 		return
+	var prev_hp := current_hp
 	current_hp = min(unit_data.max_hp, current_hp + amount)
 	_refresh_health_bar()
+	var actual := current_hp - prev_hp
+	if actual > 0:
+		var parent_node := get_parent() if get_parent() != null else self
+		VFX.spawn_damage_number(parent_node, global_position + Vector2(0, -56), actual, true)
 
 
 ## 沿 path 逐格 tween 过去（每格 0.15s）。Coroutine：await unit.move_along_path(...)。
@@ -172,23 +182,18 @@ func play_attack(target_world_pos: Vector2 = Vector2.ZERO) -> void:
 	_apply_facing()
 
 
-func play_skill(animation_key: String = "skill", target_world_pos: Vector2 = Vector2.ZERO,
-		flash_color: Color = Color.WHITE) -> void:
+func play_skill(animation_key: String = "skill", target_world_pos: Vector2 = Vector2.ZERO) -> void:
 	if target_world_pos != Vector2.ZERO:
 		_update_facing(signi(int(round(target_world_pos.x - position.x))))
 	var anim_name := animation_key
 	if anim_sprite.sprite_frames == null or not anim_sprite.sprite_frames.has_animation(anim_name):
 		anim_name = "attack" if anim_sprite.sprite_frames != null \
 			and anim_sprite.sprite_frames.has_animation("attack") else "idle"
-	var base_color := anim_sprite.modulate
-	if flash_color != Color.WHITE:
-		anim_sprite.modulate = flash_color
 	anim_sprite.play(anim_name)
 	if anim_name != "idle":
 		await anim_sprite.animation_finished
 	else:
 		await get_tree().create_timer(0.2).timeout
-	_refresh_sprite_modulate()
 	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("idle"):
 		anim_sprite.play("idle")
 	_apply_facing()
