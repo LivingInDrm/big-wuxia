@@ -7,64 +7,76 @@ const THEME_PATH := "res://resources/ui/theme/main_ui_theme.tres"
 # 注：test_theme_sync.gd 额外校验外部 ↔ 内嵌逐字段一致，这里负责和"数值语义"对齐。
 const STYLEBOX_EXPECT := {
 	"res://resources/ui/styleboxes/panel_primary.tres": {
-		"texture_margin": 32.0,
-		"content_margin": [44.0, 36.0, 44.0, 36.0],  # L T R B
+		"texture_path": "res://resources/ui/textures/wuxia/main_panel.png",
+		"texture_margin": [133.0, 351.0, 200.0, 352.0],  # L T R B
+		"content_margin": [16.0, 16.0, 16.0, 16.0],
 		"modulate": Color(1, 1, 1, 1),
 	},
 	"res://resources/ui/styleboxes/panel_modal.tres": {
-		"texture_margin": 32.0,
-		"content_margin": [50.0, 42.0, 50.0, 42.0],
+		"texture_path": "res://resources/ui/textures/wuxia/main_panel.png",
+		"texture_margin": [133.0, 351.0, 200.0, 352.0],
+		"content_margin": [16.0, 16.0, 16.0, 16.0],
 		"modulate": Color(1, 1, 1, 1),
 	},
 	"res://resources/ui/styleboxes/panel_tooltip.tres": {
-		"texture_margin": 32.0,
-		"content_margin": [28.0, 24.0, 28.0, 24.0],
+		"texture_path": "res://resources/ui/textures/wuxia/tooltip_panel.png",
+		"texture_margin": [194.0, 182.0, 185.0, 187.0],
+		"content_margin": [8.0, 6.0, 8.0, 6.0],
 		"modulate": Color(1, 1, 1, 1),
 	},
 	"res://resources/ui/styleboxes/slot_frame.tres": {
-		"texture_margin": 24.0,
-		"content_margin": [18.0, 18.0, 18.0, 18.0],
+		"texture_path": "res://resources/ui/textures/wuxia/slot_frame.png",
+		"texture_margin": [252.0, 247.0, 251.0, 251.0],
+		"content_margin": [6.0, 6.0, 6.0, 6.0],
 		"modulate": Color(1, 1, 1, 1),
 	},
 	"res://resources/ui/styleboxes/button_blue_normal.tres": {
-		"texture_margin": 32.0,
-		"content_margin": [52.0, 28.0, 52.0, 34.0],
+		"texture_path": "res://resources/ui/textures/wuxia/button_regular.png",
+		"texture_margin": [107.0, 216.0, 225.0, 218.0],
+		"content_margin": [12.0, 8.0, 12.0, 10.0],
 		"modulate": Color(1, 1, 1, 1),
 	},
 	"res://resources/ui/styleboxes/button_blue_pressed.tres": {
-		"texture_margin": 32.0,
-		"content_margin": [52.0, 34.0, 52.0, 28.0],
+		"texture_path": "res://resources/ui/textures/wuxia/button_pressed.png",
+		"texture_margin": [204.0, 226.0, 205.0, 225.0],
+		"content_margin": [12.0, 8.0, 12.0, 10.0],
 		"modulate": Color(1, 1, 1, 1),
 	},
 	"res://resources/ui/styleboxes/button_blue_hover.tres": {
-		"texture_margin": 32.0,
-		"content_margin": [52.0, 28.0, 52.0, 34.0],
-		"modulate": Color(1.1, 1.1, 1.1, 1),
+		"texture_path": "res://resources/ui/textures/wuxia/button_regular.png",
+		"texture_margin": [107.0, 216.0, 225.0, 218.0],
+		"content_margin": [12.0, 8.0, 12.0, 10.0],
+		"modulate": Color(0.9607843, 0.9411765, 0.8784314, 1),
 	},
 	"res://resources/ui/styleboxes/button_blue_disabled.tres": {
-		"texture_margin": 32.0,
-		"content_margin": [52.0, 28.0, 52.0, 34.0],
-		"modulate": Color(0.6, 0.6, 0.6, 0.7),
+		"texture_path": "res://resources/ui/textures/wuxia/button_regular.png",
+		"texture_margin": [107.0, 216.0, 225.0, 218.0],
+		"content_margin": [12.0, 8.0, 12.0, 10.0],
+		"modulate": Color(0.72, 0.72, 0.72, 0.74),
 	},
 	"res://resources/ui/styleboxes/button_red_normal.tres": {
-		"texture_margin": 32.0,
-		"content_margin": [52.0, 28.0, 52.0, 34.0],
+		"texture_path": "res://resources/ui/textures/wuxia/button_danger.png",
+		"texture_margin": [216.0, 213.0, 215.0, 213.0],
+		"content_margin": [12.0, 8.0, 12.0, 10.0],
 		"modulate": Color(1, 1, 1, 1),
 	},
 	"res://resources/ui/styleboxes/button_red_pressed.tres": {
-		"texture_margin": 32.0,
-		"content_margin": [52.0, 34.0, 52.0, 28.0],
+		"texture_path": "res://resources/ui/textures/wuxia/button_danger.png",
+		"texture_margin": [216.0, 213.0, 215.0, 213.0],
+		"content_margin": [12.0, 8.0, 12.0, 10.0],
 		"modulate": Color(1, 1, 1, 1),
 	},
 	"res://resources/ui/styleboxes/button_red_hover.tres": {
-		"texture_margin": 32.0,
-		"content_margin": [52.0, 28.0, 52.0, 34.0],
-		"modulate": Color(1.1, 1.1, 1.1, 1),
+		"texture_path": "res://resources/ui/textures/wuxia/button_danger.png",
+		"texture_margin": [216.0, 213.0, 215.0, 213.0],
+		"content_margin": [12.0, 8.0, 12.0, 10.0],
+		"modulate": Color(0.9607843, 0.9411765, 0.8784314, 1),
 	},
 	"res://resources/ui/styleboxes/button_red_disabled.tres": {
-		"texture_margin": 32.0,
-		"content_margin": [52.0, 28.0, 52.0, 34.0],
-		"modulate": Color(0.6, 0.6, 0.6, 0.7),
+		"texture_path": "res://resources/ui/textures/wuxia/button_danger.png",
+		"texture_margin": [216.0, 213.0, 215.0, 213.0],
+		"content_margin": [12.0, 8.0, 12.0, 10.0],
+		"modulate": Color(0.72, 0.72, 0.72, 0.74),
 	},
 }
 
@@ -106,6 +118,7 @@ const VARIATION_BASES := {
 	"micro": "Label",
 	"danger": "Button",
 	"modal": "PanelContainer",
+	"panel_avatar": "PanelContainer",
 	"tooltip": "PanelContainer",
 	"slot": "PanelContainer",
 	"bar_hp": "bar",
@@ -138,7 +151,14 @@ func _run() -> void:
 		if sb == null:
 			continue
 		var exp: Dictionary = STYLEBOX_EXPECT[path]
-		_assert_stylebox_full(sb, path, exp["texture_margin"], exp["content_margin"], exp["modulate"])
+		_assert_stylebox_full(
+			sb,
+			path,
+			exp["texture_path"],
+			exp["texture_margin"],
+			exp["content_margin"],
+			exp["modulate"]
+		)
 
 	# Theme 内嵌 stylebox：按 (type, name) 直接对照外部 .tres 的期望真值
 	for entry in THEME_STYLEBOXES:
@@ -152,7 +172,12 @@ func _run() -> void:
 			continue
 		var exp: Dictionary = STYLEBOX_EXPECT[ext_path]
 		_assert_stylebox_full(
-			sb, label, exp["texture_margin"], exp["content_margin"], exp["modulate"]
+			sb,
+			label,
+			exp["texture_path"],
+			exp["texture_margin"],
+			exp["content_margin"],
+			exp["modulate"]
 		)
 
 	# Label / variations font_size + font_color
@@ -163,8 +188,8 @@ func _run() -> void:
 			"%s font_size = %d" % [type_name, expected_size]
 		)
 		_assert(
-			theme.get_color("font_color", type_name) == UIColors.INK_BROWN,
-			"%s font_color = INK_BROWN" % type_name
+			theme.get_color("font_color", type_name) == UIColors.INK_BLACK,
+			"%s font_color = INK_BLACK" % type_name
 		)
 
 	# Button default 四态 font_color
@@ -185,33 +210,57 @@ func _run() -> void:
 			"variation %s base_type = %s (actual=%s)" % [variation, expected_base, actual_base]
 		)
 
+	var avatar_stylebox := theme.get_stylebox("panel", "panel_avatar") as StyleBoxTexture
+	_assert(avatar_stylebox != null, "panel_avatar/styles/panel 可访问")
+	if avatar_stylebox != null:
+		_assert_stylebox_full(
+			avatar_stylebox,
+			"Theme panel_avatar/panel",
+			"res://resources/ui/textures/wuxia/avatar_frame.png",
+			[176.0, 167.0, 176.0, 170.0],
+			[0.0, 0.0, 0.0, 0.0],
+			Color(1, 1, 1, 1)
+		)
+
 	# Bar 基础类型（Theme Type "bar"）：fill padding 常量 + base/fill 图标
 	_assert(theme.has_constant("fill_padding_left", "bar"), "bar 变体存在 fill_padding_left 常量")
 	_assert(theme.has_constant("fill_padding_right", "bar"), "bar 变体存在 fill_padding_right 常量")
-	_assert(theme.get_constant("fill_padding_left", "bar") == 52, "bar fill_padding_left = 52 (源像素)")
-	_assert(theme.get_constant("fill_padding_right", "bar") == 58, "bar fill_padding_right = 58 (源像素)")
+	_assert(theme.get_constant("fill_padding_left", "bar") == 244, "bar fill_padding_left = 244 (源像素)")
+	_assert(theme.get_constant("fill_padding_right", "bar") == 252, "bar fill_padding_right = 252 (源像素)")
 	_assert(theme.has_icon("base_texture", "bar"), "bar 变体存在 base_texture 图标")
 	_assert(theme.has_icon("fill_texture", "bar"), "bar 变体存在 fill_texture 图标")
 	_assert(theme.get_icon("base_texture", "bar") != null, "bar.base_texture 可解析为 Texture2D")
 	_assert(theme.get_icon("fill_texture", "bar") != null, "bar.fill_texture 可解析为 Texture2D")
+	_assert(
+		theme.get_icon("base_texture", "bar").resource_path == "res://resources/ui/textures/wuxia/bar_base.png",
+		"bar.base_texture 指向 wuxia/bar_base.png"
+	)
+	_assert(
+		theme.get_icon("fill_texture", "bar").resource_path == "res://resources/ui/textures/wuxia/bar_fill_neutral.png",
+		"bar.fill_texture 指向 wuxia/bar_fill_neutral.png"
+	)
 
-	# bar_hp / bar_mp / bar_exp variations：fill_tint 色相正确
+	# bar_hp / bar_mp / bar_exp variations：fill_tint 精确值正确
 	for variant in ["bar_hp", "bar_mp", "bar_exp"]:
 		_assert(theme.has_color("fill_tint", variant), "%s 变体存在 fill_tint 颜色" % variant)
 
 	var hp_tint: Color = theme.get_color("fill_tint", "bar_hp")
 	var mp_tint: Color = theme.get_color("fill_tint", "bar_mp")
 	var exp_tint: Color = theme.get_color("fill_tint", "bar_exp")
-	_assert(hp_tint.r > hp_tint.b and hp_tint.r > hp_tint.g, "bar_hp fill_tint 以红色为主 (r>b, r>g)")
-	_assert(mp_tint.b > mp_tint.r and mp_tint.b > mp_tint.g, "bar_mp fill_tint 以蓝色为主 (b>r, b>g)")
-	_assert(exp_tint.r > 0.8 and exp_tint.g > 0.6 and exp_tint.b < 0.4, "bar_exp fill_tint 金黄色 (r高 g高 b低)")
+	_assert_eq("bar_hp", "fill_tint", hp_tint, Color("#A84036"))
+	_assert_eq("bar_mp", "fill_tint", mp_tint, UIColors.JADE_MUTED)
+	_assert_eq("bar_exp", "fill_tint", exp_tint, UIColors.OCHRE)
 
 	var themed_bar_script := load("res://resources/ui/controls/themed_bar.gd")
 	_assert(themed_bar_script != null, "themed_bar.gd 可加载")
 
 	# UIColors 常量
-	_assert(UIColors.PAPER_GOLD == Color("#E7C98A"), "UIColors.PAPER_GOLD 常量值正确")
-	_assert(UIColors.INK_BROWN == Color("#3A2518"), "UIColors.INK_BROWN 常量值正确")
+	_assert(UIColors.INK_BLACK == Color("#2B2623"), "UIColors.INK_BLACK 常量值正确")
+	_assert(UIColors.PAPER_WHITE == Color("#F2EDE0"), "UIColors.PAPER_WHITE 常量值正确")
+	_assert(UIColors.PAPER_SHADOW == Color("#E0D8C4"), "UIColors.PAPER_SHADOW 常量值正确")
+	_assert(UIColors.VERMILION == Color("#8B2E2E"), "UIColors.VERMILION 常量值正确")
+	_assert(UIColors.JADE_MUTED == Color("#4A6B7A"), "UIColors.JADE_MUTED 常量值正确")
+	_assert(UIColors.OCHRE == Color("#B8883F"), "UIColors.OCHRE 常量值正确")
 
 	print("[test_theme_loads] ==== END ==== pass=%d fail=%d" % [_pass, _fail])
 	quit(0 if _fail == 0 else 1)
@@ -240,21 +289,24 @@ func _assert_eq(label: String, field: String, actual: Variant, expected: Variant
 func _assert_stylebox_full(
 	sb: StyleBoxTexture,
 	label: String,
-	expected_texture_margin: float,
+	expected_texture_path: String,
+	expected_texture_margin: Array,
 	expected_content_margin: Array,
 	expected_modulate: Color,
 ) -> void:
+	_assert_eq(label, "texture.resource_path", _texture_path(sb.texture), expected_texture_path)
+
 	# axis_stretch
 	_assert_eq(label, "axis_stretch_horizontal",
 		sb.axis_stretch_horizontal, StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH)
 	_assert_eq(label, "axis_stretch_vertical",
 		sb.axis_stretch_vertical, StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH)
 
-	# texture_margin（四边统一期望值）
-	_assert_eq(label, "texture_margin_left", sb.texture_margin_left, expected_texture_margin)
-	_assert_eq(label, "texture_margin_top", sb.texture_margin_top, expected_texture_margin)
-	_assert_eq(label, "texture_margin_right", sb.texture_margin_right, expected_texture_margin)
-	_assert_eq(label, "texture_margin_bottom", sb.texture_margin_bottom, expected_texture_margin)
+	# texture_margin（LTRB）
+	_assert_eq(label, "texture_margin_left", sb.texture_margin_left, float(expected_texture_margin[0]))
+	_assert_eq(label, "texture_margin_top", sb.texture_margin_top, float(expected_texture_margin[1]))
+	_assert_eq(label, "texture_margin_right", sb.texture_margin_right, float(expected_texture_margin[2]))
+	_assert_eq(label, "texture_margin_bottom", sb.texture_margin_bottom, float(expected_texture_margin[3]))
 
 	# content_margin（LTRB），允许空表示跳过该项
 	if expected_content_margin.size() == 4:
@@ -273,15 +325,21 @@ func _assert_stylebox_full(
 
 func _assert_button_font_colors(theme: Theme, type_name: String, label: String) -> void:
 	_assert_eq(label, "%s font_color" % type_name,
-		theme.get_color("font_color", type_name), UIColors.INK_BROWN)
+		theme.get_color("font_color", type_name), UIColors.INK_BLACK)
 	_assert_eq(label, "%s font_hover_color" % type_name,
-		theme.get_color("font_hover_color", type_name), UIColors.INK_BROWN)
+		theme.get_color("font_hover_color", type_name), UIColors.INK_BLACK)
 	_assert_eq(label, "%s font_pressed_color" % type_name,
-		theme.get_color("font_pressed_color", type_name), UIColors.PAPER_GOLD)
+		theme.get_color("font_pressed_color", type_name), UIColors.PAPER_WHITE)
 
-	# font_disabled_color：期望 = INK_BROWN 带 0.55 透明度
-	var expected_disabled := UIColors.INK_BROWN
+	# font_disabled_color：期望 = INK_BLACK 带 0.55 透明度
+	var expected_disabled := UIColors.INK_BLACK
 	expected_disabled.a = 0.55
 	var actual_disabled := theme.get_color("font_disabled_color", type_name)
 	_assert_eq(label, "%s font_disabled_color" % type_name,
 		actual_disabled, expected_disabled)
+
+
+func _texture_path(tex: Texture2D) -> String:
+	if tex == null:
+		return "<null>"
+	return tex.resource_path

@@ -40,6 +40,12 @@ theme_type_variation = &"title"
 text = "Theme 组件画廊 · 当前 Theme 提供的所有变体"
 horizontal_alignment = 1
 
+[node name="ThemeBadge" type="Label" parent="Scroll/Root"]
+layout_mode = 2
+theme_type_variation = &"body"
+text = "当前 Theme：水墨纸本风（C · 古籍折角）"
+horizontal_alignment = 1
+
 [node name="Intro" type="Label" parent="Scroll/Root"]
 layout_mode = 2
 theme_type_variation = &"caption"

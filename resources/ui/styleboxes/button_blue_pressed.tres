@@ -1,16 +1,16 @@
 [gd_resource type="StyleBoxTexture" format=3]
 
-[ext_resource type="Texture2D" path="res://resources/ui/textures/recomposed/button_blue_pressed.png" id="1_w3j65"]
+[ext_resource type="Texture2D" path="res://resources/ui/textures/wuxia/button_pressed.png" id="1_w3j65"]
 
 [resource]
-content_margin_left = 52.0
-content_margin_top = 34.0
-content_margin_right = 52.0
-content_margin_bottom = 28.0
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
 texture = ExtResource("1_w3j65")
-texture_margin_left = 32.0
-texture_margin_top = 32.0
-texture_margin_right = 32.0
-texture_margin_bottom = 32.0
+texture_margin_left = 204.0
+texture_margin_top = 226.0
+texture_margin_right = 205.0
+texture_margin_bottom = 225.0
 axis_stretch_horizontal = 0
 axis_stretch_vertical = 0
