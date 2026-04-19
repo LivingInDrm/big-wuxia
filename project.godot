@@ -1,10 +1,10 @@
 ; Engine configuration file.
-; BigWuXia - 大武侠 SRPG (MVP)
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
 ;
-; 重要约定（Manager 级）：
-; - config_version 必须为 5（Godot 4.x，不是 6，参考 godot-dev skill P0 规则）
-; - Autoload: GameState / GameBalance / SceneManager（D2 决策：S1 阶段不创建 AudioBus）
-; - 分辨率: 1366×768（窗口模式，见 docs/design/06-sprint-plan.md §S1.2）
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=5
 
