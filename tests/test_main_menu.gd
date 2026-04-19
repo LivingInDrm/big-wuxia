@@ -17,7 +17,7 @@ extends SceneTree
 ## - 通过 monkey-patch SceneManager 捕获调用（记录调用参数），而非真正退出引擎
 
 const SCENE_PATH := "res://scenes/main_menu/main_menu.tscn"
-const EXPECTED_TARGET_SCENE := "res://scenes/battle/battle.tscn"  # S2 改指向 Battle（原 CharacterSelect 推迟到 S3）
+const EXPECTED_TARGET_SCENE := "res://scenes/level_select/level_select.tscn"
 
 var _pass: int = 0
 var _fail: int = 0

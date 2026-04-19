@@ -9,7 +9,7 @@ extends Control
 ##   "开始游戏"目标由 CharacterSelect（尚未实现）改为 Battle（S2 已实现）。
 ##   CharacterSelect 会在 S3 引入 Unit 后加回来，届时再插回菜单链路。
 
-const BATTLE_SCENE := "res://scenes/battle/battle.tscn"
+const LEVEL_SELECT_SCENE := "res://scenes/level_select/level_select.tscn"
 
 @onready var start_button: Button = %StartButton
 @onready var quit_button: Button = %QuitButton
@@ -22,7 +22,7 @@ func _ready() -> void:
 
 func _on_start_pressed() -> void:
 	GameState.reset()
-	SceneManager.change_scene_to_file(BATTLE_SCENE)
+	SceneManager.change_scene_to_file(LEVEL_SELECT_SCENE)
 
 
 func _on_quit_pressed() -> void:

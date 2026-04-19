@@ -1,6 +1,6 @@
 extends Control
 
-const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
+const LEVEL_SELECT_SCENE := "res://scenes/level_select/level_select.tscn"
 const BATTLE_SCENE := "res://scenes/battle/battle.tscn"
 
 @onready var retry_button: Button = %RetryButton
@@ -17,4 +17,4 @@ func _on_retry_pressed() -> void:
 
 
 func _on_return_pressed() -> void:
-	SceneManager.change_scene_to_file(MAIN_MENU_SCENE)
+	SceneManager.change_scene_to_file(LEVEL_SELECT_SCENE)
