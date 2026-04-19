@@ -6,13 +6,28 @@ extends Node
 ## 参考：docs/design/02-architecture.md §3.1
 
 const Inventory = preload("res://scripts/core/inventory.gd")
+const ItemData = preload("res://scripts/core/item_data.gd")
+const ItemInstance = preload("res://scripts/core/item_instance.gd")
+const UnitData = preload("res://scripts/core/unit_data.gd")
+const WeaponTypes = preload("res://scripts/core/weapon_types.gd")
+const UNIT_DIR := "res://resources/data/units/"
+const PLAYER_CHAR_IDS := [
+	"xu_fengnian",
+	"jiang_ni",
+	"li_chungang",
+]
 
 signal level_completed(level_name: String)
 
 var current_level: String = ""
 var selected_characters: Array[String] = []
 var completed_levels: Array[String] = []
-var inventory: Inventory = Inventory.new()
+var inventory: Inventory
+var equipped: Dictionary = {}
+
+
+func _init() -> void:
+	reset()
 
 
 func start_level(level_name: String) -> void:
@@ -29,8 +44,91 @@ func is_level_completed(level_name: String) -> bool:
 	return level_name in completed_levels
 
 
+func equip(char_id: String, slot: ItemData.EquipSlot, item_instance: ItemInstance) -> bool:
+	if item_instance == null or item_instance.item_data == null:
+		return false
+	if slot != item_instance.item_data.equip_slot:
+		return false
+	if slot == ItemData.EquipSlot.WEAPON and not _weapon_type_matches(char_id, item_instance.item_data):
+		return false
+	if not inventory.remove_instance(item_instance.instance_id):
+		return false
+
+	var char_equipped := _ensure_equipped_slots(char_id)
+	var previous := char_equipped.get(slot) as ItemInstance
+	if previous != null:
+		inventory.unique_items.append(previous)
+	char_equipped[slot] = item_instance
+	equipped[char_id] = char_equipped
+	return true
+
+
+func unequip(char_id: String, slot: ItemData.EquipSlot) -> ItemInstance:
+	var char_equipped := _ensure_equipped_slots(char_id)
+	var previous := char_equipped.get(slot) as ItemInstance
+	if previous == null:
+		return null
+
+	inventory.unique_items.append(previous)
+	char_equipped[slot] = null
+	equipped[char_id] = char_equipped
+	return previous
+
+
+func get_equipped_items(char_id: String) -> Dictionary:
+	return _ensure_equipped_slots(char_id).duplicate(false)
+
+
 func reset() -> void:
 	current_level = ""
 	selected_characters = []
 	completed_levels = []
 	inventory = Inventory.new()
+	equipped = {}
+	for char_id in PLAYER_CHAR_IDS:
+		var unit_data := _load_unit_data(char_id)
+		if unit_data != null and not unit_data.unit_id.is_empty():
+			equipped[unit_data.unit_id] = _create_empty_slots()
+
+
+func _ensure_equipped_slots(char_id: String) -> Dictionary:
+	if not equipped.has(char_id):
+		equipped[char_id] = _create_empty_slots()
+	return equipped[char_id] as Dictionary
+
+
+func _create_empty_slots() -> Dictionary:
+	return {
+		ItemData.EquipSlot.WEAPON: null,
+		ItemData.EquipSlot.ARMOR: null,
+		ItemData.EquipSlot.ACCESSORY_1: null,
+		ItemData.EquipSlot.ACCESSORY_2: null,
+	}
+
+
+func _load_unit_data(char_id: String) -> UnitData:
+	var path := "%s%s.tres" % [UNIT_DIR, char_id]
+	if not ResourceLoader.exists(path):
+		return null
+	return load(path) as UnitData
+
+
+func _weapon_type_matches(char_id: String, item_data: ItemData) -> bool:
+	var unit_data := _load_unit_data(char_id)
+	if unit_data == null:
+		return false
+	return _weapon_type_to_string(unit_data.weapon_type) == item_data.weapon_type.to_lower()
+
+
+func _weapon_type_to_string(weapon_type: WeaponTypes.Type) -> String:
+	match int(weapon_type):
+		WeaponTypes.Type.BLADE:
+			return "blade"
+		WeaponTypes.Type.SWORD:
+			return "sword"
+		WeaponTypes.Type.FIST:
+			return "fist"
+		WeaponTypes.Type.INNER:
+			return "inner"
+		_:
+			return ""
