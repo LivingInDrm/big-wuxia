@@ -25,13 +25,15 @@ extends Node2D
 
 const UNIT_SCENE: PackedScene = preload("res://scenes/unit/unit.tscn")
 const SKILL_EXECUTOR = preload("res://scripts/systems/skill_executor.gd")
+const ITEM_EFFECT_EXECUTOR = preload("res://scripts/systems/item_effect_executor.gd")
 const VFX = preload("res://scripts/systems/vfx.gd")
+const ItemData = preload("res://scripts/core/item_data.gd")
 const TILE_PX := 64
 const TERRAIN_SET_ID := 0
 const GRASS_TERRAIN_ID := 0
 const DEFAULT_LEVEL_ID := "level_01"
 
-enum SelectState { IDLE, UNIT_SELECTED, MOVED_AWAIT_ACTION, SKILL_TARGETING }
+enum SelectState { IDLE, UNIT_SELECTED, MOVED_AWAIT_ACTION, SKILL_TARGETING, ITEM_TARGETING }
 
 @onready var terrain_layer: TileMapLayer = $TerrainLayer
 @onready var range_overlay: RangeOverlay = $RangeOverlay
@@ -54,6 +56,9 @@ var current_attack_range: Array[Vector2i] = []
 var current_skill_range: Array[Vector2i] = []
 var current_skill = null
 var _skill_return_state: SelectState = SelectState.IDLE
+var current_item: ItemData = null
+var current_item_range: Array[Vector2i] = []
+var _item_return_state: SelectState = SelectState.IDLE
 var _pending_finish_after_move: bool = false
 var _battle_ended: bool = false
 
@@ -79,6 +84,9 @@ func _ready() -> void:
 	turn_manager.turn_started.connect(_on_turn_started)
 	turn_manager.phase_changed.connect(_on_phase_changed)
 	ui.skill_button_pressed.connect(_on_skill_button_pressed)
+	ui.item_button_pressed.connect(_on_item_button_pressed)
+	ui.item_selected.connect(_on_item_selected)
+	ui.item_panel_closed.connect(_on_item_panel_closed)
 	turn_manager.start_battle()
 
 
@@ -133,6 +141,10 @@ func _unhandled_input(event: InputEvent) -> void:
 				_restore_after_skill_cancel()
 			get_viewport().set_input_as_handled()
 			return
+		if select_state == SelectState.ITEM_TARGETING:
+			_restore_after_item_cancel()
+			get_viewport().set_input_as_handled()
+			return
 		if _is_click_on_unit(world):
 			return
 		_on_cell_clicked(coord)
@@ -142,6 +154,12 @@ func _on_unit_clicked(unit: Unit) -> void:
 	if turn_manager.current_phase == TurnManager.Phase.ENEMY_TURN or _battle_ended:
 		return
 	if select_state == SelectState.SKILL_TARGETING:
+		return
+	if select_state == SelectState.ITEM_TARGETING:
+		if _can_target_with_item(unit):
+			await _execute_item(selected_unit, current_item, unit)
+		else:
+			_restore_after_item_cancel()
 		return
 	# 玩家点击单位：
 	# - 如果当前选中状态，并且点到范围内敌人 → 攻击
@@ -176,6 +194,8 @@ func _on_cell_clicked(coord: Vector2i) -> void:
 				await _execute_skill(selected_unit, current_skill, coord)
 			else:
 				_restore_after_skill_cancel()
+		SelectState.ITEM_TARGETING:
+			_restore_after_item_cancel()
 
 
 # ============ 选择 / 移动 / 攻击 ============
@@ -189,8 +209,11 @@ func _select_unit(unit: Unit) -> void:
 	range_overlay.show_move_range(current_move_range)
 	current_skill = null
 	current_skill_range.clear()
+	current_item = null
+	current_item_range.clear()
 	_pending_finish_after_move = false
 	ui.show_skills(unit)
+	ui.refresh_items()
 	ui.set_message("选中 %s — 点击高亮格移动" % unit.unit_data.unit_name)
 
 
@@ -203,6 +226,8 @@ func _cancel_selection() -> void:
 	current_attack_range.clear()
 	current_skill_range.clear()
 	current_skill = null
+	current_item_range.clear()
+	current_item = null
 	_pending_finish_after_move = false
 	range_overlay.clear()
 	ui.hide_actions()
@@ -267,6 +292,8 @@ func _finish_unit_action(unit: Unit) -> void:
 	current_attack_range.clear()
 	current_skill_range.clear()
 	current_skill = null
+	current_item_range.clear()
+	current_item = null
 	range_overlay.clear()
 	ui.hide_actions()
 	ui.set_message("")
@@ -363,6 +390,9 @@ func _on_skill_button_pressed(idx: int) -> void:
 		return
 	if skill.effect_type == 2 and select_state != SelectState.UNIT_SELECTED:
 		return
+	current_item = null
+	current_item_range.clear()
+	ui.hide_item_panel()
 	current_skill = skill
 	current_skill_range = SKILL_EXECUTOR.get_targetable_cells(selected_unit, skill, grid)
 	_skill_return_state = select_state
@@ -408,6 +438,110 @@ func _restore_after_skill_cancel() -> void:
 		range_overlay.show_move_range(current_move_range)
 	select_state = _skill_return_state
 	ui.show_skills(selected_unit)
+	ui.refresh_items()
+
+
+func _on_item_button_pressed() -> void:
+	if selected_unit == null or _battle_ended:
+		return
+	var consumables := _get_available_consumables()
+	if consumables.is_empty():
+		ui.refresh_items()
+		ui.set_message("没有可用消耗品")
+		return
+	ui.show_item_panel(consumables)
+	ui.set_message("选择一个消耗品")
+
+
+func _on_item_selected(item_id: String) -> void:
+	if selected_unit == null or _battle_ended:
+		return
+	var item := _load_item_data(item_id)
+	if item == null:
+		return
+	current_skill = null
+	current_skill_range.clear()
+	current_item = item
+	current_item_range = _get_item_target_positions(selected_unit, item)
+	_item_return_state = select_state
+	select_state = SelectState.ITEM_TARGETING
+	range_overlay.clear()
+	range_overlay.show_cells(current_item_range, Color(0.25, 0.85, 0.45, 0.35))
+	ui.hide_item_panel()
+	ui.show_skills(selected_unit)
+	ui.set_message("选择 %s 的目标单位" % item.name)
+
+
+func _on_item_panel_closed() -> void:
+	if select_state == SelectState.ITEM_TARGETING:
+		return
+	ui.refresh_items()
+
+
+func _execute_item(caster: Unit, item: ItemData, target: Unit) -> void:
+	if caster == null or item == null or target == null:
+		_restore_after_item_cancel()
+		return
+	var applied: bool = ITEM_EFFECT_EXECUTOR.apply_effect(item, target, caster)
+	if not applied:
+		ui.set_message("%s 未生效" % item.name)
+		_restore_after_item_cancel()
+		return
+	if not GameState.inventory.remove(item.id, 1):
+		push_warning("[BattleController] failed to remove item %s from inventory" % item.id)
+		_restore_after_item_cancel()
+		return
+	ui.refresh_items()
+	ui.set_message("%s 对 %s 生效" % [item.name, target.unit_data.unit_name])
+	_finish_unit_action(caster)
+
+
+func _restore_after_item_cancel() -> void:
+	current_item = null
+	current_item_range.clear()
+	range_overlay.clear()
+	if _item_return_state == SelectState.MOVED_AWAIT_ACTION:
+		range_overlay.show_attack_range(current_attack_range)
+	else:
+		range_overlay.show_move_range(current_move_range)
+	select_state = _item_return_state
+	ui.show_skills(selected_unit)
+	ui.refresh_items()
+
+
+func _can_target_with_item(unit: Unit) -> bool:
+	if current_item == null or unit == null or selected_unit == null:
+		return false
+	if unit.current_hp <= 0:
+		return false
+	if unit.unit_data.is_enemy != selected_unit.unit_data.is_enemy:
+		return false
+	return current_item_range.has(unit.current_position)
+
+
+func _get_available_consumables() -> Array:
+	var results: Array = []
+	var consumables := GameState.inventory.list_by_category(ItemData.ItemCategory.CONSUMABLE)
+	for entry in consumables:
+		if not (entry is Dictionary):
+			continue
+		if int(entry.get("count", 0)) <= 0:
+			continue
+		results.append(entry)
+	return results
+
+
+func _get_item_target_positions(caster: Unit, item: ItemData) -> Array[Vector2i]:
+	var positions: Array[Vector2i] = []
+	if caster == null or item == null:
+		return positions
+	for unit in player_units + enemy_units:
+		if unit == null or not is_instance_valid(unit) or unit.current_hp <= 0:
+			continue
+		if unit.unit_data.is_enemy != caster.unit_data.is_enemy:
+			continue
+		positions.append(unit.current_position)
+	return positions
 
 
 func _check_battle_end() -> bool:
@@ -480,6 +614,15 @@ func debug_move(unit: Unit, target: Vector2i) -> void:
 
 func debug_attack(attacker: Unit, defender: Unit) -> void:
 	await _execute_attack(attacker, defender)
+
+
+func _load_item_data(item_id: String) -> ItemData:
+	if item_id.is_empty():
+		return null
+	var path := "res://resources/data/items/%s.tres" % item_id
+	if not ResourceLoader.exists(path):
+		return null
+	return load(path) as ItemData
 
 
 func _resolve_level_data():

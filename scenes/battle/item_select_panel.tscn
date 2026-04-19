@@ -1,0 +1,55 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scenes/battle/item_select_panel.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://cwxwvmrose854" path="res://resources/fonts/NotoSerifCJKsc-Regular.otf" id="2_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.0980392, 0.0705882, 0.0470588, 0.921569)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.709804, 0.592157, 0.392157, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="ItemSelectPanel" type="PanelContainer"]
+visible = false
+offset_left = 292.0
+offset_top = 420.0
+offset_right = 552.0
+offset_bottom = 692.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+script = ExtResource("1_script")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(1, 0.94, 0.82, 1)
+text = "选择消耗品"
+
+[node name="ItemList" type="ItemList" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+same_column_width = true
+max_columns = 1
+
+[node name="CloseButton" type="Button" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+text = "关闭"
