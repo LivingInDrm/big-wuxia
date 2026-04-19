@@ -157,10 +157,39 @@ def _resize_continuous(image: Image.Image, size: Tuple[int, int]) -> Image.Image
 	return cropped.resize(size, Image.Resampling.LANCZOS)
 
 
+def _recompose_horizontal_islands(image: Image.Image, size: Tuple[int, int]) -> Image.Image:
+	components = sorted(_alpha_components(image), key=lambda bbox: bbox[0])
+	if len(components) != 3:
+		raise ValueError("Expected exactly 3 connected alpha islands, got %s" % len(components))
+
+	width, height = size
+	source_w, source_h = image.size
+	if source_h != height:
+		raise ValueError("horizontal_3slice requires matching source/target height, got %s -> %s" % (image.size, size))
+
+	left_tile = image.crop((0, 0, components[0][2], source_h)).convert("RGBA")
+	center_tile = image.crop((components[1][0], 0, components[1][2], source_h)).convert("RGBA")
+	right_tile = image.crop((components[2][0], 0, source_w, source_h)).convert("RGBA")
+
+	left_w = left_tile.size[0]
+	right_w = right_tile.size[0]
+	center_w = width - left_w - right_w
+	if center_w <= 0:
+		raise ValueError("Invalid target size %s for horizontal_3slice widths %s/%s" % (size, left_w, right_w))
+
+	canvas = Image.new("RGBA", size, (0, 0, 0, 0))
+	canvas.alpha_composite(left_tile, (0, 0))
+	_paste_resized(canvas, center_tile, (left_w, 0, left_w + center_w, height))
+	canvas.alpha_composite(right_tile, (width - right_w, 0))
+	return canvas
+
+
 def _run_job(job: RecomposeJob) -> None:
 	image = Image.open(job.source).convert("RGBA")
 	if job.mode == "islands_3x3":
 		output = _recompose_islands(image, job.size, job.margin, job.interior_trim)
+	elif job.mode == "horizontal_3slice":
+		output = _recompose_horizontal_islands(image, job.size)
 	elif job.mode == "continuous":
 		output = _resize_continuous(image, job.size)
 	else:
@@ -224,10 +253,18 @@ def main() -> None:
 			margin=24,
 			mode="continuous",
 		),
-		RecomposeJob(
-			name="wood_table_background",
-			source=ROOT / "Tiny Swords (Free Pack)/UI Elements/UI Elements/Wood Table/WoodTable.png",
-			output=OUT_DIR / "wood_table_background.png",
+			RecomposeJob(
+				name="bigbar_base",
+				source=ROOT / "Tiny Swords (Free Pack)/UI Elements/UI Elements/Bars/BigBar_Base.png",
+				output=OUT_DIR / "bigbar_base.png",
+				size=(320, 64),
+				margin=0,
+				mode="horizontal_3slice",
+			),
+			RecomposeJob(
+				name="wood_table_background",
+				source=ROOT / "Tiny Swords (Free Pack)/UI Elements/UI Elements/Wood Table/WoodTable.png",
+				output=OUT_DIR / "wood_table_background.png",
 			size=(192, 192),
 			margin=48,
 		),

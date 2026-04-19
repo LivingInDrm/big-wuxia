@@ -6,12 +6,12 @@ extends Control
 @onready var _red_hover: Button = %RedHoverButton
 @onready var _red_pressed: Button = %RedPressedButton
 @onready var _red_disabled: Button = %RedDisabledButton
-@onready var _progress_bar: TextureProgressBar = %PreviewProgressBar
+@onready var _progress_bar: Control = %PreviewProgressBar
 
 
 func _ready() -> void:
 	_apply_preview_button_states()
-	_progress_bar.value = 70.0
+	_progress_bar.set("value", 70.0)
 
 
 func _apply_preview_button_states() -> void:
