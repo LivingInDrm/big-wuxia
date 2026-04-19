@@ -139,7 +139,7 @@ func remove_unit(pos: Vector2i) -> void:
     occupancy.erase(pos)
 
 # 计算移动范围（Dijkstra with movement cost）
-func get_move_range(start: Vector2i, mov: int) -> Array[Vector2i]:
+func get_move_range(start: Vector2i, budget: int) -> Array[Vector2i]:
     # 见 §4.1
 
 # 计算攻击范围（环形）
@@ -147,7 +147,7 @@ func get_attack_range(center: Vector2i, range_min: int, range_max: int) -> Array
     # 见 §4.2
 
 # A* 寻路
-func find_path(start: Vector2i, goal: Vector2i, mov: int) -> Array[Vector2i]:
+func find_path(start: Vector2i, goal: Vector2i, budget: int) -> Array[Vector2i]:
     # 见 §4.3
 ```
 
@@ -155,13 +155,13 @@ func find_path(start: Vector2i, goal: Vector2i, mov: int) -> Array[Vector2i]:
 
 ### 4.1 移动范围（Dijkstra with movement cost）
 
-**需求**: 从起点出发，计算移动力 `mov` 范围内所有可达格子。
+**需求**: 从起点出发，计算移动预算 `budget` 范围内所有可达格子。
 
 **算法**: Dijkstra（优先队列）+ 地形移动消耗
 
 **伪代码**:
 ```gdscript
-func get_move_range(start: Vector2i, mov: int) -> Array[Vector2i]:
+func get_move_range(start: Vector2i, budget: int) -> Array[Vector2i]:
     var result: Array[Vector2i] = []
     var cost_map: Dictionary = { start: 0.0 }  # key: Vector2i, value: float（累积消耗）
     var queue: Array = [start]  # 简化用 Array，实际可用 PriorityQueue
@@ -182,14 +182,14 @@ func get_move_range(start: Vector2i, mov: int) -> Array[Vector2i]:
             
             # 如果该格子被占据，可以"跨越"但不能停留
             if is_occupied(neighbor):
-                if new_cost <= mov:
+                if new_cost <= budget:
                     # 继续扩展（但不加入 result）
                     if not cost_map.has(neighbor) or new_cost < cost_map[neighbor]:
                         cost_map[neighbor] = new_cost
                         queue.append(neighbor)
                 continue
             
-            if new_cost > mov:
+            if new_cost > budget:
                 continue
             
             if not cost_map.has(neighbor) or new_cost < cost_map[neighbor]:
@@ -252,7 +252,7 @@ func _chebyshev_distance(a: Vector2i, b: Vector2i) -> int:
 
 **伪代码**:
 ```gdscript
-func find_path(start: Vector2i, goal: Vector2i, mov: int) -> Array[Vector2i]:
+func find_path(start: Vector2i, goal: Vector2i, budget: int) -> Array[Vector2i]:
     var open_set: Array = [start]
     var came_from: Dictionary = {}
     var g_score: Dictionary = { start: 0.0 }
@@ -276,7 +276,7 @@ func find_path(start: Vector2i, goal: Vector2i, mov: int) -> Array[Vector2i]:
             
             var tentative_g := g_score[current] + tile.movement_cost
             
-            if tentative_g > mov:  # 超出移动力
+            if tentative_g > budget:  # 超出移动预算
                 continue
             
             if not g_score.has(neighbor) or tentative_g < g_score[neighbor]:
@@ -431,9 +431,10 @@ static func act(unit: Unit, grid: GridSystem, targets: Array[Unit]) -> void:
         return
     
     # 否则，向目标移动
-    var path := grid.find_path(unit.current_position, target.current_position, unit.unit_data.mov)
+    var budget := unit.get_current_mov()
+    var path := grid.find_path(unit.current_position, target.current_position, budget)
     if path.size() > 1:
-        var move_target := path[min(path.size() - 1, unit.unit_data.mov)]
+        var move_target := path[min(path.size() - 1, budget)]
         unit.move_to(move_target)
         await unit.move_finished
         
@@ -571,7 +572,7 @@ layer0.set_cell(Vector2i(5, 5), 0, Vector2i(0, 0))  # pos, source_id, atlas_coor
 | 优化点 | 方案 | 收益 |
 |---|---|---|
 | BFS/A* 用 PriorityQueue | 用堆替代 Array.sort() | O(n log n) vs O(n²) |
-| 移动范围缓存 | 相同 mov 的单位共用结果 | 减少重复计算 |
+| 移动范围缓存 | 相同移动预算的单位共用结果 | 减少重复计算 |
 | TileMapLayer 多层合并 | 地形 + 装饰 + overlay 三层分离 | 减少重绘 |
 | AnimatedSprite2D 批处理 | 用 SpriteFrames 预设，避免运行时创建 | 减少 GC |
 | 粒子特效池化 | GPUParticles2D 复用 | 减少实例化开销 |
@@ -594,8 +595,8 @@ func test_get_move_range():
             grid.tiles[Vector2i(x, y)].movement_cost = 1.0
     
     var start := Vector2i(2, 2)
-    var mov := 2
-    var range := grid.get_move_range(start, mov)
+    var budget := 2
+    var range := grid.get_move_range(start, budget)
     
     # 应该包含 (2,2) 周围 2 格内的所有格子
     assert_has(range, Vector2i(2, 0))

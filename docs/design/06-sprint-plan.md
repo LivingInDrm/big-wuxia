@@ -347,8 +347,8 @@
                grid.tiles[Vector2i(x, y)].movement_cost = 1.0
        
        var start := Vector2i(4, 4)
-       var mov := 3
-       var range := grid.get_move_range(start, mov)
+       var budget := 3
+       var range := grid.get_move_range(start, budget)
        
        # 应包含 (4,4) 周围 3 格内的所有格子
        assert_has(range, Vector2i(4, 1))  # 上 3 格
@@ -387,12 +387,14 @@
    func test_damage_calculation():
        var attacker := Unit.new()
        attacker.unit_data = UnitData.new()
-       attacker.unit_data.atk = 10
+       attacker.unit_data.attributes = AttributeSet.new()
+       attacker.unit_data.attributes.strength = 5
        attacker.unit_data.weapon_type = WeaponType.BLADE
        
        var defender := Unit.new()
        defender.unit_data = UnitData.new()
-       defender.unit_data.def = 3
+       defender.unit_data.attributes = AttributeSet.new()
+       defender.unit_data.attributes.constitution = 2
        defender.unit_data.weapon_type = WeaponType.SWORD
        defender.current_hp = 20
        

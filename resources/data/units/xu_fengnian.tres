@@ -16,6 +16,7 @@ base_mp = 10
 spec_fist = 2
 spec_blade = 8
 spec_sword = 3
+move_range = 4
 
 [resource]
 script = ExtResource("1_script")
@@ -23,11 +24,6 @@ unit_id = "xu_fengnian"
 unit_name = "徐凤年"
 is_enemy = false
 attributes = SubResource("Resource_xu_fengnian_attr")
-max_hp = 28
-atk = 8
-def = 5
-spd = 6
-mov = 4
 weapon_type = 1
 weapon_range = 1
 skill_ids = Array[String](["chun_qiu_dao_fa", "liang_xiu_qing_she"])

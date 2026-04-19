@@ -11,6 +11,7 @@ extends Resource
 # B 资源基础值（max_hp/max_mp 最终通过 AttributeResolver 计算，这里只放基础加值）
 @export var base_hp: int = 30 # 生命基础值
 @export var base_mp: int = 10 # 内力基础值
+@export var move_range: int = 4 # 移动力（运行时通过 Unit.get_current_mov 访问）
 
 # D 专精（本步先建字段，step-1-4 才使用）
 @export var spec_fist: int = 0 # 拳掌

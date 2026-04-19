@@ -330,7 +330,9 @@ func tick_cooldowns() -> void:
 
 
 func get_current_mov() -> int:
-	return unit_data.mov + temp_move_bonus if unit_data != null else temp_move_bonus
+	if unit_data == null or unit_data.attributes == null:
+		return temp_move_bonus
+	return unit_data.attributes.move_range + temp_move_bonus
 
 
 func get_qi_regen_amount() -> int:

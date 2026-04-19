@@ -53,7 +53,7 @@ func _run() -> void:
 		"T1a 相邻时敌兵不应移动 (实际=%s)" % str(enemy.current_position))
 	_assert(xu.current_hp < xu_hp_before,
 		"T1b 徐凤年 hp 下降 (前=%d 后=%d)" % [xu_hp_before, xu.current_hp])
-	# dmg = max(1, enemy.atk(14) - xu.def(10)) = 4
+	# dmg = max(1, enemy_attack(14) - xu_defense(10)) = 4
 	_assert(xu_hp_before - xu.current_hp == 4,
 		"T1c dmg=4 (实际=%d)" % (xu_hp_before - xu.current_hp))
 
@@ -65,7 +65,7 @@ func _run() -> void:
 	enemy2.position = Vector2(far.x * 64 + 32, far.y * 64 + 32)
 	g.get_tile(far).occupant = enemy2
 
-	# 放 jiang 到 (4,7)，敌兵 mov=3，可先移动到相邻格再攻击
+	# 放 jiang 到 (4,7)，敌兵 move_range=3，可先移动到相邻格再攻击
 	g.get_tile(jiang.current_position).occupant = null
 	var jiang_pos := Vector2i(4, 7)
 	jiang.current_position = jiang_pos

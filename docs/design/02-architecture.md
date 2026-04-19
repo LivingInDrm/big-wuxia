@@ -431,11 +431,7 @@ class_name UnitData extends Resource
 @export var unit_name: String              # 显示名称（例如"徐凤年"）
 @export var portrait: Texture2D            # 头像
 @export_group("Attributes")
-@export var max_hp: int = 20
-@export var atk: int = 5
-@export var def: int = 3
-@export var spd: int = 5
-@export var mov: int = 4
+@export var attributes: AttributeSet       # 六层属性入口（资质/资源/专精/移动）
 @export_group("Combat")
 @export var weapon_type: WeaponType        # enum: BLADE/SWORD/INNER
 @export var weapon_range: int = 1          # 武器攻击范围
@@ -451,11 +447,7 @@ class_name UnitData extends Resource
 unit_id = "xu_fengnian"
 unit_name = "徐凤年"
 portrait = <Texture2D 头像路径>
-max_hp = 28
-atk = 8
-def = 5
-spd = 6
-mov = 4
+attributes = <AttributeSet 子资源，含资质/资源/专精/移动>
 weapon_type = WeaponType.BLADE
 weapon_range = 1
 skill_ids = ["chun_qiu_dao_fa", "liang_xiu_qing_she"]
@@ -701,7 +693,7 @@ func is_occupied(pos: Vector2i) -> bool:
     # 检查是否有单位占据该格
     pass
 
-func get_move_range(start: Vector2i, mov: int) -> Array[Vector2i]:
+func get_move_range(start: Vector2i, budget: int) -> Array[Vector2i]:
     # Dijkstra/BFS 计算移动范围
     pass
 
@@ -709,7 +701,7 @@ func get_attack_range(center: Vector2i, range_min: int, range_max: int) -> Array
     # 环形范围计算
     pass
 
-func find_path(start: Vector2i, goal: Vector2i, mov: int) -> Array[Vector2i]:
+func find_path(start: Vector2i, goal: Vector2i, budget: int) -> Array[Vector2i]:
     # A* 寻路
     pass
 ```
@@ -737,9 +729,9 @@ func start_battle() -> void:
     _next_unit()
 
 func _build_action_queue() -> void:
-    # 按 SPD 排序
+    # 按结果层速度排序（示意）
     action_queue = (player_units + enemy_units).duplicate()
-    action_queue.sort_custom(func(a, b): return a.unit_data.spd > b.unit_data.spd)
+    action_queue.sort_custom(func(a, b): return a.get_qi_regen_amount() > b.get_qi_regen_amount())
 
 func _next_unit() -> void:
     if action_queue.is_empty():
@@ -788,14 +780,14 @@ static func calculate_damage(attacker: Unit, defender: Unit, skill: SkillData) -
     result.crit = is_crit
     
     # 伤害计算
-    var base_dmg := attacker.unit_data.atk
+    var base_dmg := AttributeResolver.get_attack(attacker).total
     var multiplier := skill.damage_multiplier
     
     # 武器克制
     if _check_weapon_advantage(attacker.unit_data.weapon_type, defender.unit_data.weapon_type):
         multiplier *= 1.25
     
-    var final_dmg := max(1, int(base_dmg * multiplier) - defender.unit_data.def)
+    var final_dmg := max(1, int(base_dmg * multiplier) - AttributeResolver.get_defense(defender).total)
     if is_crit:
         final_dmg = int(final_dmg * 1.5)
     

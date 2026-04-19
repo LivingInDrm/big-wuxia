@@ -5,7 +5,7 @@ extends SceneTree
 ##
 ## 覆盖：
 ##   T1  5 个 .tres 均可加载，且为 UnitData 实例
-##   T2  核心字段对齐 docs/design/01-game-design.md §8
+##   T2  核心资源字段对齐 v2 属性结构
 ##   T3  weapon_type 枚举值正确
 ##   T4  sprite_frames 非 null（warrior_sf / monk_sf 正确映射）
 ##
@@ -24,23 +24,23 @@ func _run() -> void:
 
 	# T1+T2+T3+T4 按单位逐项校验
 	_check("xu_fengnian", {
-		"unit_name": "徐凤年", "max_hp": 28, "atk": 8, "def": 5, "spd": 6, "mov": 4,
+		"unit_name": "徐凤年", "constitution": 7, "strength": 8, "agility": 8, "move_range": 4,
 		"weapon_type": 1, "sf_contains": "warrior", "is_enemy": false,
 	})
 	_check("jiang_ni", {
-		"unit_name": "姜泥", "max_hp": 18, "atk": 3, "def": 3, "spd": 8, "mov": 5,
+		"unit_name": "姜泥", "constitution": 5, "strength": 4, "agility": 7, "move_range": 5,
 		"weapon_type": 3, "sf_contains": "monk", "is_enemy": false,
 	})
 	_check("li_chungang", {
-		"unit_name": "李淳罡", "max_hp": 22, "atk": 12, "def": 4, "spd": 5, "mov": 3,
+		"unit_name": "李淳罡", "constitution": 7, "strength": 9, "agility": 8, "move_range": 3,
 		"weapon_type": 2, "sf_contains": "warrior", "is_enemy": false,
 	})
 	_check("enemy_soldier", {
-		"unit_name": "北莽普通兵", "max_hp": 12, "atk": 4, "def": 2, "spd": 4, "mov": 3,
+		"unit_name": "北莽普通兵", "constitution": 5, "strength": 5, "agility": 4, "move_range": 3,
 		"weapon_type": 3, "sf_contains": "warrior", "is_enemy": true,
 	})
 	_check("yang_yuanzan", {
-		"unit_name": "杨元赞", "max_hp": 30, "atk": 9, "def": 4, "spd": 6, "mov": 3,
+		"unit_name": "杨元赞", "constitution": 9, "strength": 9, "agility": 6, "move_range": 3,
 		"weapon_type": 1, "sf_contains": "warrior", "is_enemy": true,
 	})
 
@@ -54,12 +54,17 @@ func _check(id: String, expected: Dictionary) -> void:
 		return
 	_assert(u.unit_name == expected["unit_name"],
 		"%s unit_name=%s (exp=%s)" % [id, u.unit_name, expected["unit_name"]])
-	_assert(u.max_hp == expected["max_hp"],
-		"%s max_hp=%d (exp=%d)" % [id, u.max_hp, expected["max_hp"]])
-	_assert(u.atk == expected["atk"], "%s atk=%d (exp=%d)" % [id, u.atk, expected["atk"]])
-	_assert(u.def == expected["def"], "%s def=%d (exp=%d)" % [id, u.def, expected["def"]])
-	_assert(u.spd == expected["spd"], "%s spd=%d (exp=%d)" % [id, u.spd, expected["spd"]])
-	_assert(u.mov == expected["mov"], "%s mov=%d (exp=%d)" % [id, u.mov, expected["mov"]])
+	_assert(u.attributes != null, "%s attributes 非 null" % id)
+	if u.attributes == null:
+		return
+	_assert(u.attributes.constitution == expected["constitution"],
+		"%s constitution=%d (exp=%d)" % [id, u.attributes.constitution, expected["constitution"]])
+	_assert(u.attributes.strength == expected["strength"],
+		"%s strength=%d (exp=%d)" % [id, u.attributes.strength, expected["strength"]])
+	_assert(u.attributes.agility == expected["agility"],
+		"%s agility=%d (exp=%d)" % [id, u.attributes.agility, expected["agility"]])
+	_assert(u.attributes.move_range == expected["move_range"],
+		"%s move_range=%d (exp=%d)" % [id, u.attributes.move_range, expected["move_range"]])
 	_assert(u.weapon_type == expected["weapon_type"],
 		"%s weapon_type=%d (exp=%d)" % [id, u.weapon_type, expected["weapon_type"]])
 	_assert(u.is_enemy == expected["is_enemy"],

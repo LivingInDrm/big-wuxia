@@ -14,6 +14,7 @@ fortune = 4
 base_hp = 30
 base_mp = 10
 spec_sword = 10
+move_range = 3
 
 [resource]
 script = ExtResource("1_script")
@@ -21,11 +22,6 @@ unit_id = "li_chungang"
 unit_name = "李淳罡"
 is_enemy = false
 attributes = SubResource("Resource_li_chungang_attr")
-max_hp = 22
-atk = 12
-def = 4
-spd = 5
-mov = 3
 weapon_type = 2
 weapon_range = 1
 skill_ids = Array[String](["jian_qi", "jian_qi_ru_lei", "jian_kai_tian_men"])

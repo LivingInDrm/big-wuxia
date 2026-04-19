@@ -8,7 +8,7 @@ const AttributeSet = preload("res://scripts/core/attribute_set.gd")
 ##
 ## 字段分组：
 ##   基础识别   id / 显示名
-##   属性       attributes + 过渡期旧字段 hp/atk/def/spd/mov
+##   属性       attributes（六层属性与移动力入口）
 ##   战斗       weapon_type / weapon_range
 ##   技能       skill_ids（S5 再用）
 ##   动画       sprite_frames / sprite_offset / modulate
@@ -23,11 +23,6 @@ const AttributeSet = preload("res://scripts/core/attribute_set.gd")
 
 @export_group("Attributes")
 @export var attributes: AttributeSet
-@export var max_hp: int = 20 # DEPRECATED: will be removed in step-1-7
-@export var atk: int = 5 # DEPRECATED: will be removed in step-1-7
-@export var def: int = 3 # DEPRECATED: will be removed in step-1-7
-@export var spd: int = 5 # DEPRECATED: will be removed in step-1-7
-@export var mov: int = 4 # DEPRECATED: will be removed in step-1-7
 
 @export_group("Combat")
 @export var weapon_type: WeaponTypes.Type = WeaponTypes.Type.NONE
@@ -43,4 +38,4 @@ const AttributeSet = preload("res://scripts/core/attribute_set.gd")
 
 
 func _to_string() -> String:
-	return "[UnitData id=%s name=%s hp=%d atk=%d]" % [unit_id, unit_name, max_hp, atk]
+	return "[UnitData id=%s name=%s attrs=%s]" % [unit_id, unit_name, attributes]

@@ -342,7 +342,7 @@ if attacker.weapon_type 克制 defender.weapon_type:
 |---|---|---|---|---|---|
 | 0 | 剑气（普攻+） | 0 | 直线 2 格 | 伤害 = ATK×1.1，穿透第一个单位 | 比普攻略强 |
 | 1 | 剑气·如雷 | 2 | 直线 3 格 | 伤害 = ATK×1.5，穿透所有单位 | 直线 AOE |
-| 2 | 剑开天门（大招） | ∞（整局 1 次） | 十字 5 格 AOE | 伤害 = ATK×2.5，巨大十字范围 | 终极技能，每局只能用 1 次 |
+| 2 | 剑开天门（大招） | ∞（整局 1 次） | 十字 5 格 AOE | 伤害 = ATK×4.5，巨大十字范围 | 终极技能，每局只能用 1 次 |
 
 **动画映射**：
 - Idle: `Warrior_Idle.png`（8 帧）
@@ -408,7 +408,7 @@ func enemy_ai(unit: Unit):
     else:
         var path = find_path_to(unit, target)
         if path.size() > 0:
-            move_along_path(unit, path, unit.mov)
+            move_along_path(unit, path, unit.get_current_mov())
         if is_in_attack_range(unit, target):  # 移动后再判断
             attack(target)
         else:

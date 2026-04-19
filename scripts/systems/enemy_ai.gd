@@ -51,7 +51,7 @@ func take_turn(enemy: Unit, player_units: Array[Unit]) -> void:
 		return
 
 	# 3. 否则移动：选离目标最近的可达格子
-	var move_cells: Array[Vector2i] = grid.get_move_range(from, enemy.unit_data.mov, true)
+	var move_cells: Array[Vector2i] = grid.get_move_range(from, enemy.get_current_mov(), true)
 	if move_cells.is_empty():
 		return
 	var best: Vector2i = _closest_to(target.current_position, move_cells)

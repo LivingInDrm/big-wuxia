@@ -15,6 +15,7 @@ base_hp = 25
 base_mp = 5
 spec_fist = 3
 spec_blade = 3
+move_range = 3
 
 [resource]
 script = ExtResource("1_script")
@@ -22,11 +23,6 @@ unit_id = "enemy_soldier"
 unit_name = "北莽普通兵"
 is_enemy = true
 attributes = SubResource("Resource_enemy_soldier_attr")
-max_hp = 12
-atk = 4
-def = 2
-spd = 4
-mov = 3
 weapon_type = 3
 weapon_range = 1
 skill_ids = Array[String]([])

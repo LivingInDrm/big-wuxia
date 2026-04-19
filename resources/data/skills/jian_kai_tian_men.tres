@@ -12,5 +12,5 @@ max_uses = 1
 range_type = 3
 range_value = 2
 effect_type = 0
-power = 2.5
+power = 4.5
 animation_key = "attack"

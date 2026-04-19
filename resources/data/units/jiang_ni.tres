@@ -15,6 +15,7 @@ base_hp = 25
 base_mp = 15
 spec_medicine = 7
 spec_poison = 2
+move_range = 5
 
 [resource]
 script = ExtResource("1_script")
@@ -22,11 +23,6 @@ unit_id = "jiang_ni"
 unit_name = "姜泥"
 is_enemy = false
 attributes = SubResource("Resource_jiang_ni_attr")
-max_hp = 18
-atk = 3
-def = 3
-spd = 8
-mov = 5
 weapon_type = 3
 weapon_range = 1
 skill_ids = Array[String](["nei_gong_zhang", "hui_chun_shu", "qing_gong"])

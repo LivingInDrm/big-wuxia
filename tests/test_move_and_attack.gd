@@ -4,12 +4,12 @@ extends SceneTree
 ## 用法：godot --headless --path . --script tests/test_move_and_attack.gd
 ##
 ## 覆盖：
-##   T1  get_move_range 基础：徐凤年 mov=4 从 (5,5) 在空旷地图可达数 ≤ 期望
+##   T1  get_move_range 基础：徐凤年 move_range=4 从 (5,5) 在空旷地图可达数 ≤ 期望
 ##   T2  get_move_range 不含起点；不含被占用格子
 ##   T3  get_attack_range weapon_range=1 → 8 格
 ##   T4  get_attack_range weapon_range=2 → 24 格（5x5 - 1）
 ##   T5  find_path 产出合法 path（连续、无障碍、长度合理）
-##   T6  CombatSystem.calc_damage: max(1, atk-def)
+##   T6  CombatSystem.calc_damage: max(1, attack-defense)
 ##   T7  Unit.take_damage 正确扣血 + HP 条更新
 ##   T8  BattleController.debug_move 流程：occupant 更新 + 位置变化
 ##   T9  BattleController.debug_attack 流程：敌兵 HP 下降
@@ -32,7 +32,7 @@ func _run() -> void:
 	_assert(not r.is_empty(), "T1 get_move_range 非空")
 	_assert(not r.has(Vector2i(5, 5)), "T2a 不含起点")
 	# Manhattan ≤ 4 的格子数量为 1+4+8+12+16=41 个（含自身）；去掉自身 40；边界在中央不受影响
-	_assert(r.size() == 40, "T1b mov=4 在空旷地图可达 40 格 (实际=%d)" % r.size())
+	_assert(r.size() == 40, "T1b move_range=4 在空旷地图可达 40 格 (实际=%d)" % r.size())
 
 	# T2: 占用格子不能落脚
 	grid.get_tile(Vector2i(5, 6)).occupant = Node.new()
@@ -87,7 +87,7 @@ func _run() -> void:
 	# T8: debug_move
 	var enemy_a: Unit = battle.get_enemy_units()[0]
 	var pre_pos := xu.current_position
-	# 目标：往东移 3 格（mov=4 够）
+	# 目标：往东移 3 格（move_range=4 足够）
 	var target := pre_pos + Vector2i(3, 0)
 	await battle.debug_move(xu, target)
 	_assert(xu.current_position == target,

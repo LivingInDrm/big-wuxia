@@ -61,6 +61,7 @@ BigWuXia 的 MVP 范围是**轻量级战斗循环验证**，具体包括：
 | 05 | [05-mvp-scope.md](./05-mvp-scope.md) | MVP 功能勾选表、2 关卡大纲（教程关 + 正式关）、验证目标 |
 | 06 | [06-sprint-plan.md](./06-sprint-plan.md) | 6 个 sprint 详单（目标/范围/不做/验收/依赖/工作量） |
 | 07 | [07-risks-unknowns.md](./07-risks-unknowns.md) | 已知风险、未知项、待 Manager 拍板事项 |
+| 09 | [09-attribute-system.md](./09-attribute-system.md) | v2 P1 六层属性架构、公式占位、角色矩阵、追溯接口 |
 
 ## 工作流约束（P0 规则）
 
