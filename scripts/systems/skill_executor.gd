@@ -8,6 +8,10 @@ const EXPLOSION_VFX: SpriteFrames = preload("res://resources/sprites/vfx/explosi
 const HEAL_VFX: SpriteFrames = preload("res://resources/sprites/vfx/heal.tres")
 const FIRE_LIFETIME := 0.45
 const LINE_VFX_STEP_DELAY := 0.05
+const DUST_SCALE := 1.5
+const FIRE_SCALE := 1.8
+const EXPLOSION_SCALE := 2.5
+const HEAL_SCALE := 1.2
 
 
 static func get_targetable_cells(caster: Unit, skill, grid: GridSystem) -> Array[Vector2i]:
@@ -128,26 +132,26 @@ static func _spawn_skill_vfx(caster: Unit, skill, target_pos: Vector2i,
 			_spawn_damage_dust(parent_node, target_pos)
 		"liang_xiu_qing_she":
 			for coord in affected_cells:
-				_spawn_fire(parent_node, coord, 0.6)
+				_spawn_fire(parent_node, coord, FIRE_SCALE)
 		"jian_qi_ru_lei":
 			for coord in affected_cells:
-				_spawn_fire(parent_node, coord, 0.8)
+				_spawn_fire(parent_node, coord, FIRE_SCALE)
 				await caster.get_tree().create_timer(LINE_VFX_STEP_DELAY).timeout
 		"jian_kai_tian_men":
-			VFX.spawn_at(parent_node, EXPLOSION_VFX, _coord_to_world(target_pos), 1.5)
+			VFX.spawn_at(parent_node, EXPLOSION_VFX, _coord_to_world(target_pos), EXPLOSION_SCALE)
 			for coord in affected_cells:
-				_spawn_fire(parent_node, coord, 0.8)
+				_spawn_fire(parent_node, coord, FIRE_SCALE)
 		"hui_chun_shu":
-			VFX.spawn_at(parent_node, HEAL_VFX, _coord_to_world(target_pos) + Vector2(0, -32), 0.75)
+			VFX.spawn_at(parent_node, HEAL_VFX, _coord_to_world(target_pos) + Vector2(0, -20), HEAL_SCALE)
 		"qing_gong":
-			VFX.spawn_at(parent_node, DUST_VFX, caster.global_position + Vector2(0, 12), 1.0)
+			VFX.spawn_at(parent_node, DUST_VFX, caster.global_position + Vector2(0, 12), DUST_SCALE)
 
 
 static func _spawn_damage_dust(parent_node: Node, target_pos: Vector2i) -> void:
 	var world_pos := _coord_to_world(target_pos) + Vector2(0, 16)
 	if parent_node == null:
 		return
-	VFX.spawn_at(parent_node, DUST_VFX, world_pos, 1.0)
+	VFX.spawn_at(parent_node, DUST_VFX, world_pos, DUST_SCALE)
 
 
 static func _spawn_fire(parent_node: Node, coord: Vector2i, scale: float) -> void:

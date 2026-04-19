@@ -2,7 +2,11 @@ extends SceneTree
 
 const BATTLE_SCENE := "res://scenes/battle/battle.tscn"
 const SKILL_EXECUTOR = preload("res://scripts/systems/skill_executor.gd")
+const EXPLOSION_VFX: SpriteFrames = preload("res://resources/sprites/vfx/explosion.tres")
+const HEAL_VFX: SpriteFrames = preload("res://resources/sprites/vfx/heal.tres")
 const VIEWPORT := Vector2i(1280, 720)
+const FIRE_PREVIEW_TIME := 0.18
+const PREVIEW_PROGRESS := 0.4
 
 
 func _init() -> void:
@@ -45,8 +49,7 @@ func _capture_cross_skill(battle) -> void:
 		battle.get_grid(),
 		CombatSystem
 	)
-	for _i in 8:
-		await process_frame
+	await _wait_seconds(FIRE_PREVIEW_TIME)
 	_save("tools/screenshots/s5_skill_cross.png")
 
 
@@ -63,8 +66,7 @@ func _capture_ultimate(battle) -> void:
 		battle.get_grid(),
 		CombatSystem
 	)
-	for _i in 8:
-		await process_frame
+	await _wait_animation_progress(EXPLOSION_VFX, PREVIEW_PROGRESS)
 	_save("tools/screenshots/s5_ultimate.png")
 
 
@@ -80,8 +82,7 @@ func _capture_heal(battle) -> void:
 		battle.get_grid(),
 		CombatSystem
 	)
-	for _i in 8:
-		await process_frame
+	await _wait_animation_progress(HEAL_VFX, PREVIEW_PROGRESS)
 	_save("tools/screenshots/s5_heal.png")
 
 
@@ -93,3 +94,23 @@ func _save(rel_path: String) -> void:
 		push_error("[s5_vfx_screenshots] save_png failed err=%s path=%s" % [err, abs])
 	else:
 		print("[s5_vfx_screenshots] saved %s (%sx%s)" % [abs, img.get_width(), img.get_height()])
+
+
+func _wait_animation_progress(sprite_frames: SpriteFrames, progress: float) -> void:
+	if sprite_frames == null:
+		await _wait_seconds(0.2)
+		return
+	var frame_count := sprite_frames.get_frame_count(&"default")
+	var fps := sprite_frames.get_animation_speed(&"default")
+	if frame_count <= 0 or fps <= 0.0:
+		await _wait_seconds(0.2)
+		return
+	var duration := (float(frame_count) / fps) * progress
+	await _wait_seconds(duration)
+
+
+func _wait_seconds(duration: float) -> void:
+	if duration <= 0.0:
+		await process_frame
+		return
+	await root.get_tree().create_timer(duration).timeout
