@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="UnitData" load_steps=3 format=3 uid="uid://bwxunit0004"]
+
+[ext_resource type="Script" uid="uid://djynxol3vtqtc" path="res://scripts/core/unit_data.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://resources/data/units/warrior_sprite_frames.tres" id="2_sf"]
+
+[resource]
+script = ExtResource("1_script")
+unit_id = "enemy_soldier"
+unit_name = "北莽普通兵"
+max_hp = 12
+atk = 4
+def = 2
+spd = 4
+mov = 3
+weapon_type = 0
+weapon_range = 1
+skill_ids = Array[String]([])
+sprite_frames = ExtResource("2_sf")
+sprite_offset = Vector2(0, -32)
+modulate = Color(1.0, 0.45, 0.45, 1.0)

@@ -1,10 +1,14 @@
-[gd_scene load_steps=8 format=3 uid="uid://b1m2mnwxyz001"]
+[gd_scene format=3 uid="uid://b1m2mnwxy0001"]
 
-[ext_resource type="Script" path="res://scenes/main_menu/main_menu.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dwulmsk6t5slv" path="res://scenes/main_menu/main_menu.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://buis1cgjfnf4u" path="res://resources/sprites/backgrounds/mountain_bg.png" id="2_bg"]
 [ext_resource type="FontFile" uid="uid://cwxwvmrose854" path="res://resources/fonts/NotoSerifCJKsc-Regular.otf" id="3_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+content_margin_left = 32.0
+content_margin_top = 18.0
+content_margin_right = 32.0
+content_margin_bottom = 22.0
 bg_color = Color(0.945, 0.898, 0.776, 0.92)
 border_width_left = 3
 border_width_top = 3
@@ -15,28 +19,12 @@ corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
-content_margin_left = 32.0
-content_margin_top = 18.0
-content_margin_right = 32.0
-content_margin_bottom = 22.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-bg_color = Color(0.98, 0.94, 0.82, 0.96)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.55, 0.35, 0.2, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-content_margin_left = 32.0
-content_margin_top = 18.0
-content_margin_right = 32.0
-content_margin_bottom = 22.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+content_margin_left = 32.0
+content_margin_top = 22.0
+content_margin_right = 32.0
+content_margin_bottom = 18.0
 bg_color = Color(0.85, 0.78, 0.62, 0.95)
 border_width_left = 3
 border_width_top = 3
@@ -47,10 +35,22 @@ corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
 content_margin_left = 32.0
-content_margin_top = 22.0
+content_margin_top = 18.0
 content_margin_right = 32.0
-content_margin_bottom = 18.0
+content_margin_bottom = 22.0
+bg_color = Color(0.98, 0.94, 0.82, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.55, 0.35, 0.2, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_focus"]
 bg_color = Color(0, 0, 0, 0)
@@ -64,7 +64,7 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=1104107487]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -73,7 +73,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=461167875]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -84,17 +84,17 @@ texture = ExtResource("2_bg")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="TitleLabel" type="Label" parent="."]
+[node name="TitleLabel" type="Label" parent="." unique_id=1015358638]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.0
 offset_left = -480.0
 offset_top = 80.0
 offset_right = 480.0
 offset_bottom = 240.0
 grow_horizontal = 2
+grow_vertical = 0
 theme_override_colors/font_color = Color(0.2, 0.14, 0.1, 1)
 theme_override_colors/font_shadow_color = Color(0.55, 0.42, 0.28, 0.45)
 theme_override_constants/shadow_offset_x = 3
@@ -106,17 +106,17 @@ text = "大武侠"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SubtitleLabel" type="Label" parent="."]
+[node name="SubtitleLabel" type="Label" parent="." unique_id=1262155918]
 layout_mode = 1
-anchors_preset = 7
+anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.0
 offset_left = -300.0
 offset_top = 248.0
 offset_right = 300.0
 offset_bottom = 298.0
 grow_horizontal = 2
+grow_vertical = 0
 theme_override_colors/font_color = Color(0.2, 0.15, 0.12, 0.9)
 theme_override_colors/font_shadow_color = Color(1, 0.95, 0.85, 0.4)
 theme_override_constants/shadow_offset_x = 1
@@ -126,7 +126,7 @@ theme_override_font_sizes/font_size = 30
 text = "— 雪中悍刀行 · SRPG —"
 horizontal_alignment = 1
 
-[node name="ButtonContainer" type="VBoxContainer" parent="."]
+[node name="ButtonContainer" type="VBoxContainer" parent="." unique_id=1163572246]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -141,37 +141,37 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 28
 
-[node name="StartButton" type="Button" parent="ButtonContainer"]
+[node name="StartButton" type="Button" parent="ButtonContainer" unique_id=1968547290]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 84)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.15, 0.1, 0.07, 1)
-theme_override_colors/font_hover_color = Color(0.35, 0.18, 0.08, 1)
 theme_override_colors/font_pressed_color = Color(0.1, 0.06, 0.04, 1)
+theme_override_colors/font_hover_color = Color(0.35, 0.18, 0.08, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 38
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 text = "开始游戏"
 
-[node name="QuitButton" type="Button" parent="ButtonContainer"]
+[node name="QuitButton" type="Button" parent="ButtonContainer" unique_id=185057575]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 84)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.15, 0.1, 0.07, 1)
-theme_override_colors/font_hover_color = Color(0.35, 0.18, 0.08, 1)
 theme_override_colors/font_pressed_color = Color(0.1, 0.06, 0.04, 1)
+theme_override_colors/font_hover_color = Color(0.35, 0.18, 0.08, 1)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 38
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 text = "退出江湖"
 
-[node name="VersionLabel" type="Label" parent="."]
+[node name="VersionLabel" type="Label" parent="." unique_id=1879160013]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0

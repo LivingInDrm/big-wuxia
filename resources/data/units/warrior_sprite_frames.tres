@@ -1,0 +1,149 @@
+[gd_resource type="SpriteFrames" format=3]
+
+[ext_resource type="Texture2D" path="res://resources/sprites/units/warrior/attack.png" id="1_atdcu"]
+[ext_resource type="Texture2D" path="res://resources/sprites/units/warrior/idle.png" id="2_37jxj"]
+[ext_resource type="Texture2D" path="res://resources/sprites/units/warrior/run.png" id="3_bt3er"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e1f5w"]
+atlas = ExtResource("1_atdcu")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7xcda"]
+atlas = ExtResource("1_atdcu")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xw0op"]
+atlas = ExtResource("1_atdcu")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_drsdu"]
+atlas = ExtResource("1_atdcu")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i7okg"]
+atlas = ExtResource("2_37jxj")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_61pll"]
+atlas = ExtResource("2_37jxj")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ene5"]
+atlas = ExtResource("2_37jxj")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tyomm"]
+atlas = ExtResource("2_37jxj")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b03tx"]
+atlas = ExtResource("2_37jxj")
+region = Rect2(768, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rn8h6"]
+atlas = ExtResource("2_37jxj")
+region = Rect2(960, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rngq3"]
+atlas = ExtResource("2_37jxj")
+region = Rect2(1152, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8ujhp"]
+atlas = ExtResource("2_37jxj")
+region = Rect2(1344, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rgcgp"]
+atlas = ExtResource("3_bt3er")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_51cd8"]
+atlas = ExtResource("3_bt3er")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7edsl"]
+atlas = ExtResource("3_bt3er")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0npy6"]
+atlas = ExtResource("3_bt3er")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hukmk"]
+atlas = ExtResource("3_bt3er")
+region = Rect2(768, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ax336"]
+atlas = ExtResource("3_bt3er")
+region = Rect2(960, 0, 192, 192)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e1f5w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7xcda")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xw0op")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_drsdu")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i7okg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_61pll")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ene5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tyomm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b03tx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rn8h6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rngq3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8ujhp")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rgcgp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_51cd8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7edsl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0npy6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hukmk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ax336")
+}],
+"loop": true,
+"name": &"run",
+"speed": 10.0
+}]
