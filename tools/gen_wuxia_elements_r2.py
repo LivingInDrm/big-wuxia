@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import argparse
 import os
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -50,10 +51,16 @@ ASSETS = [
         size=(1536, 1024),
         api_size=(1536, 1024),
         prompt=(
-            STYLE_PREFIX
-            + "A long horizontal rectangular UI panel. All four corners have the signature ink folded-corner ornament. "
-            "Interior is large clean empty paper, suitable for HUD with many child widgets. The border and corner ornaments "
-            "must be clearly visible and consistent on all 4 corners."
+            "Style: Traditional Chinese wuxia ink-wash UI asset in the 'ancient scroll book' aesthetic. "
+            "Rice paper (xuan paper) warm off-white background #F2EDE0 with subtle fiber grain. "
+            "All borders are clean thin black ink outlines (2 px). Decorative angular ink ornaments at corners "
+            "(like classical Chinese book binding folded corners). Flat 2D, no 3D shading, no gradients, no glow, no highlights. "
+            "Restrained literati palette: paper off-white + black ink. Transparent background outside the shape.\n\n"
+            "A long horizontal rectangular UI panel centered inside the image canvas with CLEAR MARGIN on ALL FOUR SIDES "
+            "(at least 8 percent of canvas on each side). The panel must have FOUR complete visible borders — top, bottom, "
+            "LEFT, and right — all fully drawn and entirely within the image bounds. Do NOT bleed the panel to the image edge. "
+            "All four corners have the signature ink folded-corner ornament, symmetric and identical on all 4 corners. "
+            "Interior is large clean empty paper suitable for HUD content. No part of the panel frame should touch or exceed the image boundary."
         ),
         kind="ai",
     ),
@@ -309,12 +316,26 @@ def build_overview(results: list[tuple[AssetSpec, Path]], overview_path: Path) -
 
 async def run_generation() -> tuple[list[tuple[AssetSpec, Path]], Path]:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    client = get_client()
-    loop = asyncio.get_running_loop()
-    ai_specs = [spec for spec in ASSETS if spec.kind == "ai"]
-    pil_specs = [spec for spec in ASSETS if spec.kind == "pil"]
+    parser = argparse.ArgumentParser(description="Generate wuxia UI elements.")
+    parser.add_argument(
+        "--only",
+        action="append",
+        dest="only_keys",
+        help="Generate only the specified asset key. Repeatable.",
+    )
+    args = parser.parse_args()
+    selected_keys = set(args.only_keys or [])
+    unknown_keys = sorted(selected_keys - {spec.key for spec in ASSETS})
+    if unknown_keys:
+        raise ValueError(f"Unknown asset keys for --only: {', '.join(unknown_keys)}")
 
-    with ThreadPoolExecutor(max_workers=max(len(ai_specs), 4)) as executor:
+    selected_specs = [spec for spec in ASSETS if not selected_keys or spec.key in selected_keys]
+    ai_specs = [spec for spec in selected_specs if spec.kind == "ai"]
+    pil_specs = [spec for spec in selected_specs if spec.kind == "pil"]
+    client = get_client() if ai_specs else None
+    loop = asyncio.get_running_loop()
+
+    with ThreadPoolExecutor(max_workers=max(len(selected_specs), 4)) as executor:
         ai_tasks = [
             (spec, loop.run_in_executor(executor, generate_ai_asset_blocking, client, spec, OUT_DIR / spec.filename))
             for spec in ai_specs
@@ -333,8 +354,12 @@ async def run_generation() -> tuple[list[tuple[AssetSpec, Path]], Path]:
     for spec, path in results:
         validate_png(path, spec.size)
 
+    overview_results = [(spec, OUT_DIR / spec.filename) for spec in ASSETS]
+    for spec, path in overview_results:
+        validate_png(path, spec.size)
+
     overview_path = OUT_DIR / "overview.png"
-    build_overview(results, overview_path)
+    build_overview(overview_results, overview_path)
     with Image.open(overview_path) as overview:
         overview_size = overview.size
     validate_png(overview_path, overview_size)
