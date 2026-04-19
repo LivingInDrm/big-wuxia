@@ -97,4 +97,4 @@ func _closest_to(target: Vector2i, cells: Array[Vector2i]) -> Vector2i:
 
 func _attack(enemy: Unit, target: Unit) -> void:
 	await enemy.play_attack(target.position)
-	CombatSystem.resolve_attack(enemy, target)
+	CombatSystem.resolve_attack(enemy, target, grid)

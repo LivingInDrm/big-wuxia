@@ -18,10 +18,11 @@ class_name TerrainTileData
 @export var display_name: String = ""
 @export_range(0, 99) var movement_cost: int = 1
 @export_range(0.0, 1.0, 0.01) var dodge_bonus: float = 0.0
+@export_range(0, 99) var def_bonus: int = 0
 @export var is_obstacle: bool = false
 
 
 func _to_string() -> String:
-	return "[TileData id=%s name=%s cost=%d dodge=%.2f obs=%s]" % [
-		tile_id, display_name, movement_cost, dodge_bonus, is_obstacle
+	return "[TileData id=%s name=%s cost=%d dodge=%.2f def=%d obs=%s]" % [
+		tile_id, display_name, movement_cost, dodge_bonus, def_bonus, is_obstacle
 	]

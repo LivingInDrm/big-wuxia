@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/skill_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+skill_id = "hui_chun_shu"
+skill_name = "回春术"
+description = "对 3 格内友军恢复 8 点生命。"
+cooldown = 1
+max_uses = -1
+range_type = 0
+range_value = 3
+effect_type = 1
+power = 8.0
+animation_key = "heal"

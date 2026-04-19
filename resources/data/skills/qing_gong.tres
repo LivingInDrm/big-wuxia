@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/skill_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+skill_id = "qing_gong"
+skill_name = "轻功·掠影"
+description = "发动轻功，获得 +3 的额外移动。"
+cooldown = 3
+max_uses = -1
+range_type = 0
+range_value = 0
+effect_type = 2
+power = 3.0
+animation_key = "run"

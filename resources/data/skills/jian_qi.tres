@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/skill_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+skill_id = "jian_qi"
+skill_name = "剑气"
+description = "直线 2 格剑气。"
+cooldown = 0
+max_uses = -1
+range_type = 1
+range_value = 2
+effect_type = 0
+power = 1.1
+animation_key = "attack"

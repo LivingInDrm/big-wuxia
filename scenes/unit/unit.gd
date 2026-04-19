@@ -25,11 +25,14 @@ var current_position: Vector2i = Vector2i.ZERO
 var acted: bool = false
 var facing: int = 1
 var _hurt_feedback_running: bool = false
+var skills: Array = []
+var temp_move_bonus: int = 0
 
 signal unit_selected(unit: Unit)
 signal unit_died(unit: Unit)
 signal hurt_started(unit: Unit)
 signal hurt_finished(unit: Unit)
+signal skill_state_changed(unit: Unit)
 
 
 ## 场景预设或代码构造时调用；add_child 之后 _ready 会按 unit_data 初始化视觉。
@@ -55,6 +58,7 @@ func _ready() -> void:
 	# 血量
 	current_hp = unit_data.max_hp
 	_refresh_health_bar()
+	_load_skills()
 
 	# 初始位置（grid → pixel，tile center 对齐）
 	if current_position != Vector2i.ZERO or true:
@@ -115,6 +119,13 @@ func take_damage(amount: int) -> void:
 		_play_hurt_feedback()
 
 
+func heal(amount: int) -> void:
+	if unit_data == null or amount <= 0 or current_hp <= 0:
+		return
+	current_hp = min(unit_data.max_hp, current_hp + amount)
+	_refresh_health_bar()
+
+
 ## 沿 path 逐格 tween 过去（每格 0.15s）。Coroutine：await unit.move_along_path(...)。
 ## path 中第一个元素应是第一个目标格（不含起点）。
 func move_along_path(path: Array[Vector2i]) -> void:
@@ -161,6 +172,28 @@ func play_attack(target_world_pos: Vector2 = Vector2.ZERO) -> void:
 	_apply_facing()
 
 
+func play_skill(animation_key: String = "skill", target_world_pos: Vector2 = Vector2.ZERO,
+		flash_color: Color = Color.WHITE) -> void:
+	if target_world_pos != Vector2.ZERO:
+		_update_facing(signi(int(round(target_world_pos.x - position.x))))
+	var anim_name := animation_key
+	if anim_sprite.sprite_frames == null or not anim_sprite.sprite_frames.has_animation(anim_name):
+		anim_name = "attack" if anim_sprite.sprite_frames != null \
+			and anim_sprite.sprite_frames.has_animation("attack") else "idle"
+	var base_color := anim_sprite.modulate
+	if flash_color != Color.WHITE:
+		anim_sprite.modulate = flash_color
+	anim_sprite.play(anim_name)
+	if anim_name != "idle":
+		await anim_sprite.animation_finished
+	else:
+		await get_tree().create_timer(0.2).timeout
+	_refresh_sprite_modulate()
+	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("idle"):
+		anim_sprite.play("idle")
+	_apply_facing()
+
+
 func _die() -> void:
 	unit_died.emit(self)
 	var tw := create_tween()
@@ -197,6 +230,47 @@ func _refresh_sprite_modulate() -> void:
 		return
 	var acted_tint := Color(0.6, 0.6, 0.6, 1.0) if acted else Color.WHITE
 	anim_sprite.modulate = unit_data.modulate * acted_tint
+
+
+func _load_skills() -> void:
+	skills.clear()
+	if unit_data == null:
+		return
+	var balance = get_node_or_null("/root/GameBalance")
+	for skill_id in unit_data.skill_ids:
+		if balance == null:
+			break
+		var skill = balance.get_skill_data(skill_id)
+		if skill == null:
+			continue
+		skills.append(skill.duplicate_runtime())
+
+
+func get_skill(idx: int):
+	if idx < 0 or idx >= skills.size():
+		return null
+	return skills[idx]
+
+
+func tick_cooldowns() -> void:
+	for skill in skills:
+		if skill.current_cd > 0:
+			skill.current_cd -= 1
+	skill_state_changed.emit(self)
+
+
+func get_current_mov() -> int:
+	return unit_data.mov + temp_move_bonus if unit_data != null else temp_move_bonus
+
+
+func set_move_buff(amount: int) -> void:
+	temp_move_bonus = max(temp_move_bonus, amount)
+	skill_state_changed.emit(self)
+
+
+func clear_temp_buffs() -> void:
+	temp_move_bonus = 0
+	skill_state_changed.emit(self)
 
 
 func _play_hurt_feedback() -> void:

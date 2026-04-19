@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/skill_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+skill_id = "jian_qi_ru_lei"
+skill_name = "剑气·如雷"
+description = "直线 3 格，贯穿路径上所有目标。"
+cooldown = 2
+max_uses = -1
+range_type = 1
+range_value = 3
+effect_type = 0
+power = 1.5
+animation_key = "attack"

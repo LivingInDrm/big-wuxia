@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SkillData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/skill_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+skill_id = "liang_xiu_qing_she"
+skill_name = "两袖青蛇"
+description = "以目标为中心，十字范围刀气横扫。"
+cooldown = 2
+max_uses = -1
+range_type = 2
+range_value = 2
+effect_type = 0
+power = 0.8
+animation_key = "attack"
