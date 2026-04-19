@@ -15,3 +15,6 @@ class_name LevelData
 @export_group("Objectives")
 @export var victory_condition: String = "kill_all"
 @export var boss_id: String = ""
+
+@export_group("Rewards")
+@export var rewards: Array[Dictionary] = []

@@ -15,6 +15,8 @@ const AttributeSet = preload("res://scripts/core/attribute_set.gd")
 const AttributeResolver = preload("res://scripts/systems/attribute_resolver.gd")
 const StatusEffect = preload("res://scripts/core/status_effect.gd")
 const TraitData = preload("res://scripts/core/trait_data.gd")
+const ItemData = preload("res://scripts/core/item_data.gd")
+const ITEM_DIR := "res://resources/data/items/"
 
 @export var unit_data: UnitData
 
@@ -265,6 +267,7 @@ func play_skill(animation_key: String = "skill", target_world_pos: Vector2 = Vec
 
 
 func _die() -> void:
+	_grant_loot_drops()
 	unit_died.emit(self)
 	var tw := create_tween()
 	tw.tween_property(self, "modulate:a", 0.0, 0.3)
@@ -398,3 +401,38 @@ func _get_attributes() -> AttributeSet:
 	if unit_data != null and unit_data.attributes != null:
 		return unit_data.attributes
 	return AttributeSet.new()
+
+
+func _grant_loot_drops() -> void:
+	if unit_data == null or unit_data.loot_table == null:
+		return
+	var game_state := get_node_or_null("/root/GameState")
+	if game_state == null:
+		return
+	var drops := unit_data.loot_table.roll()
+	if drops.is_empty():
+		return
+
+	var drop_texts: Array[String] = []
+	for drop in drops:
+		if not (drop is Dictionary):
+			continue
+		var item_id := String(drop.get("item_id", ""))
+		var count := int(drop.get("count", 0))
+		if item_id.is_empty() or count <= 0:
+			continue
+		game_state.inventory.add(item_id, count)
+		drop_texts.append("%s x%d" % [_get_item_name(item_id), count])
+
+	if not drop_texts.is_empty():
+		print("%s 掉落: %s" % [unit_data.unit_name, ", ".join(drop_texts)])
+
+
+func _get_item_name(item_id: String) -> String:
+	var path := "%s%s.tres" % [ITEM_DIR, item_id]
+	if not ResourceLoader.exists(path):
+		return item_id
+	var item := load(path) as ItemData
+	if item == null or item.name.is_empty():
+		return item_id
+	return item.name

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="LootTable" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/loot_table.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+entries = Array[Dictionary]([{
+"item_id": "lao_huang_xinwu",
+"max": 1,
+"min": 1,
+"weight": 100
+}, {
+"item_id": "jinchuang_yao",
+"max": 3,
+"min": 2,
+"weight": 80
+}, {
+"item_id": "jiedu_dan",
+"max": 1,
+"min": 1,
+"weight": 30
+}])

@@ -2,6 +2,7 @@ extends Resource
 class_name UnitData
 
 const AttributeSet = preload("res://scripts/core/attribute_set.gd")
+const LootTable = preload("res://scripts/core/loot_table.gd")
 ## UnitData —— 单位静态数据（Resource，可在编辑器或脚本中实例化成 .tres）
 ##
 ## 来源参考：docs/design/02-architecture.md §4.1 + docs/design/01-game-design.md §8
@@ -30,6 +31,7 @@ const AttributeSet = preload("res://scripts/core/attribute_set.gd")
 
 @export_group("Skills")
 @export var skill_ids: Array[String] = []
+@export var loot_table: LootTable
 
 @export_group("Animation")
 @export var sprite_frames: SpriteFrames

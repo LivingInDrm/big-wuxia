@@ -28,10 +28,12 @@ const SKILL_EXECUTOR = preload("res://scripts/systems/skill_executor.gd")
 const ITEM_EFFECT_EXECUTOR = preload("res://scripts/systems/item_effect_executor.gd")
 const VFX = preload("res://scripts/systems/vfx.gd")
 const ItemData = preload("res://scripts/core/item_data.gd")
+const LevelData = preload("res://scripts/core/level_data.gd")
 const TILE_PX := 64
 const TERRAIN_SET_ID := 0
 const GRASS_TERRAIN_ID := 0
 const DEFAULT_LEVEL_ID := "level_01"
+const ITEM_DIR := "res://resources/data/items/"
 
 enum SelectState { IDLE, UNIT_SELECTED, MOVED_AWAIT_ACTION, SKILL_TARGETING, ITEM_TARGETING }
 
@@ -487,7 +489,8 @@ func _execute_item(caster: Unit, item: ItemData, target: Unit) -> void:
 		ui.set_message("%s 未生效" % item.name)
 		_restore_after_item_cancel()
 		return
-	if not GameState.inventory.remove(item.id, 1):
+	var game_state: Node = _game_state()
+	if game_state == null or not game_state.inventory.remove(item.id, 1):
 		push_warning("[BattleController] failed to remove item %s from inventory" % item.id)
 		_restore_after_item_cancel()
 		return
@@ -521,7 +524,10 @@ func _can_target_with_item(unit: Unit) -> bool:
 
 func _get_available_consumables() -> Array:
 	var results: Array = []
-	var consumables := GameState.inventory.list_by_category(ItemData.ItemCategory.CONSUMABLE)
+	var game_state: Node = _game_state()
+	if game_state == null:
+		return results
+	var consumables: Array = game_state.inventory.list_by_category(ItemData.ItemCategory.CONSUMABLE)
 	for entry in consumables:
 		if not (entry is Dictionary):
 			continue
@@ -563,11 +569,16 @@ func _check_battle_end() -> bool:
 
 
 func trigger_victory() -> void:
-	SceneManager.change_scene_to_file("res://scenes/victory/victory.tscn")
+	_grant_level_rewards()
+	var scene_manager: Node = _scene_manager()
+	if scene_manager != null:
+		scene_manager.change_scene_to_file("res://scenes/victory/victory.tscn")
 
 
 func trigger_defeat() -> void:
-	SceneManager.change_scene_to_file("res://scenes/defeat/defeat.tscn")
+	var scene_manager: Node = _scene_manager()
+	if scene_manager != null:
+		scene_manager.change_scene_to_file("res://scenes/defeat/defeat.tscn")
 
 
 # ============ 测试访问 API ============
@@ -626,14 +637,40 @@ func _load_item_data(item_id: String) -> ItemData:
 
 
 func _resolve_level_data():
-	var level_id := GameState.current_level
+	var game_state: Node = _game_state()
+	var game_balance: Node = _game_balance()
+	var level_id: String = game_state.current_level if game_state != null else ""
 	if level_id == "":
 		level_id = DEFAULT_LEVEL_ID
-		GameState.start_level(level_id)
-	var level = GameBalance.get_level_data(level_id)
+		if game_state != null:
+			game_state.start_level(level_id)
+	var level = game_balance.get_level_data(level_id) if game_balance != null else null
 	if level == null:
 		push_error("[BattleController] Missing LevelData: %s" % level_id)
 	return level
+
+
+func _grant_level_rewards() -> void:
+	var level_data := current_level_data as LevelData
+	if level_data == null or level_data.rewards.is_empty():
+		return
+
+	var reward_texts: Array[String] = []
+	for reward in level_data.rewards:
+		if not (reward is Dictionary):
+			continue
+		var item_id := String(reward.get("item_id", ""))
+		var count := int(reward.get("count", 0))
+		if item_id.is_empty() or count <= 0:
+			continue
+		var game_state: Node = _game_state()
+		if game_state == null:
+			return
+		game_state.inventory.add(item_id, count)
+		reward_texts.append("%s x%d" % [_get_item_name(item_id), count])
+
+	if not reward_texts.is_empty():
+		print("%s 通关奖励: %s" % [level_data.level_name, ", ".join(reward_texts)])
 
 
 func _spawn_unit_entry(entry: Dictionary, is_enemy: bool) -> void:
@@ -642,7 +679,8 @@ func _spawn_unit_entry(entry: Dictionary, is_enemy: bool) -> void:
 	if unit_id == "" or not (spawn_coord is Vector2i):
 		push_error("[BattleController] Invalid unit entry: %s" % [entry])
 		return
-	var data := GameBalance.get_unit_data(unit_id) as UnitData
+	var game_balance: Node = _game_balance()
+	var data := game_balance.get_unit_data(unit_id) as UnitData if game_balance != null else null
 	if data == null:
 		push_error("[BattleController] UnitData load failed: %s" % unit_id)
 		return
@@ -709,3 +747,25 @@ func _is_boss_alive() -> bool:
 		if unit.unit_data.unit_id == current_level_data.boss_id:
 			return true
 	return false
+
+
+func _get_item_name(item_id: String) -> String:
+	var path := "%s%s.tres" % [ITEM_DIR, item_id]
+	if not ResourceLoader.exists(path):
+		return item_id
+	var item := load(path) as ItemData
+	if item == null or item.name.is_empty():
+		return item_id
+	return item.name
+
+
+func _game_state():
+	return get_node_or_null("/root/GameState")
+
+
+func _game_balance():
+	return get_node_or_null("/root/GameBalance")
+
+
+func _scene_manager():
+	return get_node_or_null("/root/SceneManager")

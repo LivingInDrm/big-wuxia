@@ -29,3 +29,10 @@ enemy_units = Array[Dictionary]([{
 }])
 victory_condition = "kill_boss"
 boss_id = "yang_yuanzan"
+rewards = Array[Dictionary]([{
+"count": 1,
+"item_id": "chunqiu_daofa"
+}, {
+"count": 2,
+"item_id": "jinchuang_yao"
+}])

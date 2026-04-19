@@ -28,3 +28,10 @@ enemy_units = Array[Dictionary]([{
 "unit_id": "enemy_soldier"
 }])
 victory_condition = "kill_all"
+rewards = Array[Dictionary]([{
+"count": 2,
+"item_id": "jinchuang_yao"
+}, {
+"count": 1,
+"item_id": "neili_dan"
+}])

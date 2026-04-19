@@ -101,7 +101,11 @@ func _on_item_panel_closed() -> void:
 
 
 func _refresh_item_button() -> void:
-	var consumables := GameState.inventory.list_by_category(ItemData.ItemCategory.CONSUMABLE)
+	var game_state: Node = get_node_or_null("/root/GameState")
+	if game_state == null:
+		item_button.disabled = true
+		return
+	var consumables: Array = game_state.inventory.list_by_category(ItemData.ItemCategory.CONSUMABLE)
 	var has_usable := false
 	for entry in consumables:
 		if not (entry is Dictionary):
