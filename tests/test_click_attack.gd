@@ -163,9 +163,7 @@ func _click_empty_cell(world_pos: Vector2, battle) -> void:
 
 
 func _world_to_screen(world_pos: Vector2, battle) -> Vector2:
-	var cam: Camera2D = battle.camera
-	var vp_size: Vector2 = root.get_viewport().get_visible_rect().size
-	return world_pos - cam.position + vp_size * 0.5
+	return battle.get_viewport().get_canvas_transform() * world_pos
 
 
 func _assert(ok: bool, msg: String) -> void:

@@ -21,6 +21,7 @@ script = ExtResource("5_ov")
 script = ExtResource("3_tm")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(1.5, 1.5)
 
 [node name="UI" type="CanvasLayer" parent="."]
 script = ExtResource("4_ui")

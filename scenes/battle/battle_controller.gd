@@ -147,14 +147,23 @@ func _unhandled_input(event: InputEvent) -> void:
 		# 避免依赖 get_global_mouse_position() 的缓存（测试场景下可能为 0）。
 		var mb := event as InputEventMouseButton
 		var world: Vector2 = get_viewport().get_canvas_transform().affine_inverse() * mb.position
+		var coord := Vector2i(int(world.x / TILE_PX), int(world.y / TILE_PX))
+		if select_state == SelectState.SKILL_TARGETING:
+			if current_skill != null and current_skill_range.has(coord):
+				_on_cell_clicked(coord)
+			else:
+				_restore_after_skill_cancel()
+			get_viewport().set_input_as_handled()
+			return
 		if _is_click_on_unit(world):
 			return
-		var coord := Vector2i(int(world.x / TILE_PX), int(world.y / TILE_PX))
 		_on_cell_clicked(coord)
 
 
 func _on_unit_clicked(unit: Unit) -> void:
 	if turn_manager.current_phase == TurnManager.Phase.ENEMY_TURN or _battle_ended:
+		return
+	if select_state == SelectState.SKILL_TARGETING:
 		return
 	# 玩家点击单位：
 	# - 如果当前选中状态，并且点到范围内敌人 → 攻击

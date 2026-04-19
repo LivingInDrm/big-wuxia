@@ -13,12 +13,14 @@ func _init() -> void:
 func _run() -> void:
 	print("[test_skill_cast] ==== BEGIN ====")
 	DisplayServer.window_set_size(Vector2i(1366, 768))
+	await _test_cross_skill_on_empty_cell()
+	await _wait_frames(15)
+	await _test_cross_skill_on_enemy_unit()
+	_finish()
 
-	var packed := load("res://scenes/battle/battle.tscn") as PackedScene
-	var battle = packed.instantiate()
-	root.add_child(battle)
-	await process_frame
-	await process_frame
+
+func _test_cross_skill_on_empty_cell() -> void:
+	var battle = await _load_battle()
 
 	var xu: Unit = battle.get_player_units()[0]
 	var enemy_top: Unit = battle.get_enemy_units()[0]
@@ -48,7 +50,47 @@ func _run() -> void:
 	_assert(xu.get_skill(1).current_cd == 2,
 		"T3c 两袖青蛇释放后 current_cd=2 (实际=%d)" % xu.get_skill(1).current_cd)
 
-	_finish()
+	battle.queue_free()
+	await _wait_frames(2)
+
+
+func _test_cross_skill_on_enemy_unit() -> void:
+	var battle = await _load_battle()
+
+	var xu: Unit = battle.get_player_units()[0]
+	var enemy_top: Unit = battle.get_enemy_units()[0]
+	var hp_top := enemy_top.current_hp
+
+	await _click_unit(xu, battle)
+	await _click_empty_cell(_coord_to_world(Vector2i(5, 2)), battle)
+	for _i in 120:
+		await process_frame
+
+	var skill_button: Button = battle.ui.skill_buttons[1]
+	await _click_control(skill_button)
+	await process_frame
+	_assert(battle.select_state == 3, "T4 进入 SKILL_TARGETING（点敌兵释放前）")
+
+	await _click_unit(enemy_top, battle)
+	for _i in 120:
+		await process_frame
+
+	_assert(enemy_top.current_hp < hp_top,
+		"T5a 点敌兵所在格释放技能后 HP 下降 (前=%d 后=%d)" % [hp_top, enemy_top.current_hp])
+	_assert(xu.get_skill(1).current_cd == 2,
+		"T5b 点敌兵释放技能后 current_cd=2 (实际=%d)" % xu.get_skill(1).current_cd)
+
+	battle.queue_free()
+	await _wait_frames(2)
+
+
+func _load_battle():
+	var packed := load("res://scenes/battle/battle.tscn") as PackedScene
+	var battle = packed.instantiate()
+	root.add_child(battle)
+	await process_frame
+	await process_frame
+	return battle
 
 
 func _click_unit(unit: Unit, battle) -> void:
@@ -88,9 +130,12 @@ func _coord_to_world(coord: Vector2i) -> Vector2:
 
 
 func _world_to_screen(world_pos: Vector2, battle) -> Vector2:
-	var cam: Camera2D = battle.camera
-	var vp_size: Vector2 = root.get_viewport().get_visible_rect().size
-	return world_pos - cam.position + vp_size * 0.5
+	return battle.get_viewport().get_canvas_transform() * world_pos
+
+
+func _wait_frames(count: int) -> void:
+	for _i in count:
+		await process_frame
 
 
 func _assert(ok: bool, msg: String) -> void:
