@@ -13,8 +13,9 @@ category = 1
 stackable = false
 max_stack = 1
 droppable = true
-equip_slot = "accessory"
+equip_slot = 3
+weapon_type = ""
 stat_modifiers = {
-"hp": 20
+"max_hp": 20
 }
 enhancement_level = 0

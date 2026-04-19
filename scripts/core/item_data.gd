@@ -16,6 +16,14 @@ enum ConsumableEffectType {
 	DISPEL = 3,
 }
 
+enum EquipSlot {
+	NONE = 0,
+	WEAPON = 1,
+	ARMOR = 2,
+	ACCESSORY_1 = 3,
+	ACCESSORY_2 = 4,
+}
+
 @export_group("Identity")
 @export var id: String = ""
 @export var name: String = ""
@@ -35,7 +43,8 @@ enum ConsumableEffectType {
 @export var effect_target_stat: String = ""
 
 @export_group("Equipment")
-@export var equip_slot: String = ""
+@export var equip_slot: EquipSlot = EquipSlot.NONE
+@export var weapon_type: String = ""
 @export var stat_modifiers: Dictionary = {}
 @export var enhancement_level: int = 0
 

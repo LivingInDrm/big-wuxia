@@ -25,9 +25,10 @@ const CATEGORY_LABELS := {
 const STAT_LABELS := {
 	"attack": "攻击",
 	"defense": "防御",
-	"hp": "气血",
-	"mp": "内力",
-	"weapon_type": "武器类型",
+	"qinggong": "轻功",
+	"qi_speed": "集气",
+	"max_hp": "气血",
+	"max_mp": "内力",
 }
 
 const SPECIALTY_LABELS := {
@@ -220,8 +221,10 @@ func _build_detail_lines(item_data: ItemData) -> Array[String]:
 		ItemData.ItemCategory.CONSUMABLE:
 			lines.append("效果：%s" % _consumable_effect_text(item_data))
 		ItemData.ItemCategory.EQUIPMENT:
-			if not item_data.equip_slot.is_empty():
+			if item_data.equip_slot != ItemData.EquipSlot.NONE:
 				lines.append("部位：%s" % _equip_slot_text(item_data.equip_slot))
+			if not item_data.weapon_type.is_empty():
+				lines.append("武器类型：%s" % _specialty_label(item_data.weapon_type))
 			var stat_keys := item_data.stat_modifiers.keys()
 			stat_keys.sort()
 			for key in stat_keys:
@@ -249,15 +252,17 @@ func _consumable_effect_text(item_data: ItemData) -> String:
 	return "未知效果"
 
 
-func _equip_slot_text(slot: String) -> String:
+func _equip_slot_text(slot: int) -> String:
 	match slot:
-		"weapon":
+		ItemData.EquipSlot.WEAPON:
 			return "武器"
-		"armor":
+		ItemData.EquipSlot.ARMOR:
 			return "护甲"
-		"accessory":
-			return "饰品"
-	return slot
+		ItemData.EquipSlot.ACCESSORY_1:
+			return "饰品一"
+		ItemData.EquipSlot.ACCESSORY_2:
+			return "饰品二"
+	return "无"
 
 
 func _specialty_label(key: String) -> String:
