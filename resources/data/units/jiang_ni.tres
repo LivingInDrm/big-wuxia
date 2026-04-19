@@ -13,6 +13,8 @@ insight = 8
 fortune = 7
 base_hp = 25
 base_mp = 15
+spec_medicine = 7
+spec_poison = 2
 
 [resource]
 script = ExtResource("1_script")

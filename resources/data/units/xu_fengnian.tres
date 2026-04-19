@@ -13,6 +13,9 @@ insight = 6
 fortune = 9
 base_hp = 30
 base_mp = 10
+spec_fist = 2
+spec_blade = 8
+spec_sword = 3
 
 [resource]
 script = ExtResource("1_script")

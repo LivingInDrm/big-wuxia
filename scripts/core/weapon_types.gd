@@ -12,7 +12,8 @@ enum Type {
 	NONE = 0,   # 敌兵等无武器克制
 	BLADE = 1,  # 刀 —— 徐凤年
 	SWORD = 2,  # 剑 —— 李淳罡
-	INNER = 3,  # 内功 —— 姜泥
+	FIST = 3,   # 拳掌/徒手 —— 姜泥、普通兵
+	INNER = 4,  # 内功 —— 预留给后续纯内功流派
 }
 
 ## 返回 attacker 攻击 defender 时的克制倍率：

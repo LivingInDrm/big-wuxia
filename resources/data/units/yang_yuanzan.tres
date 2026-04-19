@@ -13,6 +13,7 @@ insight = 5
 fortune = 3
 base_hp = 40
 base_mp = 10
+spec_blade = 5
 
 [resource]
 script = ExtResource("1_script")
@@ -25,7 +26,7 @@ atk = 9
 def = 4
 spd = 6
 mov = 3
-weapon_type = 3
+weapon_type = 1
 weapon_range = 1
 skill_ids = Array[String]([])
 sprite_frames = ExtResource("2_sf")

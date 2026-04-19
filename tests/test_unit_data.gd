@@ -4,7 +4,7 @@ extends SceneTree
 ## 用法：godot --headless --path . --script tests/test_unit_data.gd
 ##
 ## 覆盖：
-##   T1  4 个 .tres 均可加载，且为 UnitData 实例
+##   T1  5 个 .tres 均可加载，且为 UnitData 实例
 ##   T2  核心字段对齐 docs/design/01-game-design.md §8
 ##   T3  weapon_type 枚举值正确
 ##   T4  sprite_frames 非 null（warrior_sf / monk_sf 正确映射）
@@ -37,7 +37,11 @@ func _run() -> void:
 	})
 	_check("enemy_soldier", {
 		"unit_name": "北莽普通兵", "max_hp": 12, "atk": 4, "def": 2, "spd": 4, "mov": 3,
-		"weapon_type": 0, "sf_contains": "warrior", "is_enemy": true,
+		"weapon_type": 3, "sf_contains": "warrior", "is_enemy": true,
+	})
+	_check("yang_yuanzan", {
+		"unit_name": "杨元赞", "max_hp": 30, "atk": 9, "def": 4, "spd": 6, "mov": 3,
+		"weapon_type": 1, "sf_contains": "warrior", "is_enemy": true,
 	})
 
 	_finish()
