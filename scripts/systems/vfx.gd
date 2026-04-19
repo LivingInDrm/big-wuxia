@@ -5,6 +5,7 @@ const DAMAGE_NUMBER_FONT_SIZE := 32
 const DAMAGE_NUMBER_OUTLINE := 3
 const DAMAGE_NUMBER_TRAVEL := 60.0
 const DAMAGE_NUMBER_DURATION := 0.8
+const UI_FONT: FontFile = preload("res://resources/fonts/NotoSerifCJKsc-Regular.otf")
 
 
 static func spawn_at(parent: Node, sprite_frames: SpriteFrames, world_pos: Vector2,
@@ -28,7 +29,8 @@ static func spawn_damage_number(parent: Node, world_pos: Vector2, amount: Varian
 	var screen_pos: Vector2 = viewport.get_canvas_transform() * world_pos
 	var overlay := CanvasLayer.new()
 	overlay.layer = 200
-	tree.root.add_child(overlay)
+	var overlay_parent: Node = tree.current_scene if tree.current_scene != null else parent
+	overlay_parent.add_child(overlay)
 
 	var label := Label.new()
 	label.text = _format_damage_text(amount, is_heal)
@@ -38,6 +40,7 @@ static func spawn_damage_number(parent: Node, world_pos: Vector2, amount: Varian
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.z_index = 100
+	label.add_theme_font_override("font", UI_FONT)
 	label.add_theme_font_size_override("font_size", DAMAGE_NUMBER_FONT_SIZE)
 	label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 1.0))
 	label.add_theme_constant_override("outline_size", DAMAGE_NUMBER_OUTLINE)

@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://bwxunit_scene_01"]
+[gd_scene load_steps=5 format=3 uid="uid://bwxunit_scene_01"]
 
 [ext_resource type="Script" uid="uid://cbwmyuhexlwt1" path="res://scenes/unit/unit.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://cwxwvmrose854" path="res://resources/fonts/NotoSerifCJKsc-Regular.otf" id="2_font"]
 
 [sub_resource type="StyleBoxFlat" id="sb_fill"]
 bg_color = Color(0.3, 0.85, 0.35, 1)
@@ -49,6 +50,7 @@ anchor_bottom = 1.0
 offset_top = -2.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 10
 text = "0/0"
 horizontal_alignment = 1

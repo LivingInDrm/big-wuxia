@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bwxbattle0001"]
+[gd_scene load_steps=7 format=3 uid="uid://bwxbattle0001"]
 
 [ext_resource type="Script" uid="uid://blvsyhdtf4xme" path="res://scenes/battle/battle_controller.gd" id="1_ctrl"]
 [ext_resource type="TileSet" uid="uid://cwhuiu6wui754" path="res://resources/data/tiles/main_tileset.tres" id="2_ts"]
 [ext_resource type="Script" path="res://scripts/systems/turn_manager.gd" id="3_tm"]
 [ext_resource type="Script" path="res://scenes/battle/battle_ui.gd" id="4_ui"]
 [ext_resource type="Script" path="res://scenes/battle/range_overlay.gd" id="5_ov"]
+[ext_resource type="FontFile" uid="uid://cwxwvmrose854" path="res://resources/fonts/NotoSerifCJKsc-Regular.otf" id="6_font"]
 
 [node name="Battle" type="Node2D"]
 script = ExtResource("1_ctrl")
@@ -40,6 +41,7 @@ offset_bottom = 44.0
 alignment = 1
 
 [node name="TurnLabel" type="Label" parent="UI/Root/TopBar"]
+theme_override_fonts/font = ExtResource("6_font")
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(1, 0.92, 0.75, 1)
 theme_override_colors/font_outline_color = Color(0.1, 0.05, 0, 1)
@@ -47,6 +49,7 @@ theme_override_constants/outline_size = 4
 text = "回合 1 - 玩家阶段"
 
 [node name="MessageLabel" type="Label" parent="UI/Root"]
+theme_override_fonts/font = ExtResource("6_font")
 anchor_left = 0.5
 anchor_top = 0.0
 anchor_right = 0.5
@@ -81,12 +84,15 @@ theme_override_constants/separation = 8
 
 [node name="Skill1Button" type="Button" parent="UI/Root/ActionPanel/Margin/VBox"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("6_font")
 text = "Skill 1"
 
 [node name="Skill2Button" type="Button" parent="UI/Root/ActionPanel/Margin/VBox"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("6_font")
 text = "Skill 2"
 
 [node name="Skill3Button" type="Button" parent="UI/Root/ActionPanel/Margin/VBox"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("6_font")
 text = "Skill 3"
