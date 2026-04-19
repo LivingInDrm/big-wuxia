@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="UnitData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/unit_data.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://resources/data/units/warrior_sprite_frames.tres" id="2_sf"]
+
+[resource]
+script = ExtResource("1_script")
+unit_id = "yang_yuanzan"
+unit_name = "杨元赞"
+is_enemy = true
+max_hp = 30
+atk = 9
+def = 4
+spd = 6
+mov = 3
+weapon_type = 3
+weapon_range = 1
+skill_ids = Array[String]([])
+sprite_frames = ExtResource("2_sf")
+sprite_offset = Vector2(0, -32)
+modulate = Color(0.95, 0.3, 0.25, 1.0)
