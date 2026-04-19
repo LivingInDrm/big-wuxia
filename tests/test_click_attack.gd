@@ -1,20 +1,16 @@
 extends SceneTree
 ## test_click_attack —— 真实鼠标事件 E2E 测试（S4 bug fix 保障）
 ##
-## 背景：用户在编辑器点击敌兵无反应。根因是 Area2D.input_event 触发后事件继续
-##       冒泡到 BattleController._unhandled_input，_on_cell_clicked 在
-##       MOVED_AWAIT_ACTION 状态下把该点击当"点空格"直接 _finish_unit_action，
-##       导致攻击动画没播放、单位被 set_acted，交互看起来"没反应"。
+## 背景：用户在编辑器点击敌兵无反应。真实事件顺序里 _unhandled_input 先于
+##       Area2D.input_event 执行，BattleController 会先把这次点击当"点空格"
+##       处理，导致 MOVED_AWAIT_ACTION 下直接 _finish_unit_action。
 ##
-## Fix：Unit._on_area_input 在 emit 后 get_viewport().set_input_as_handled()
+## Fix：BattleController._unhandled_input 先做 Physics 点查询；若点在 Unit 身上，
+##      就跳过空格点击逻辑，让后续 Area2D.input_event 正常处理单位点击。
 ##
 ## 测试策略：
-##   Godot headless/脚本模式下 Area2D.input_event 无法通过 Input.parse_input_event
-##   触发（需要 PhysicsServer mouse picking）。改用组合模拟：
-##   1. 真实 push_input 进 viewport（覆盖 _unhandled_input 冒泡路径）
-##   2. 同步调用 unit._on_area_input(viewport, event, 0)（覆盖 Area2D 路径）
-##   两者同时推送模拟真实鼠标效果——关键：验证"点击敌兵"能正确攻击而不被
-##   冒泡逻辑打断。
+##   真实使用 Viewport.push_input(..., true) 注入鼠标事件，要求事件同时经过
+##   BattleController._unhandled_input 与 Area2D.input_event，最终验证敌兵 HP 下降。
 ##
 ## 用法：godot --path . --script tests/test_click_attack.gd
 
@@ -126,42 +122,45 @@ func _run() -> void:
 	_finish()
 
 
-## 模拟真实鼠标左键点击 Unit
-## Godot 4 headless 下 Area2D.input_event 不会被 PhysicsServer 自动触发，
-## 所以调 Unit._on_area_input 模拟 Area2D picking。
-## 修复验证：Unit._on_area_input 内应调 set_input_as_handled 防冒泡。
-## 本测试在调 Area2D 回调后，立即再调 battle._unhandled_input 模拟"事件冒泡到
-## _unhandled_input"——如果修复未生效，_unhandled_input 会把同一次点击当"点空格"处理
-## 导致 MOVED_AWAIT_ACTION 下立即 _finish_unit_action（这是用户报告的 bug）。
-## 修复生效时：测试手动检查 get_viewport().is_input_handled() 来跳过 _unhandled_input。
 func _click_unit(unit: Unit, battle) -> void:
 	var ev := InputEventMouseButton.new()
 	ev.button_index = MOUSE_BUTTON_LEFT
 	ev.pressed = true
 	ev.position = _world_to_screen(unit.position, battle)
 	ev.global_position = ev.position
+	root.push_input(ev, true)
+	await process_frame
+	await physics_frame
 
-	# 1. Area2D picking 阶段
-	unit._on_area_input(root.get_viewport(), ev, 0)
-	# 2. 模拟事件继续冒泡：viewport 已经被 set_input_as_handled 标记
-	#    真实场景下 _unhandled_input 不会触发。测试里验证这点：
-	if not root.get_viewport().is_input_handled():
-		# 未修复 → bug 场景
-		battle._unhandled_input(ev)
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.pressed = false
+	release.position = ev.position
+	release.global_position = ev.global_position
+	root.push_input(release, true)
 	await process_frame
-	await process_frame
+	await physics_frame
 
 
 ## 模拟点击空格（不经过 Area2D，直接走 _unhandled_input）
-## 用直接调用而不是 push_input：push_input 在异步分发时可能被 Tween 期间多次处理
 func _click_empty_cell(world_pos: Vector2, battle) -> void:
 	var ev := InputEventMouseButton.new()
 	ev.button_index = MOUSE_BUTTON_LEFT
 	ev.pressed = true
 	ev.position = _world_to_screen(world_pos, battle)
 	ev.global_position = ev.position
-	battle._unhandled_input(ev)
+	root.push_input(ev, true)
 	await process_frame
+	await physics_frame
+
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.pressed = false
+	release.position = ev.position
+	release.global_position = ev.global_position
+	root.push_input(release, true)
+	await process_frame
+	await physics_frame
 
 
 func _world_to_screen(world_pos: Vector2, battle) -> Vector2:

@@ -133,6 +133,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		# 避免依赖 get_global_mouse_position() 的缓存（测试场景下可能为 0）
 		var mb := event as InputEventMouseButton
 		var world: Vector2 = get_viewport().get_canvas_transform().affine_inverse() * mb.position
+		if _is_click_on_unit(world):
+			return
 		var coord := Vector2i(int(world.x / TILE_PX), int(world.y / TILE_PX))
 		_on_cell_clicked(coord)
 
@@ -289,6 +291,19 @@ func _all_acted(units: Array[Unit]) -> bool:
 		if not u.acted:
 			return false
 	return true
+
+
+func _is_click_on_unit(world_pos: Vector2) -> bool:
+	var params := PhysicsPointQueryParameters2D.new()
+	params.position = world_pos
+	params.collide_with_areas = true
+	params.collide_with_bodies = false
+	var hits := get_world_2d().direct_space_state.intersect_point(params)
+	for hit in hits:
+		var collider = hit.get("collider")
+		if collider is Area2D and collider.get_parent() is Unit:
+			return true
+	return false
 
 
 # ============ 测试访问 API ============
