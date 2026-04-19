@@ -1,15 +1,18 @@
 extends Control
 
 const BATTLE_SCENE := "res://scenes/battle/battle.tscn"
+const CHARACTER_PANEL_SCENE := "res://scenes/character_panel/character_panel.tscn"
 const MAIN_MENU_SCENE := "res://scenes/main_menu/main_menu.tscn"
 const UI_FONT: FontFile = preload("res://resources/fonts/NotoSerifCJKsc-Regular.otf")
 
 @onready var levels_container: VBoxContainer = %LevelsContainer
 @onready var subtitle_label: Label = %SubtitleLabel
+@onready var character_button: Button = %CharacterButton
 @onready var back_button: Button = %BackButton
 
 
 func _ready() -> void:
+	character_button.pressed.connect(_on_character_pressed)
 	back_button.pressed.connect(_on_back_pressed)
 	_populate_levels()
 
@@ -54,3 +57,7 @@ func _on_level_pressed(level_id: String) -> void:
 
 func _on_back_pressed() -> void:
 	SceneManager.change_scene_to_file(MAIN_MENU_SCENE)
+
+
+func _on_character_pressed() -> void:
+	SceneManager.change_scene_to_file(CHARACTER_PANEL_SCENE)

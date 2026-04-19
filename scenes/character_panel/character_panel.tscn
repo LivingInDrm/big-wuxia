@@ -1,0 +1,237 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scenes/character_panel/character_panel.gd" id="1_script"]
+[ext_resource type="FontFile" uid="uid://cwxwvmrose854" path="res://resources/fonts/NotoSerifCJKsc-Regular.otf" id="2_font"]
+[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Wood Table/WoodTable.png" id="3_wood"]
+[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Papers/RegularPaper.png" id="4_paper"]
+[ext_resource type="PackedScene" path="res://scenes/character_panel/equip_select_popup.tscn" id="5_popup"]
+
+[node name="CharacterPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_wood")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Shade" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.09, 0.06, 0.04, 0.18)
+
+[node name="RootMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 28
+
+[node name="RootVBox" type="VBoxContainer" parent="RootMargin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Header" type="HBoxContainer" parent="RootMargin/RootVBox"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="RootMargin/RootVBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 52
+theme_override_colors/font_color = Color(0.98, 0.92, 0.78, 1)
+theme_override_colors/font_shadow_color = Color(0.2, 0.12, 0.08, 0.55)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+text = "角色"
+
+[node name="ReturnButton" type="Button" parent="RootMargin/RootVBox/Header" unique_id=6201]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 58)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 26
+theme_override_colors/font_color = Color(0.15, 0.1, 0.07, 1)
+theme_override_colors/font_hover_color = Color(0.32, 0.18, 0.08, 1)
+theme_override_colors/font_pressed_color = Color(0.1, 0.06, 0.04, 1)
+text = "返回"
+
+[node name="Content" type="HBoxContainer" parent="RootMargin/RootVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 22
+
+[node name="CharacterCard" type="Control" parent="RootMargin/RootVBox/Content"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PaperBg" type="TextureRect" parent="RootMargin/RootVBox/Content/CharacterCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_paper")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Margin" type="MarginContainer" parent="RootMargin/RootVBox/Content/CharacterCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 22
+
+[node name="VBox" type="VBoxContainer" parent="RootMargin/RootVBox/Content/CharacterCard/Margin"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="ListTitle" type="Label" parent="RootMargin/RootVBox/Content/CharacterCard/Margin/VBox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 34
+theme_override_colors/font_color = Color(0.2, 0.14, 0.1, 1)
+text = "角色列表"
+
+[node name="CharacterButtons" type="VBoxContainer" parent="RootMargin/RootVBox/Content/CharacterCard/Margin/VBox" unique_id=6202]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="EquipmentCard" type="Control" parent="RootMargin/RootVBox/Content"]
+custom_minimum_size = Vector2(470, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PaperBg" type="TextureRect" parent="RootMargin/RootVBox/Content/EquipmentCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_paper")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Margin" type="MarginContainer" parent="RootMargin/RootVBox/Content/EquipmentCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 26
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 26
+theme_override_constants/margin_bottom = 22
+
+[node name="VBox" type="VBoxContainer" parent="RootMargin/RootVBox/Content/EquipmentCard/Margin"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="CurrentCharacterLabel" type="Label" parent="RootMargin/RootVBox/Content/EquipmentCard/Margin/VBox" unique_id=6203]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 34
+theme_override_colors/font_color = Color(0.2, 0.14, 0.1, 1)
+text = "徐凤年 · 装备与属性"
+
+[node name="EquipmentSlots" type="VBoxContainer" parent="RootMargin/RootVBox/Content/EquipmentCard/Margin/VBox" unique_id=6204]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="StatsCard" type="Control" parent="RootMargin/RootVBox/Content"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PaperBg" type="TextureRect" parent="RootMargin/RootVBox/Content/StatsCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_paper")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Margin" type="MarginContainer" parent="RootMargin/RootVBox/Content/StatsCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 26
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 26
+theme_override_constants/margin_bottom = 22
+
+[node name="VBox" type="VBoxContainer" parent="RootMargin/RootVBox/Content/StatsCard/Margin"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="BasicTitle" type="Label" parent="RootMargin/RootVBox/Content/StatsCard/Margin/VBox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(0.2, 0.14, 0.1, 1)
+text = "基础属性"
+
+[node name="BasicStatsContainer" type="VBoxContainer" parent="RootMargin/RootVBox/Content/StatsCard/Margin/VBox" unique_id=6205]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SpecialtyTitle" type="Label" parent="RootMargin/RootVBox/Content/StatsCard/Margin/VBox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(0.2, 0.14, 0.1, 1)
+text = "专精等级"
+
+[node name="SpecialtyStatsContainer" type="VBoxContainer" parent="RootMargin/RootVBox/Content/StatsCard/Margin/VBox" unique_id=6206]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EquipSelectPopup" parent="." instance=ExtResource("5_popup") unique_id=6207]
+unique_name_in_owner = true

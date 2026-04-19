@@ -102,6 +102,17 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 12
 
+[node name="CharacterButton" type="Button" parent="Center/Card/Margin/VBox" unique_id=2104]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(440, 68)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn")
+text = "角色"
+
 [node name="BackButton" type="Button" parent="Center/Card/Margin/VBox" unique_id=2103]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(440, 68)
