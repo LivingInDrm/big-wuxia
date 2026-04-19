@@ -1,0 +1,10 @@
+{
+  "main_panel": {"left": 133, "top": 351, "right": 200, "bottom": 352},
+  "tooltip_panel": {"left": 194, "top": 182, "right": 185, "bottom": 187},
+  "slot_frame": {"left": 84, "top": 82, "right": 83, "bottom": 83},
+  "button_regular": {"left": 35, "top": 72, "right": 75, "bottom": 72},
+  "button_pressed": {"left": 68, "top": 75, "right": 68, "bottom": 75},
+  "button_danger": {"left": 72, "top": 71, "right": 71, "bottom": 71},
+  "bar_base": {"left": 244, "top": 123, "right": 252, "bottom": 116},
+  "avatar_frame": {"left": 176, "top": 167, "right": 176, "bottom": 170}
+}
