@@ -52,6 +52,9 @@ static func resolve_attack(attacker: Unit, defender: Unit, grid: GridSystem,
 	var result := calculate_attack(attacker, defender, grid, skill)
 	if result.hit:
 		defender.take_damage(result.damage)
+	else:
+		var parent := defender.get_parent() if defender.get_parent() != null else defender
+		VFX.spawn_damage_number(parent, defender.global_position + Vector2(0, -40), "MISS", false)
 	return defender.current_hp <= 0
 
 

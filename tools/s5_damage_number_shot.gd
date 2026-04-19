@@ -31,8 +31,17 @@ func _run() -> void:
 		await process_frame
 
 	await _click_unit(enemy, battle)
-	await root.get_tree().create_timer(0.2).timeout
-	await process_frame
+	var enemy_hp_before := enemy.current_hp
+	var damage_observed := false
+	for _i in 120:
+		await process_frame
+		if enemy.current_hp < enemy_hp_before:
+			damage_observed = true
+			break
+	if not damage_observed:
+		push_error("[s5_damage_number_shot] attack did not resolve before screenshot")
+		quit(2)
+		return
 	_save("tools/screenshots/s5_damage_number.png")
 	quit(0)
 
