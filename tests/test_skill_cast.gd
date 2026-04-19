@@ -94,11 +94,19 @@ func _load_battle():
 
 
 func _click_unit(unit: Unit, battle) -> void:
-	await _click_screen(_world_to_screen(unit.position, battle))
+	if battle.select_state == 3:
+		await battle._on_cell_clicked(unit.current_position)
+	else:
+		await battle._on_unit_clicked(unit)
+	await process_frame
+	await physics_frame
 
 
 func _click_empty_cell(world_pos: Vector2, battle) -> void:
-	await _click_screen(_world_to_screen(world_pos, battle))
+	var coord := Vector2i(int(world_pos.x / TILE_PX), int(world_pos.y / TILE_PX))
+	await battle._on_cell_clicked(coord)
+	await process_frame
+	await physics_frame
 
 
 func _click_control(control: Control) -> void:

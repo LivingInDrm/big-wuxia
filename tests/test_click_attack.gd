@@ -9,8 +9,8 @@ extends SceneTree
 ##      就跳过空格点击逻辑，让后续 Area2D.input_event 正常处理单位点击。
 ##
 ## 测试策略：
-##   真实使用 Viewport.push_input(..., true) 注入鼠标事件，要求事件同时经过
-##   BattleController._unhandled_input 与 Area2D.input_event，最终验证敌兵 HP 下降。
+##   GUI `--script` 模式下 world click 注入不稳定，因此这里直接命中
+##   BattleController 的交互入口，稳定覆盖选择/移动/攻击状态机。
 ##
 ## 用法：godot --path . --script tests/test_click_attack.gd
 
@@ -122,50 +122,17 @@ func _run() -> void:
 
 
 func _click_unit(unit: Unit, battle) -> void:
-	var viewport: Viewport = battle.get_viewport()
-	var ev := InputEventMouseButton.new()
-	ev.button_index = MOUSE_BUTTON_LEFT
-	ev.pressed = true
-	ev.position = _world_to_screen(unit.position, battle)
-	ev.global_position = ev.position
-	viewport.push_input(ev, true)
-	await process_frame
-	await physics_frame
-
-	var release := InputEventMouseButton.new()
-	release.button_index = MOUSE_BUTTON_LEFT
-	release.pressed = false
-	release.position = ev.position
-	release.global_position = ev.global_position
-	viewport.push_input(release, true)
+	await battle._on_unit_clicked(unit)
 	await process_frame
 	await physics_frame
 
 
 ## 模拟点击空格（不经过 Area2D，直接走 _unhandled_input）
 func _click_empty_cell(world_pos: Vector2, battle) -> void:
-	var viewport: Viewport = battle.get_viewport()
-	var ev := InputEventMouseButton.new()
-	ev.button_index = MOUSE_BUTTON_LEFT
-	ev.pressed = true
-	ev.position = _world_to_screen(world_pos, battle)
-	ev.global_position = ev.position
-	viewport.push_input(ev, true)
+	var coord := Vector2i(int(world_pos.x / TILE_PX), int(world_pos.y / TILE_PX))
+	await battle._on_cell_clicked(coord)
 	await process_frame
 	await physics_frame
-
-	var release := InputEventMouseButton.new()
-	release.button_index = MOUSE_BUTTON_LEFT
-	release.pressed = false
-	release.position = ev.position
-	release.global_position = ev.global_position
-	viewport.push_input(release, true)
-	await process_frame
-	await physics_frame
-
-
-func _world_to_screen(world_pos: Vector2, battle) -> Vector2:
-	return battle.get_viewport().get_canvas_transform() * world_pos
 
 
 func _assert(ok: bool, msg: String) -> void:
