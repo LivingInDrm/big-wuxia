@@ -32,7 +32,6 @@ grow_vertical = 2
 [node name="Root" type="VBoxContainer" parent="Scroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
 theme_override_constants/separation = 20
 
 [node name="PageTitle" type="Label" parent="Scroll/Root"]
