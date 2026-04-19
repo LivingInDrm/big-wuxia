@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>9-patch 交互式切片工具</title>
+  <style>
+    :root { --bg:#f5f0e6; --panel:#fffaf0; --ink:#2c241b; --line:#d7c5aa; --red:#ff0000cc; --mask:#00ff0020; }
+    * { box-sizing:border-box; }
+    body { margin:0; font:14px/1.5 "PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif; color:var(--ink); background:
+      radial-gradient(circle at top,#fffaf0 0,#f5f0e6 45%,#eadfc9 100%); }
+    .page { max-width:1500px; margin:0 auto; padding:20px; }
+    .notice, .toolbar, .content, .preview { background:rgba(255,250,240,.92); border:1px solid var(--line); border-radius:14px; box-shadow:0 10px 30px rgba(80,60,20,.08); }
+    .notice { padding:12px 16px; margin-bottom:14px; }
+    .toolbar { display:flex; align-items:center; gap:14px; padding:12px 16px; margin-bottom:14px; flex-wrap:wrap; }
+    .toolbar select, .toolbar button, .side input { border:1px solid #b89b73; border-radius:10px; padding:8px 10px; background:#fff; color:var(--ink); }
+    .toolbar button, .preview-actions button { cursor:pointer; }
+    .content { display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:16px; padding:16px; }
+    .canvas-wrap { overflow:auto; min-height:340px; background:linear-gradient(180deg,#fbf6ed,#f0e4cf); border:1px dashed #ccb28c; border-radius:12px; padding:10px; }
+    #mainCanvas { display:block; margin:0 auto; max-width:100%; background-image:
+      linear-gradient(45deg,rgba(120,95,60,.08) 25%,transparent 25%,transparent 75%,rgba(120,95,60,.08) 75%),
+      linear-gradient(45deg,rgba(120,95,60,.08) 25%,transparent 25%,transparent 75%,rgba(120,95,60,.08) 75%);
+      background-size:20px 20px; background-position:0 0,10px 10px; border-radius:8px; }
+    .side { display:flex; flex-direction:column; gap:14px; }
+    .field { display:grid; grid-template-columns:26px 1fr auto; align-items:center; gap:8px; }
+    .field label { font-weight:700; }
+    .stepper { display:flex; flex-direction:column; gap:4px; }
+    .stepper button, .preview-actions button, .toolbar button { min-height:36px; padding:8px 12px; border:1px solid #9a7d4e; border-radius:10px; background:linear-gradient(180deg,#fff,#f0dfbf); }
+    .field input { width:100%; }
+    .hint, .meta { color:#6e5941; font-size:12px; }
+    .export { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .json-box { width:100%; min-height:170px; resize:vertical; border:1px solid #ccb28c; border-radius:10px; padding:10px; background:#fffdf8; font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .preview { margin-top:14px; padding:16px; }
+    .preview-head { display:flex; justify-content:space-between; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:10px; }
+    #previewCanvas { width:100%; max-width:500px; height:auto; display:block; border:1px solid #ccb28c; border-radius:12px; background:
+      linear-gradient(180deg,rgba(255,255,255,.95),rgba(242,232,210,.95)); }
+    .preview-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .status { min-height:20px; color:#7a351d; }
+    @media (max-width:960px) { .content { grid-template-columns:1fr; } .side { order:-1; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="notice">推荐通过本地 HTTP 访问以避免部分浏览器在 <code>file://</code> 下限制图片或 localStorage：<code>cd /Users/xiaochunliu/VerdentProject/big-wuxia/tools && python3 -m http.server 8080</code>，再打开 <code>http://localhost:8080/ninepatch_slicer.html</code></div>
+    <div class="toolbar">
+      <label for="assetSelect">素材</label>
+      <select id="assetSelect"></select>
+      <strong id="imageSize">未加载</strong>
+      <span class="meta">图片路径：<code>./generated/wuxia_elements_r2/&lt;asset&gt;.png</code></span>
+    </div>
+    <div class="content">
+      <div class="canvas-wrap">
+        <canvas id="mainCanvas"></canvas>
+      </div>
+      <div class="side">
+        <strong>Inset</strong>
+        <div id="fields"></div>
+        <div class="hint">输入框支持方向键微调：<code>↑/↓ ±1</code>，<code>Shift+↑/↓ ±10</code></div>
+        <div class="export">
+          <button id="copyBtn">复制 JSON</button>
+          <button id="downloadBtn">下载 JSON</button>
+        </div>
+        <textarea id="jsonBox" class="json-box" readonly></textarea>
+        <div id="status" class="status"></div>
+      </div>
+    </div>
+    <div class="preview">
+      <div class="preview-head">
+        <strong id="previewLabel">拉伸预览 500x300</strong>
+        <span class="meta">纯 Canvas 9-slice 绘制，实时验证边角是否保持不拉伸</span>
+      </div>
+      <canvas id="previewCanvas" width="500" height="300"></canvas>
+      <div class="preview-actions">
+        <button data-size="700x300">拉宽</button>
+        <button data-size="500x420">拉高</button>
+        <button data-size="760x420">拉两向</button>
+        <button data-size="500x300">复位</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const ASSETS = ["main_panel","tooltip_panel","slot_frame","button_regular","button_pressed","button_danger","bar_base","avatar_frame"];
+    const DEFAULTS = {
+      main_panel:{left:180,top:140,right:180,bottom:140}, tooltip_panel:{left:120,top:120,right:120,bottom:120},
+      slot_frame:{left:150,top:150,right:150,bottom:150}, button_regular:{left:160,top:88,right:160,bottom:88},
+      button_pressed:{left:160,top:88,right:160,bottom:88}, button_danger:{left:160,top:88,right:160,bottom:88},
+      bar_base:{left:96,top:40,right:96,bottom:40}, avatar_frame:{left:132,top:132,right:132,bottom:132}
+    };
+    const state = {
+      asset: ASSETS[0], image: null, scale: 1, drag: null,
+      preview: { width: 500, height: 300 },
+      insets: Object.fromEntries(ASSETS.map(a => [a, loadInsets(a)]))
+    };
+    const ui = {
+      assetSelect: document.getElementById("assetSelect"), imageSize: document.getElementById("imageSize"),
+      fields: document.getElementById("fields"), jsonBox: document.getElementById("jsonBox"), status: document.getElementById("status"),
+      mainCanvas: document.getElementById("mainCanvas"), previewCanvas: document.getElementById("previewCanvas"),
+      previewLabel: document.getElementById("previewLabel"), copyBtn: document.getElementById("copyBtn"), downloadBtn: document.getElementById("downloadBtn")
+    };
+    const mainCtx = ui.mainCanvas.getContext("2d");
+    const previewCtx = ui.previewCanvas.getContext("2d");
+    const fieldMap = {};
+
+    function loadInsets(asset) {
+      const fallback = { ...DEFAULTS[asset] };
+      try { return { ...fallback, ...(JSON.parse(localStorage.getItem("ninepatch_insets_" + asset) || "null") || {}) }; }
+      catch (_) { return fallback; }
+    }
+    function saveInsets(asset) {
+      try { localStorage.setItem("ninepatch_insets_" + asset, JSON.stringify(state.insets[asset])); }
+      catch (_) {}
+    }
+    function setStatus(text, isError) {
+      ui.status.textContent = text || "";
+      ui.status.style.color = isError ? "#9f271e" : "#5e4a35";
+    }
+    function clampInsets(next) {
+      const img = state.image;
+      if (!img) return next;
+      const minGap = 5;
+      const maxLeft = Math.max(minGap, img.width - next.right - 1);
+      const maxRight = Math.max(minGap, img.width - next.left - 1);
+      const maxTop = Math.max(minGap, img.height - next.bottom - 1);
+      const maxBottom = Math.max(minGap, img.height - next.top - 1);
+      next.left = Math.max(minGap, Math.min(next.left, maxLeft));
+      next.right = Math.max(minGap, Math.min(next.right, maxRight));
+      next.top = Math.max(minGap, Math.min(next.top, maxTop));
+      next.bottom = Math.max(minGap, Math.min(next.bottom, maxBottom));
+      if (next.left + next.right >= img.width) {
+        const room = img.width - 1;
+        next.left = Math.min(next.left, room - next.right);
+        next.right = Math.min(next.right, room - next.left);
+      }
+      if (next.top + next.bottom >= img.height) {
+        const room = img.height - 1;
+        next.top = Math.min(next.top, room - next.bottom);
+        next.bottom = Math.min(next.bottom, room - next.top);
+      }
+      return next;
+    }
+    function updateInsets(patch) {
+      if (!state.image) return;
+      state.insets[state.asset] = clampInsets({ ...state.insets[state.asset], ...patch });
+      saveInsets(state.asset);
+      syncFields();
+      renderAll();
+    }
+    function syncFields() {
+      const inset = state.insets[state.asset];
+      ["left","top","right","bottom"].forEach(key => { fieldMap[key].value = inset[key]; });
+      ui.jsonBox.value = JSON.stringify(Object.fromEntries(ASSETS.map(a => [a, state.insets[a]])), null, 2);
+    }
+    function drawMain() {
+      const img = state.image;
+      if (!img) return;
+      const maxWidth = Math.min(1200, window.innerWidth - 380, img.width);
+      state.scale = Math.min(1, maxWidth / img.width || 1);
+      ui.mainCanvas.width = Math.round(img.width * state.scale);
+      ui.mainCanvas.height = Math.round(img.height * state.scale);
+      mainCtx.clearRect(0, 0, ui.mainCanvas.width, ui.mainCanvas.height);
+      mainCtx.drawImage(img, 0, 0, ui.mainCanvas.width, ui.mainCanvas.height);
+      const { left, right, top, bottom } = state.insets[state.asset];
+      const x1 = left * state.scale, x2 = (img.width - right) * state.scale;
+      const y1 = top * state.scale, y2 = (img.height - bottom) * state.scale;
+      mainCtx.fillStyle = "#00ff0020";
+      [[0,0,x1,y1],[x2,0,ui.mainCanvas.width-x2,y1],[0,y2,x1,ui.mainCanvas.height-y2],[x2,y2,ui.mainCanvas.width-x2,ui.mainCanvas.height-y2]]
+        .forEach(r => mainCtx.fillRect(...r));
+      mainCtx.strokeStyle = "#ff0000cc";
+      mainCtx.lineWidth = 2;
+      [x1, x2].forEach(x => { mainCtx.beginPath(); mainCtx.moveTo(x, 0); mainCtx.lineTo(x, ui.mainCanvas.height); mainCtx.stroke(); });
+      [y1, y2].forEach(y => { mainCtx.beginPath(); mainCtx.moveTo(0, y); mainCtx.lineTo(ui.mainCanvas.width, y); mainCtx.stroke(); });
+    }
+    function drawSlice(ctx, img, sx, sy, sw, sh, dx, dy, dw, dh) {
+      if (sw <= 0 || sh <= 0 || dw <= 0 || dh <= 0) return;
+      ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
+    }
+    function drawPreview() {
+      const img = state.image;
+      const { width, height } = state.preview;
+      ui.previewCanvas.width = width;
+      ui.previewCanvas.height = height;
+      ui.previewLabel.textContent = "拉伸预览 " + width + "x" + height;
+      previewCtx.clearRect(0, 0, width, height);
+      if (!img) return;
+      const { left, right, top, bottom } = state.insets[state.asset];
+      const midW = Math.max(1, img.width - left - right), midH = Math.max(1, img.height - top - bottom);
+      const dstMidW = Math.max(1, width - left - right), dstMidH = Math.max(1, height - top - bottom);
+      const xs = [0, left, img.width - right], ys = [0, top, img.height - bottom];
+      const dx = [0, left, width - right], dy = [0, top, height - bottom];
+      const sw = [left, midW, right], sh = [top, midH, bottom];
+      const dw = [left, dstMidW, right], dh = [top, dstMidH, bottom];
+      for (let yi = 0; yi < 3; yi++) for (let xi = 0; xi < 3; xi++) drawSlice(previewCtx, img, xs[xi], ys[yi], sw[xi], sh[yi], dx[xi], dy[yi], dw[xi], dh[yi]);
+      previewCtx.strokeStyle = "rgba(80,60,20,.28)";
+      previewCtx.strokeRect(.5, .5, width - 1, height - 1);
+    }
+    function renderAll() { drawMain(); drawPreview(); }
+    function hitTest(evt) {
+      if (!state.image) return null;
+      const rect = ui.mainCanvas.getBoundingClientRect();
+      const x = evt.clientX - rect.left, y = evt.clientY - rect.top, t = 8;
+      const img = state.image, inset = state.insets[state.asset], s = state.scale;
+      const guides = [
+        { key: "left", axis: "x", pos: inset.left * s }, { key: "right", axis: "x", pos: (img.width - inset.right) * s },
+        { key: "top", axis: "y", pos: inset.top * s }, { key: "bottom", axis: "y", pos: (img.height - inset.bottom) * s }
+      ];
+      return guides.find(g => Math.abs((g.axis === "x" ? x : y) - g.pos) <= t) || null;
+    }
+    function onPointerMove(evt) {
+      const hit = state.drag || hitTest(evt);
+      ui.mainCanvas.style.cursor = !hit ? "default" : hit.axis === "x" ? "ew-resize" : "ns-resize";
+      if (!state.drag || !state.image) return;
+      const rect = ui.mainCanvas.getBoundingClientRect();
+      const px = (evt.clientX - rect.left) / state.scale;
+      const py = (evt.clientY - rect.top) / state.scale;
+      const img = state.image;
+      if (state.drag.key === "left") updateInsets({ left: Math.round(px) });
+      if (state.drag.key === "right") updateInsets({ right: Math.round(img.width - px) });
+      if (state.drag.key === "top") updateInsets({ top: Math.round(py) });
+      if (state.drag.key === "bottom") updateInsets({ bottom: Math.round(img.height - py) });
+    }
+    function exportJson() { return JSON.stringify(Object.fromEntries(ASSETS.map(a => [a, state.insets[a]])), null, 2); }
+    async function copyJson() {
+      const text = exportJson();
+      try { await navigator.clipboard.writeText(text); setStatus("JSON 已复制到剪贴板"); }
+      catch (_) {
+        ui.jsonBox.value = text; ui.jsonBox.focus(); ui.jsonBox.select();
+        document.execCommand("copy"); setStatus("已选中 JSON，可手动复制");
+      }
+    }
+    function downloadJson() {
+      const blob = new Blob([exportJson()], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = Object.assign(document.createElement("a"), { href: url, download: "user_insets.json" });
+      a.click(); URL.revokeObjectURL(url); setStatus("已下载 user_insets.json");
+    }
+    function buildFields() {
+      const defs = [["left","L"],["top","T"],["right","R"],["bottom","B"]];
+      ui.fields.innerHTML = defs.map(([key, label]) => `
+        <div class="field">
+          <label for="inset_${key}">${label}</label>
+          <input id="inset_${key}" type="number" min="5" step="1" inputmode="numeric">
+          <div class="stepper">
+            <button type="button" data-key="${key}" data-delta="1">▲</button>
+            <button type="button" data-key="${key}" data-delta="-1">▼</button>
+          </div>
+        </div>`).join("");
+      defs.forEach(([key]) => {
+        const el = document.getElementById("inset_" + key);
+        fieldMap[key] = el;
+        el.addEventListener("input", () => updateInsets({ [key]: Number(el.value || 0) }));
+        el.addEventListener("keydown", evt => {
+          if (!["ArrowUp","ArrowDown"].includes(evt.key)) return;
+          evt.preventDefault();
+          const step = evt.shiftKey ? 10 : 1;
+          updateInsets({ [key]: state.insets[state.asset][key] + (evt.key === "ArrowUp" ? step : -step) });
+        });
+      });
+      ui.fields.querySelectorAll("button[data-key]").forEach(btn => btn.addEventListener("click", () => {
+        updateInsets({ [btn.dataset.key]: state.insets[state.asset][btn.dataset.key] + Number(btn.dataset.delta) });
+      }));
+    }
+    function loadImage(asset) {
+      setStatus("加载中...");
+      const img = new Image();
+      img.onload = () => {
+        state.image = img;
+        ui.imageSize.textContent = img.width + "x" + img.height;
+        state.insets[asset] = clampInsets(state.insets[asset]);
+        syncFields();
+        renderAll();
+        setStatus("已加载 " + asset);
+      };
+      img.onerror = () => {
+        state.image = null;
+        ui.imageSize.textContent = "加载失败";
+        mainCtx.clearRect(0,0,ui.mainCanvas.width,ui.mainCanvas.height);
+        previewCtx.clearRect(0,0,ui.previewCanvas.width,ui.previewCanvas.height);
+        setStatus("图片加载失败，请确认从 tools/ 目录访问且路径存在", true);
+      };
+      img.src = "./generated/wuxia_elements_r2/" + asset + ".png";
+    }
+    function init() {
+      ui.assetSelect.innerHTML = ASSETS.map(a => `<option value="${a}">${a}</option>`).join("");
+      ui.assetSelect.value = state.asset;
+      buildFields();
+      ui.assetSelect.addEventListener("change", () => { state.asset = ui.assetSelect.value; syncFields(); loadImage(state.asset); });
+      ui.mainCanvas.addEventListener("pointerdown", evt => {
+        const hit = hitTest(evt);
+        if (!hit) return;
+        state.drag = hit;
+        ui.mainCanvas.setPointerCapture(evt.pointerId);
+      });
+      ui.mainCanvas.addEventListener("pointermove", onPointerMove);
+      ui.mainCanvas.addEventListener("pointerup", () => state.drag = null);
+      ui.mainCanvas.addEventListener("pointerleave", () => { if (!state.drag) ui.mainCanvas.style.cursor = "default"; });
+      window.addEventListener("resize", drawMain);
+      document.querySelectorAll(".preview-actions button").forEach(btn => btn.addEventListener("click", () => {
+        const [w,h] = btn.dataset.size.split("x").map(Number);
+        state.preview = { width: w, height: h };
+        drawPreview();
+      }));
+      ui.copyBtn.addEventListener("click", copyJson);
+      ui.downloadBtn.addEventListener("click", downloadJson);
+      syncFields();
+      loadImage(state.asset);
+    }
+    init();
+  </script>
+</body>
+</html>
