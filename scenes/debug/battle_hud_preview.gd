@@ -69,7 +69,7 @@ func _apply_unit_card(card_node: Node, unit: Object) -> void:
 func _apply_hp_row(row_node: Node, caption_text: String, variation: StringName,
 		cur: int, maxv: int) -> void:
 	var cap := row_node.get_node("Caption") as Label
-	var bar := row_node.get_node("Bar") as TextureProgressBar
+	var bar := row_node.get_node("Bar") as Range
 	var val := row_node.get_node("Value") as Label
 	cap.text = caption_text
 	bar.theme_type_variation = variation
@@ -82,9 +82,9 @@ func _on_current_unit_changed(unit: Object) -> void:
 	if unit == null:
 		return
 	_apply_unit_card(hud.get_node("%UnitInfoCard"), unit)
-	_apply_hp_row(hud.get_node("%HpBarRow"), "HP", &"bar/hp",
+	_apply_hp_row(hud.get_node("%HpBarRow"), "HP", &"bar_hp",
 			unit.current_hp, unit.max_hp)
-	_apply_hp_row(hud.get_node("%MpBarRow"), "MP", &"bar/mp",
+	_apply_hp_row(hud.get_node("%MpBarRow"), "MP", &"bar_mp",
 			unit.current_mp, unit.max_mp)
 
 
@@ -95,7 +95,7 @@ func _on_target_changed(unit: Object) -> void:
 		return
 	target.visible = true
 	_apply_unit_card(hud.get_node("%EnemyInfoCard"), unit)
-	_apply_hp_row(hud.get_node("%EnemyHpBar"), "HP", &"bar/hp",
+	_apply_hp_row(hud.get_node("%EnemyHpBar"), "HP", &"bar_hp",
 			unit.current_hp, unit.max_hp)
 
 

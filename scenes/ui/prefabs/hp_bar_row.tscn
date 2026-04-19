@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://cbwxhpbarrow01"]
+[gd_scene load_steps=3 format=3 uid="uid://cbwxhpbarrow01"]
 
 [ext_resource type="Theme" path="res://resources/ui/theme/main_ui_theme.tres" id="1_theme"]
-[ext_resource type="Texture2D" path="res://resources/ui/textures/recomposed/bigbar_base.png" id="2_barbase"]
-[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Bars/BigBar_Fill.png" id="3_barfill"]
+[ext_resource type="Script" path="res://resources/ui/controls/themed_bar.gd" id="2_themedbar"]
 
 [node name="HpBarRow" type="HBoxContainer"]
 custom_minimum_size = Vector2(280, 36)
@@ -17,20 +16,15 @@ theme_type_variation = &"caption"
 text = "HP"
 vertical_alignment = 1
 
-[node name="Bar" type="TextureProgressBar" parent="."]
+[node name="Bar" type="Range" parent="."]
 custom_minimum_size = Vector2(160, 28)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
-theme_type_variation = &"bar/hp"
+theme_type_variation = &"bar_hp"
+script = ExtResource("2_themedbar")
 max_value = 100.0
 value = 60.0
-texture_under = ExtResource("2_barbase")
-texture_progress = ExtResource("3_barfill")
-stretch_margin_left = 8
-stretch_margin_top = 4
-stretch_margin_right = 8
-stretch_margin_bottom = 4
 
 [node name="Value" type="Label" parent="."]
 custom_minimum_size = Vector2(80, 0)
