@@ -9,11 +9,16 @@ extends SceneTree
 ##        - current_hp == max_hp
 ##        - anim_sprite.animation == "idle"
 ##        - anim_sprite.modulate == unit_data.modulate
+##        - facing 初始按阵营设置
 ##        - health_bar.max_value / value 正确
 ##   T3  HP 条按阈值染色：
 ##        ratio > 0.5 → 绿 (0.3,0.85,0.35)
 ##        0.2 < ratio <= 0.5 → 黄 (0.95,0.82,0.25)
 ##        ratio <= 0.2 → 红 (0.9,0.25,0.25)
+##   T4  敌方初始 facing=-1 / flip_h=true
+##   T5  move_along_path 后保持最后一次移动朝向
+##   T6  play_attack 后保持目标方向
+##   T7  take_damage 触发受击反馈，并恢复基础颜色与位置
 ##
 ## 退出码：0 = 全部通过，1 = 有失败
 
@@ -55,6 +60,7 @@ func _run() -> void:
 			"T2d modulate 与 data 一致")
 		_assert(u.anim_sprite.flip_h == false,
 			"T2d2 玩家 flip_h=false (实际=%s)" % u.anim_sprite.flip_h)
+	_assert(u.facing == 1, "T2d3 玩家 facing=1 (实际=%d)" % u.facing)
 	_assert(u.health_bar.max_value == float(data_xu.max_hp),
 		"T2e health_bar.max_value")
 	_assert(u.health_bar.value == float(data_xu.max_hp),
@@ -76,7 +82,47 @@ func _run() -> void:
 	await process_frame
 	_assert(e.anim_sprite.flip_h == true,
 		"T4a 敌方 flip_h=true (实际=%s)" % e.anim_sprite.flip_h)
+	_assert(e.facing == -1, "T4b 敌方 facing=-1 (实际=%d)" % e.facing)
+
+	# T5: move 后保持最终朝向
+	u = packed.instantiate()
+	u.setup(data_xu, Vector2i(4, 4))
+	root.add_child(u)
+	await process_frame
+	await u.move_along_path([Vector2i(3, 4), Vector2i(2, 4)])
+	_assert(u.facing == -1, "T5a 向左移动后 facing=-1 (实际=%d)" % u.facing)
+	_assert(u.anim_sprite.animation == &"idle", "T5b 移动结束后回到 idle")
+	_assert(u.anim_sprite.flip_h == true, "T5c 向左移动后 idle 保持朝左")
+
+	# T6: attack 后保持目标方向
+	await u.play_attack(Vector2(u.position.x + 64.0, u.position.y))
+	_assert(u.facing == 1, "T6a 攻击右侧目标后 facing=1 (实际=%d)" % u.facing)
+	_assert(u.anim_sprite.animation == &"idle", "T6b 攻击结束后回到 idle")
+	_assert(u.anim_sprite.flip_h == false, "T6c 攻击右侧后 idle 保持朝右")
+
+	# T7: hurt feedback
+	u.current_hp = data_xu.max_hp
+	u._refresh_health_bar()
+	var expected_base := data_xu.modulate
+	var pre_hurt_pos := u.position
+	u.take_damage(3)
+	await process_frame
+	var hurt_color := u.anim_sprite.modulate
+	_assert(u._hurt_feedback_running, "T7a take_damage 后进入受击反馈中")
+	_assert(hurt_color != expected_base,
+		"T7b 受击反馈期间 modulate 已变化 (实际=%s)" % str(hurt_color))
+	for _i in 40:
+		if not u._hurt_feedback_running:
+			break
+		await process_frame
+	_assert(not u._hurt_feedback_running, "T7c 受击反馈能正常结束")
+	_assert(u.anim_sprite.modulate == expected_base,
+		"T7d 受击结束后颜色恢复基础值 (实际=%s)" % str(u.anim_sprite.modulate))
+	_assert(u.position == pre_hurt_pos,
+		"T7e 受击结束后位置恢复 (实际=%s 期望=%s)" % [str(u.position), str(pre_hurt_pos)])
+
 	e.queue_free()
+	u.queue_free()
 	await process_frame
 
 	_finish()

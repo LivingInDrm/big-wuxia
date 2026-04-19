@@ -23,9 +23,13 @@ const TILE_PX := 64
 var current_hp: int = 0
 var current_position: Vector2i = Vector2i.ZERO
 var acted: bool = false
+var facing: int = 1
+var _hurt_feedback_running: bool = false
 
 signal unit_selected(unit: Unit)
 signal unit_died(unit: Unit)
+signal hurt_started(unit: Unit)
+signal hurt_finished(unit: Unit)
 
 
 ## 场景预设或代码构造时调用；add_child 之后 _ready 会按 unit_data 初始化视觉。
@@ -42,9 +46,9 @@ func _ready() -> void:
 	# 动画
 	anim_sprite.sprite_frames = unit_data.sprite_frames
 	anim_sprite.offset = unit_data.sprite_offset
-	anim_sprite.modulate = unit_data.modulate
-	# 敌方单位面向左（flip_h），玩家单位保持默认（面向右）
-	anim_sprite.flip_h = unit_data.is_enemy
+	facing = -1 if unit_data.is_enemy else 1
+	_refresh_sprite_modulate()
+	_apply_facing()
 	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("idle"):
 		anim_sprite.play("idle")
 
@@ -95,7 +99,7 @@ func set_selected(on: bool) -> void:
 func set_acted(on: bool) -> void:
 	acted = on
 	acted_indicator.visible = on
-	anim_sprite.modulate = unit_data.modulate * (Color(0.6, 0.6, 0.6, 1.0) if on else Color.WHITE)
+	_refresh_sprite_modulate()
 
 
 ## 扣血 + 更新 HP 条；HP<=0 触发 unit_died 信号并启动死亡动画。
@@ -106,6 +110,9 @@ func take_damage(amount: int) -> void:
 	_refresh_health_bar()
 	if current_hp <= 0:
 		_die()
+		return
+	if is_inside_tree():
+		_play_hurt_feedback()
 
 
 ## 沿 path 逐格 tween 过去（每格 0.15s）。Coroutine：await unit.move_along_path(...)。
@@ -113,16 +120,10 @@ func take_damage(amount: int) -> void:
 func move_along_path(path: Array[Vector2i]) -> void:
 	if path.is_empty():
 		return
+	_update_facing(path.back().x - current_position.x)
 	# 播放 run 动画
 	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("run"):
 		anim_sprite.play("run")
-	# 根据移动方向调整朝向（敌方默认左，不覆盖）
-	var first_dx: int = path[0].x - current_position.x
-	if not unit_data.is_enemy:
-		if first_dx > 0:
-			anim_sprite.flip_h = false
-		elif first_dx < 0:
-			anim_sprite.flip_h = true
 
 	for step in path:
 		var target_px := Vector2(
@@ -137,8 +138,7 @@ func move_along_path(path: Array[Vector2i]) -> void:
 	# 恢复 idle + 恢复朝向
 	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("idle"):
 		anim_sprite.play("idle")
-	if not unit_data.is_enemy:
-		anim_sprite.flip_h = false
+	_apply_facing()
 
 
 ## 播放 attack 动画（Coroutine：await unit.play_attack()）。
@@ -146,10 +146,7 @@ func move_along_path(path: Array[Vector2i]) -> void:
 func play_attack(target_world_pos: Vector2 = Vector2.ZERO) -> void:
 	# 调整朝向到目标
 	if target_world_pos != Vector2.ZERO:
-		if not unit_data.is_enemy:
-			anim_sprite.flip_h = target_world_pos.x < position.x
-		else:
-			anim_sprite.flip_h = target_world_pos.x <= position.x
+		_update_facing(signi(int(round(target_world_pos.x - position.x))))
 	var anim_name := "attack" if anim_sprite.sprite_frames != null \
 		and anim_sprite.sprite_frames.has_animation("attack") else "idle"
 	anim_sprite.play(anim_name)
@@ -161,11 +158,7 @@ func play_attack(target_world_pos: Vector2 = Vector2.ZERO) -> void:
 	# 回到 idle
 	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("idle"):
 		anim_sprite.play("idle")
-	# 恢复默认朝向
-	if not unit_data.is_enemy:
-		anim_sprite.flip_h = false
-	else:
-		anim_sprite.flip_h = true
+	_apply_facing()
 
 
 func _die() -> void:
@@ -182,3 +175,50 @@ func _on_area_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void
 		# 否则"点击敌兵"会同时被当成"点击空格"从而立刻 _finish_unit_action，
 		# 导致攻击动画未播放 + 状态瞬间回 IDLE（用户感知为"无响应"）
 		get_viewport().set_input_as_handled()
+
+
+func _update_facing(dx: int) -> void:
+	if dx < 0:
+		facing = -1
+	elif dx > 0:
+		facing = 1
+	_apply_facing()
+
+
+func _apply_facing() -> void:
+	if anim_sprite != null:
+		anim_sprite.flip_h = facing < 0
+
+
+func _refresh_sprite_modulate() -> void:
+	if anim_sprite == null or unit_data == null:
+		return
+	if _hurt_feedback_running:
+		return
+	var acted_tint := Color(0.6, 0.6, 0.6, 1.0) if acted else Color.WHITE
+	anim_sprite.modulate = unit_data.modulate * acted_tint
+
+
+func _play_hurt_feedback() -> void:
+	if _hurt_feedback_running or anim_sprite == null or unit_data == null or current_hp <= 0:
+		return
+	_hurt_feedback_running = true
+	var base_pos := position
+	var base_color := unit_data.modulate * (Color(0.6, 0.6, 0.6, 1.0) if acted else Color.WHITE)
+	var shake_offset := Vector2(-6.0 * float(facing), 0.0)
+	anim_sprite.modulate = Color(1.0, 0.3, 0.3, 1.0)
+	hurt_started.emit(self)
+
+	var tw := create_tween()
+	tw.tween_property(anim_sprite, "modulate", base_color, 0.12)
+	tw.parallel().tween_property(self, "position", base_pos + shake_offset, 0.05)
+	tw.chain().tween_property(self, "position", base_pos - shake_offset, 0.08)
+	tw.chain().tween_property(self, "position", base_pos, 0.07)
+	tw.finished.connect(_on_hurt_feedback_finished.bind(base_pos))
+
+
+func _on_hurt_feedback_finished(base_pos: Vector2) -> void:
+	position = base_pos
+	_hurt_feedback_running = false
+	_refresh_sprite_modulate()
+	hurt_finished.emit(self)
