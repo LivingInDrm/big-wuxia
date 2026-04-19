@@ -413,7 +413,6 @@ func _grant_loot_drops() -> void:
 	if drops.is_empty():
 		return
 
-	var drop_texts: Array[String] = []
 	for drop in drops:
 		if not (drop is Dictionary):
 			continue
@@ -422,17 +421,4 @@ func _grant_loot_drops() -> void:
 		if item_id.is_empty() or count <= 0:
 			continue
 		game_state.inventory.add(item_id, count)
-		drop_texts.append("%s x%d" % [_get_item_name(item_id), count])
 
-	if not drop_texts.is_empty():
-		print("%s 掉落: %s" % [unit_data.unit_name, ", ".join(drop_texts)])
-
-
-func _get_item_name(item_id: String) -> String:
-	var path := "%s%s.tres" % [ITEM_DIR, item_id]
-	if not ResourceLoader.exists(path):
-		return item_id
-	var item := load(path) as ItemData
-	if item == null or item.name.is_empty():
-		return item_id
-	return item.name

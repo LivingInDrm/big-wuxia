@@ -66,15 +66,12 @@ var _battle_ended: bool = false
 
 
 func _ready() -> void:
-	print("[BattleController] ready")
-
 	current_level_data = _resolve_level_data()
 	_paint_map()
 
 	grid = GridSystem.new()
 	add_child(grid)
 	grid.init_from_tilemap(terrain_layer)
-	print("[BattleController] GridSystem initialized with %d tiles" % grid.tile_count())
 
 	_spawn_units()
 
@@ -104,7 +101,6 @@ func _paint_map() -> void:
 				cells.append(Vector2i(x, y))
 	map_bounds = _compute_bounds(cells)
 	terrain_layer.set_cells_terrain_connect(cells, TERRAIN_SET_ID, GRASS_TERRAIN_ID, true)
-	print("[BattleController] painted %d cells via terrain_connect (grass)" % cells.size())
 
 
 func _spawn_units() -> void:
@@ -117,10 +113,6 @@ func _spawn_units() -> void:
 		_spawn_unit_entry(entry, false)
 	for entry in current_level_data.enemy_units:
 		_spawn_unit_entry(entry, true)
-
-	print("[BattleController] spawned %d player + %d enemy units" % [
-		player_units.size(), enemy_units.size()])
-
 
 # ============ 输入处理 ============
 
@@ -312,7 +304,6 @@ func _finish_unit_action(unit: Unit) -> void:
 # ============ 回合流转 ============
 
 func _on_turn_started(turn_num: int) -> void:
-	print("[BattleController] turn_started: %d" % turn_num)
 	ui.set_turn(turn_num, TurnManager.phase_label(turn_manager.current_phase))
 	if turn_num > 1:
 		for u in player_units + enemy_units:
@@ -656,7 +647,6 @@ func _grant_level_rewards() -> void:
 	if level_data == null or level_data.rewards.is_empty():
 		return
 
-	var reward_texts: Array[String] = []
 	for reward in level_data.rewards:
 		if not (reward is Dictionary):
 			continue
@@ -668,10 +658,6 @@ func _grant_level_rewards() -> void:
 		if game_state == null:
 			return
 		game_state.inventory.add(item_id, count)
-		reward_texts.append("%s x%d" % [_get_item_name(item_id), count])
-
-	if not reward_texts.is_empty():
-		print("%s 通关奖励: %s" % [level_data.level_name, ", ".join(reward_texts)])
 
 
 func _spawn_unit_entry(entry: Dictionary, is_enemy: bool) -> void:
@@ -750,14 +736,6 @@ func _is_boss_alive() -> bool:
 	return false
 
 
-func _get_item_name(item_id: String) -> String:
-	var path := "%s%s.tres" % [ITEM_DIR, item_id]
-	if not ResourceLoader.exists(path):
-		return item_id
-	var item := load(path) as ItemData
-	if item == null or item.name.is_empty():
-		return item_id
-	return item.name
 
 
 func _game_state():
