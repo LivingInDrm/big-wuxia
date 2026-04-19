@@ -36,8 +36,8 @@ func _run() -> void:
 	for _i in 20:
 		await process_frame
 
-	var xu: Unit = battle.get_player_units()[0]       # (2, 2)
-	var enemy_a: Unit = battle.get_enemy_units()[0]   # (6, 1)
+	var xu: Unit = battle.get_player_units()[0]       # (1, 2)
+	var enemy_a: Unit = battle.get_enemy_units()[0]   # (4, 2)
 	var grid: GridSystem = battle.get_grid()
 
 	_assert(xu.unit_data.unit_id == "xu_fengnian", "setup: xu is 徐凤年")
@@ -56,10 +56,10 @@ func _run() -> void:
 	_assert(not battle.current_move_range.is_empty(),
 		"T1c move_range 非空 (size=%d)" % battle.current_move_range.size())
 
-	# === 步骤 2：点击移动范围内的 (5, 2) 空格 ===
-	var move_target := Vector2i(5, 2)
+	# === 步骤 2：点击移动范围内的 (3, 2) 空格 ===
+	var move_target := Vector2i(3, 2)
 	_assert(battle.current_move_range.has(move_target),
-		"T2a (5,2) 应在 move_range 内")
+		"T2a (3,2) 应在 move_range 内")
 
 	var target_world := Vector2(
 		move_target.x * TILE_PX + TILE_PX / 2.0,
@@ -76,7 +76,7 @@ func _run() -> void:
 	_assert(not battle.current_attack_range.is_empty(),
 		"T2d attack_range 非空 (size=%d)" % battle.current_attack_range.size())
 	_assert(battle.current_attack_range.has(enemy_a.current_position),
-		"T2e (6,1) 敌兵应在攻击范围内")
+		"T2e (4,2) 敌兵应在攻击范围内")
 
 	# === 步骤 3（BUG 验证）：点击敌兵 → 期望 HP 下降 + 攻击动画播放 ===
 	# 关键：真实管线里这次点击会先进入 _unhandled_input，再进入 Area2D.input_event。

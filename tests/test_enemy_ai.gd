@@ -58,16 +58,16 @@ func _run() -> void:
 		"T1c dmg=1 (实际=%d)" % (xu_hp_before - xu.current_hp))
 
 	# === T2: 敌兵离玩家远 → 先移动再看能否攻击 ===
-	# 挪 enemy2 到远处 (10,9)；除 jiang 外把其他玩家移走
+	# 挪 enemy2 到远处 (7,7)；除 jiang 外把其他玩家移走
 	g.get_tile(enemy2.current_position).occupant = null
-	var far: Vector2i = Vector2i(10, 9)
+	var far: Vector2i = Vector2i(7, 7)
 	enemy2.current_position = far
 	enemy2.position = Vector2(far.x * 64 + 32, far.y * 64 + 32)
 	g.get_tile(far).occupant = enemy2
 
-	# 放 jiang 到 (6,9)，敌兵 mov=3，Manhattan 距离 = 4+0 = 4，移 3 格后距离 = 1 → 可攻击
+	# 放 jiang 到 (4,7)，敌兵 mov=3，可先移动到相邻格再攻击
 	g.get_tile(jiang.current_position).occupant = null
-	var jiang_pos := Vector2i(6, 9)
+	var jiang_pos := Vector2i(4, 7)
 	jiang.current_position = jiang_pos
 	jiang.position = Vector2(jiang_pos.x * 64 + 32, jiang_pos.y * 64 + 32)
 	g.get_tile(jiang_pos).occupant = jiang

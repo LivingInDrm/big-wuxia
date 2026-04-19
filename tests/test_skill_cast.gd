@@ -29,7 +29,7 @@ func _test_cross_skill_on_empty_cell() -> void:
 	var hp_mid := enemy_mid.current_hp
 
 	await _click_unit(xu, battle)
-	await _click_empty_cell(_coord_to_world(Vector2i(5, 2)), battle)
+	await _click_empty_cell(_coord_to_world(Vector2i(3, 2)), battle)
 	for _i in 120:
 		await process_frame
 
@@ -39,7 +39,7 @@ func _test_cross_skill_on_empty_cell() -> void:
 	await process_frame
 	_assert(battle.select_state == 3, "T2 进入 SKILL_TARGETING")
 
-	await _click_empty_cell(_coord_to_world(Vector2i(6, 2)), battle)
+	await _click_empty_cell(_coord_to_world(Vector2i(4, 3)), battle)
 	for _i in 120:
 		await process_frame
 
@@ -62,7 +62,7 @@ func _test_cross_skill_on_enemy_unit() -> void:
 	var hp_top := enemy_top.current_hp
 
 	await _click_unit(xu, battle)
-	await _click_empty_cell(_coord_to_world(Vector2i(5, 2)), battle)
+	await _click_empty_cell(_coord_to_world(Vector2i(3, 2)), battle)
 	for _i in 120:
 		await process_frame
 
