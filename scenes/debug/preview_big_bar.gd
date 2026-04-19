@@ -8,8 +8,8 @@ extends Control
 		value = clampf(next_value, 0.0, max_value)
 		queue_redraw()
 
-@export var fill_padding_left := 22.0
-@export var fill_padding_right := 22.0
+@export var fill_padding_left := 55.0
+@export var fill_padding_right := 55.0
 
 
 func _ready() -> void:
