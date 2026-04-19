@@ -144,8 +144,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 		if select_state == SelectState.ITEM_TARGETING:
-			_restore_after_item_cancel()
-			get_viewport().set_input_as_handled()
+			if not _is_click_on_unit(world):
+				_restore_after_item_cancel()
+				get_viewport().set_input_as_handled()
 			return
 		if _is_click_on_unit(world):
 			return
