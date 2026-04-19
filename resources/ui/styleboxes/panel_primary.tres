@@ -1,6 +1,6 @@
 [gd_resource type="StyleBoxTexture" format=3]
 
-[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Papers/RegularPaper.png" id="1_swrnd"]
+[ext_resource type="Texture2D" path="res://resources/ui/textures/recomposed/paper_regular.png" id="1_swrnd"]
 
 [resource]
 content_margin_left = 44.0

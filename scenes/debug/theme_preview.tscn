@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" path="res://resources/ui/theme/main_ui_theme.tres" id="1_jiu0d"]
 [ext_resource type="Script" path="res://scenes/debug/theme_preview.gd" id="2_1rkso"]
-[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Wood Table/WoodTable.png" id="3_duvuw"]
+[ext_resource type="Texture2D" path="res://resources/ui/textures/recomposed/wood_table_background.png" id="3_duvuw"]
 [ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Icons/Icon_05.png" id="4_awjjt"]
 [ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Bars/BigBar_Base.png" id="5_u22jx"]
 [ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Bars/BigBar_Fill.png" id="6_0ajyc"]
@@ -34,10 +34,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_duvuw")
-patch_margin_left = 96
-patch_margin_top = 96
-patch_margin_right = 96
-patch_margin_bottom = 96
+patch_margin_left = 48
+patch_margin_top = 48
+patch_margin_right = 48
+patch_margin_bottom = 48
 
 [node name="@Label@65" type="Label" parent="." unique_id=831285235]
 layout_mode = 0

@@ -1,6 +1,6 @@
 [gd_resource type="StyleBoxTexture" format=3]
 
-[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Buttons/BigBlueButton_Regular.png" id="1_3bq71"]
+[ext_resource type="Texture2D" path="res://resources/ui/textures/recomposed/button_blue_regular.png" id="1_3bq71"]
 
 [resource]
 content_margin_left = 52.0
