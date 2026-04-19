@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" path="res://resources/ui/textures/recomposed/button_red_pressed.png" id="6_7hvnk"]
 [ext_resource type="Texture2D" path="res://resources/ui/textures/recomposed/paper_special.png" id="7_xcf25"]
 [ext_resource type="Texture2D" path="res://resources/ui/textures/recomposed/slot_frame.png" id="8_dtl3j"]
+[ext_resource type="Texture2D" path="res://resources/ui/textures/recomposed/bigbar_base.png" id="9_bbase"]
+[ext_resource type="Texture2D" path="res://resources/ui/textures/recomposed/bigbar_fill_neutral.png" id="10_bfill"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_edf8y"]
 content_margin_left = 52.0
@@ -260,6 +262,20 @@ Label/colors/font_color = Color(0.22745098, 0.14509805, 0.09411765, 1)
 Label/font_sizes/font_size = 22
 Label/fonts/font = ExtResource("1_7hlbw")
 PanelContainer/styles/panel = SubResource("StyleBoxTexture_3tgrv")
+bar/base_type = &"Range"
+bar/colors/fill_tint = Color(1, 1, 1, 1)
+bar/constants/fill_padding_left = 52
+bar/constants/fill_padding_right = 58
+bar/constants/fill_padding_top = 0
+bar/constants/fill_padding_bottom = 0
+bar/icons/base_texture = ExtResource("9_bbase")
+bar/icons/fill_texture = ExtResource("10_bfill")
+bar_hp/base_type = &"bar"
+bar_hp/colors/fill_tint = Color(0.86, 0.2, 0.24, 1)
+bar_mp/base_type = &"bar"
+bar_mp/colors/fill_tint = Color(0.26, 0.52, 0.92, 1)
+bar_exp/base_type = &"bar"
+bar_exp/colors/fill_tint = Color(0.95, 0.78, 0.22, 1)
 body/base_type = &"Label"
 body/colors/font_color = Color(0.22745098, 0.14509805, 0.09411765, 1)
 body/font_sizes/font_size = 22

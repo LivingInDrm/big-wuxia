@@ -6,12 +6,16 @@ extends Control
 @onready var _red_hover: Button = %RedHoverButton
 @onready var _red_pressed: Button = %RedPressedButton
 @onready var _red_disabled: Button = %RedDisabledButton
-@onready var _progress_bar: Control = %PreviewProgressBar
+@onready var _hp_bar: Range = %HPBar
+@onready var _mp_bar: Range = %MPBar
+@onready var _exp_bar: Range = %EXPBar
 
 
 func _ready() -> void:
 	_apply_preview_button_states()
-	_progress_bar.set("value", 70.0)
+	# Value already set in scene; ensure redraw.
+	for bar in [_hp_bar, _mp_bar, _exp_bar]:
+		bar.queue_redraw()
 
 
 func _apply_preview_button_states() -> void:

@@ -108,6 +108,9 @@ const VARIATION_BASES := {
 	"modal": "PanelContainer",
 	"tooltip": "PanelContainer",
 	"slot": "PanelContainer",
+	"bar_hp": "bar",
+	"bar_mp": "bar",
+	"bar_exp": "bar",
 }
 
 var _pass: int = 0
@@ -181,6 +184,30 @@ func _run() -> void:
 			actual_base == expected_base,
 			"variation %s base_type = %s (actual=%s)" % [variation, expected_base, actual_base]
 		)
+
+	# Bar 基础类型（Theme Type "bar"）：fill padding 常量 + base/fill 图标
+	_assert(theme.has_constant("fill_padding_left", "bar"), "bar 变体存在 fill_padding_left 常量")
+	_assert(theme.has_constant("fill_padding_right", "bar"), "bar 变体存在 fill_padding_right 常量")
+	_assert(theme.get_constant("fill_padding_left", "bar") == 52, "bar fill_padding_left = 52 (源像素)")
+	_assert(theme.get_constant("fill_padding_right", "bar") == 58, "bar fill_padding_right = 58 (源像素)")
+	_assert(theme.has_icon("base_texture", "bar"), "bar 变体存在 base_texture 图标")
+	_assert(theme.has_icon("fill_texture", "bar"), "bar 变体存在 fill_texture 图标")
+	_assert(theme.get_icon("base_texture", "bar") != null, "bar.base_texture 可解析为 Texture2D")
+	_assert(theme.get_icon("fill_texture", "bar") != null, "bar.fill_texture 可解析为 Texture2D")
+
+	# bar_hp / bar_mp / bar_exp variations：fill_tint 色相正确
+	for variant in ["bar_hp", "bar_mp", "bar_exp"]:
+		_assert(theme.has_color("fill_tint", variant), "%s 变体存在 fill_tint 颜色" % variant)
+
+	var hp_tint: Color = theme.get_color("fill_tint", "bar_hp")
+	var mp_tint: Color = theme.get_color("fill_tint", "bar_mp")
+	var exp_tint: Color = theme.get_color("fill_tint", "bar_exp")
+	_assert(hp_tint.r > hp_tint.b and hp_tint.r > hp_tint.g, "bar_hp fill_tint 以红色为主 (r>b, r>g)")
+	_assert(mp_tint.b > mp_tint.r and mp_tint.b > mp_tint.g, "bar_mp fill_tint 以蓝色为主 (b>r, b>g)")
+	_assert(exp_tint.r > 0.8 and exp_tint.g > 0.6 and exp_tint.b < 0.4, "bar_exp fill_tint 金黄色 (r高 g高 b低)")
+
+	var themed_bar_script := load("res://resources/ui/controls/themed_bar.gd")
+	_assert(themed_bar_script != null, "themed_bar.gd 可加载")
 
 	# UIColors 常量
 	_assert(UIColors.PAPER_GOLD == Color("#E7C98A"), "UIColors.PAPER_GOLD 常量值正确")

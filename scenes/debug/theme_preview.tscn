@@ -4,9 +4,7 @@
 [ext_resource type="Script" path="res://scenes/debug/theme_preview.gd" id="2_1rkso"]
 [ext_resource type="Texture2D" path="res://resources/ui/textures/recomposed/wood_table_background.png" id="3_duvuw"]
 [ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Icons/Icon_05.png" id="4_awjjt"]
-[ext_resource type="Texture2D" path="res://resources/ui/textures/recomposed/bigbar_base.png" id="5_u22jx"]
-[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Bars/BigBar_Fill.png" id="6_0ajyc"]
-[ext_resource type="Script" path="res://scenes/debug/preview_big_bar.gd" id="7_5gdf6"]
+[ext_resource type="Script" path="res://resources/ui/controls/themed_bar.gd" id="5_themedbar"]
 
 [node name="ThemePreview" type="Control" unique_id=1656057497]
 layout_mode = 3
@@ -457,26 +455,54 @@ horizontal_alignment = 1
 [node name="@VBoxContainer@71" type="VBoxContainer" parent="." unique_id=1370460427]
 layout_mode = 0
 offset_left = 900.0
-offset_top = 548.0
+offset_top = 108.0
 offset_right = 1330.0
 offset_bottom = 734.0
-theme_override_constants/separation = 12
+theme_override_constants/separation = 10
 
 [node name="@Label@63" type="Label" parent="@VBoxContainer@71" unique_id=1320310609]
 layout_mode = 2
 theme_type_variation = &"title"
 text = "进度条系统"
 
-[node name="PreviewProgressBar" type="Control" parent="@VBoxContainer@71" unique_id=1010990651]
+[node name="HPBar" type="Range" parent="@VBoxContainer@71" unique_id=1010990651]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(320, 64)
 layout_mode = 2
-script = ExtResource("7_5gdf6")
-base_texture = ExtResource("5_u22jx")
-fill_texture = ExtResource("6_0ajyc")
-value = 70.0
+theme_type_variation = &"bar_hp"
+script = ExtResource("5_themedbar")
+max_value = 100.0
+value = 90.0
 
-[node name="@Label@64" type="Label" parent="@VBoxContainer@71" unique_id=487987445]
+[node name="HPLabel" type="Label" parent="@VBoxContainer@71" unique_id=487987445]
 layout_mode = 2
 theme_type_variation = &"caption"
-text = "BigBar_Base / BigBar_Fill，当前值 70%"
+text = "HP 条 (bar/hp) · 90%"
+
+[node name="MPBar" type="Range" parent="@VBoxContainer@71" unique_id=1010990652]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 64)
+layout_mode = 2
+theme_type_variation = &"bar_mp"
+script = ExtResource("5_themedbar")
+max_value = 100.0
+value = 60.0
+
+[node name="MPLabel" type="Label" parent="@VBoxContainer@71" unique_id=487987446]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "MP 条 (bar/mp) · 60%"
+
+[node name="EXPBar" type="Range" parent="@VBoxContainer@71" unique_id=1010990653]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 64)
+layout_mode = 2
+theme_type_variation = &"bar_exp"
+script = ExtResource("5_themedbar")
+max_value = 100.0
+value = 30.0
+
+[node name="EXPLabel" type="Label" parent="@VBoxContainer@71" unique_id=487987447]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "EXP 条 (bar/exp) · 30%"
