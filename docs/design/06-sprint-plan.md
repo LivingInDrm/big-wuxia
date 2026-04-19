@@ -4,14 +4,14 @@
 
 ## Sprint 总览
 
-| Sprint | 一句话目标 | 工作量 | 关键产出 |
+| Sprint | 一句话目标 | 工作量 | 关键产出 | 状态 |
 |---|---|---|---|
-| S1 | 项目骨架 + 主菜单 + 武侠 UI 基调 | 1 天 | project.godot + MainMenu + 字体/背景导入 |
-| S2 | 网格地图 + TileMapLayer + GridSystem | 1-2 天 | Battle 场景 + 地形渲染 + 逻辑网格 |
-| S3 | 单位系统 + 回合切换 | 2 天 | Unit 场景 + TurnManager + 3 角色 + 敌人 |
-| S4 | 移动/攻击范围 + 基础战斗 | 2 天 | BFS 移动 + 普攻 + 伤害结算 + 死亡 |
-| S5 | 技能系统 + 地形/克制 + 胜负判定 | 2 天 | 6 个技能 + 地形修正 + Victory/Defeat |
-| S6 | 2 关卡 + polish（字体/特效）+ E2E 通关 | 2 天 | 教程关 + 正式关 + 美术达标（音效/BGM + 立绘替换 → Post-MVP，按 D2/D3 决策剔除） |
+| S1 | 项目骨架 + 主菜单 + 武侠 UI 基调 | 1 天 | project.godot + MainMenu + 字体/背景导入 | 已完成 |
+| S2 | 网格地图 + TileMapLayer + GridSystem | 1-2 天 | Battle 场景 + 地形渲染 + 逻辑网格 | 已完成 |
+| S3 | 单位系统 + 回合切换 | 2 天 | Unit 场景 + TurnManager + 3 角色 + 敌人 | 已完成 |
+| S4 | 移动/攻击范围 + 基础战斗 | 2 天 | BFS 移动 + 普攻 + 伤害结算 + 死亡 | 已完成 |
+| S5 | 技能系统 + 地形/克制 + 胜负判定 | 2 天 | 6 个技能 + 地形修正 + Victory/Defeat | 已完成 |
+| S6 | 2 关卡 + polish（字体/特效）+ E2E 通关 | 2 天 | LevelData + 双关卡 + 选关流程 + 截图化 E2E | 已完成 |
 
 **总工作量**: 10-12 天（按每天 6-8 小时工作计算）
 
@@ -578,6 +578,9 @@
 ---
 
 ## Sprint 6: 2 关卡 + polish（字体/特效）+ E2E 通关
+
+> **完成状态（2026-04-19）**：S6 已完成并进入 MVP Freeze，版本号 `v0.1`。
+> 交付物：`LevelData` Resource、`level_01.tres` / `level_02.tres`、BOSS `yang_yuanzan.tres`、`level_select` 场景、真实鼠标 `tools/e2e_full_playthrough.gd` 与 7 张流程截图。
 
 ### S6.1 目标
 

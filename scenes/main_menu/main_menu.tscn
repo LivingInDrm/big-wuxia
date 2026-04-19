@@ -188,4 +188,5 @@ theme_override_colors/font_color = Color(0.9, 0.88, 0.82, 0.75)
 theme_override_fonts/font = ExtResource("3_font")
 theme_override_font_sizes/font_size = 18
 text = "BigWuXia MVP · Sprint 1"
+text = "BigWuXia MVP · v0.1"
 horizontal_alignment = 2
