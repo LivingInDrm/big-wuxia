@@ -29,8 +29,8 @@ func _test_attack_buff_reads_from_status_source() -> void:
 	var buffed_attack := AttributeResolver.get_attack(unit)
 	var sources: Dictionary = buffed_attack.get("sources", {})
 
-	_assert(int(base_attack.get("total", -1)) == 28, "T1a 基础 attack total=28")
-	_assert(int(buffed_attack.get("total", -1)) == 31, "T1b attack buff 后 total=31")
+	_assert(int(base_attack.get("total", -1)) == 33, "T1a 基础 attack total=33")
+	_assert(int(buffed_attack.get("total", -1)) == 36, "T1b attack buff 后 total=36")
 	_assert(int(sources.get("status", -1)) == 3, "T1c attack sources.status=3")
 
 	unit.queue_free()
@@ -53,7 +53,7 @@ func _test_status_effect_expires_after_turn_end() -> void:
 	battle.get_turn_manager()._next_turn()
 	await process_frame
 	_assert(xu.status_effects.is_empty(), "T2e 第二次回合末扣到 0 自动清除")
-	_assert(int(AttributeResolver.get_attack(xu).get("total", -1)) == 28, "T2f 清除后 attack 恢复")
+	_assert(int(AttributeResolver.get_attack(xu).get("total", -1)) == 33, "T2f 清除后 attack 恢复")
 
 	battle.queue_free()
 	await process_frame

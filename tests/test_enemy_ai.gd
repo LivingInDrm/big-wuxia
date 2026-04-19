@@ -85,8 +85,9 @@ func _run() -> void:
 	_assert(chebyshev <= 1, "T2b 敌兵移到姜泥攻击范围内 (Chebyshev=%d)" % chebyshev)
 	_assert(jiang.current_hp < jiang_hp_before,
 		"T2c 姜泥 hp 下降 (前=%d 后=%d)" % [jiang_hp_before, jiang.current_hp])
-	_assert(jiang_hp_before - jiang.current_hp == 7,
-		"T2d dmg=7 (实际=%d)" % (jiang_hp_before - jiang.current_hp))
+	# 姜泥开场自带 cloth_robe，防御从 7 提到 9，敌兵伤害降到 5。
+	_assert(jiang_hp_before - jiang.current_hp == 5,
+		"T2d dmg=5 (实际=%d)" % (jiang_hp_before - jiang.current_hp))
 
 	# === T3: take_turn 健壮性：玩家全死/空数组不崩溃 ===
 	await ai.take_turn(enemy3, [])

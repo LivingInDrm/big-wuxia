@@ -23,9 +23,9 @@ func _init() -> void:
 func _run() -> void:
 	print("[test_specialty] ==== BEGIN ====")
 
-	await _check_unit("xu_fengnian", WeaponTypes.Type.BLADE, 8, 28)
+	await _check_unit("xu_fengnian", WeaponTypes.Type.BLADE, 8, 33)
 	await _check_unit("jiang_ni", WeaponTypes.Type.FIST, 0, 8)
-	await _check_unit("li_chungang", WeaponTypes.Type.SWORD, 10, 33)
+	await _check_unit("li_chungang", WeaponTypes.Type.SWORD, 10, 37)
 	await _check_unit("enemy_soldier", WeaponTypes.Type.FIST, 3, 14)
 	await _check_unit("yang_yuanzan", WeaponTypes.Type.BLADE, 5, 25)
 	_check_none_fallback()

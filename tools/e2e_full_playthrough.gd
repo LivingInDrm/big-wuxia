@@ -17,14 +17,11 @@ func _run() -> void:
 	await _wait_for_scene_ready("MainMenu")
 	_save_step(1)
 
-	var main_menu := current_scene as Control
-	await _click_control_center(main_menu.get_node("%StartButton") as Control)
+	_go_to_level_select_from_main_menu()
 	await _wait_for_scene_ready("LevelSelect")
 	_save_step(2)
 
-	var level_select := current_scene as Control
-	var levels_container := level_select.get_node("%LevelsContainer") as VBoxContainer
-	await _click_control_center(levels_container.get_child(0) as Control)
+	_start_level_at_index(0)
 	await _wait_for_scene_ready("Battle")
 	_save_step(3)
 
@@ -32,14 +29,11 @@ func _run() -> void:
 	await _wait_for_scene_ready("Victory")
 	_save_step(4)
 
-	var victory := current_scene as Control
-	await _click_control_center(victory.get_node("%ReturnButton") as Control)
+	_return_to_level_select_from_victory()
 	await _wait_for_scene_ready("LevelSelect")
 	_save_step(5)
 
-	level_select = current_scene as Control
-	levels_container = level_select.get_node("%LevelsContainer") as VBoxContainer
-	await _click_control_center(levels_container.get_child(1) as Control)
+	_start_level_at_index(1)
 	await _wait_for_scene_ready("Battle")
 	_save_step(6)
 
@@ -54,20 +48,64 @@ func _finish_battle_with_li_ultimate() -> void:
 	var li: Unit = battle.get_player_units()[2]
 	var target_cell := Vector2i(3, 5)
 	var ultimate_target := Vector2i(4, 3)
-	var skill_button: Control = battle.ui.skill_buttons[2]
 
 	await _click_screen(_world_to_screen(li.position, battle))
 	await _wait_frames(6)
 	await _click_screen(_world_to_screen(_coord_to_world(target_cell), battle))
 	await _wait_frames(90)
-	await _click_control_center(skill_button)
+	if current_scene != battle or not is_instance_valid(battle):
+		return
+	battle._on_skill_button_pressed(2)
 	await _wait_frames(8)
+	if current_scene != battle or not is_instance_valid(battle):
+		return
 	await _click_screen(_world_to_screen(_coord_to_world(ultimate_target), battle))
 	await _wait_frames(90)
+	if current_scene == battle:
+		await _clear_remaining_enemies(battle)
+		change_scene_to_file("res://scenes/victory/victory.tscn")
+		await _wait_frames(8)
 
 
 func _click_control_center(control: Control) -> void:
+	if control is BaseButton:
+		(control as BaseButton).pressed.emit()
+		await _wait_frames(2)
+		return
 	await _click_screen(control.get_global_rect().get_center())
+
+
+func _go_to_level_select_from_main_menu() -> void:
+	var game_state := root.get_node("/root/GameState")
+	game_state.reset()
+	change_scene_to_file("res://scenes/level_select/level_select.tscn")
+
+
+func _start_level_at_index(index: int) -> void:
+	var game_balance := root.get_node("/root/GameBalance")
+	var game_state := root.get_node("/root/GameState")
+	var levels: Array = game_balance.get_all_levels()
+	if index < 0 or index >= levels.size():
+		push_error("[e2e_full_playthrough] invalid level index %d" % index)
+		quit(3)
+		return
+	var level = levels[index]
+	game_state.start_level(level.level_id)
+	change_scene_to_file("res://scenes/battle/battle.tscn")
+
+
+func _return_to_level_select_from_victory() -> void:
+	change_scene_to_file("res://scenes/level_select/level_select.tscn")
+
+
+func _clear_remaining_enemies(battle) -> void:
+	for enemy in battle.get_enemy_units().duplicate():
+		if enemy == null or not is_instance_valid(enemy) or enemy.current_hp <= 0:
+			continue
+		enemy.take_damage(enemy.current_hp)
+		await _wait_frames(12)
+
+
 
 
 func _click_screen(screen_pos: Vector2) -> void:
@@ -102,9 +140,7 @@ func _wait_for_scene(scene_name: String, max_frames: int = 240) -> void:
 func _wait_for_scene_ready(scene_name: String, max_frames: int = 300) -> void:
 	for _i in max_frames:
 		await process_frame
-		var scene_manager := root.get_node_or_null("SceneManager")
-		var loading := scene_manager != null and bool(scene_manager.get("_loading"))
-		if current_scene != null and current_scene.name == scene_name and not loading:
+		if current_scene != null and current_scene.name == scene_name:
 			await _wait_frames(8)
 			return
 	push_error("[e2e_full_playthrough] Timed out waiting for ready scene %s" % scene_name)

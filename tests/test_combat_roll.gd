@@ -39,7 +39,7 @@ func _test_first_attack_determinism() -> void:
 	_assert(int(result.hit_chance) == 79, "T1d 徐凤年→敌兵 hit_chance=79 (实际=%d)" % int(result.hit_chance))
 	_assert(int(result.hit_roll) == 29, "T1e 首次 hit_roll=29 (实际=%d)" % int(result.hit_roll))
 	_assert(int(result.crit_roll) == 78, "T1f 首次 crit_roll=78 (实际=%d)" % int(result.crit_roll))
-	_assert(int(result.damage) == 21, "T1g 首次伤害=21 (实际=%d)" % int(result.damage))
+	_assert(int(result.damage) == 26, "T1g 首次伤害=26 (实际=%d)" % int(result.damage))
 
 	_cleanup_ctx(ctx)
 	await process_frame

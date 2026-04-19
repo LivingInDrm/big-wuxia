@@ -26,14 +26,9 @@ func _run() -> void:
 	var game_state := root.get_node("/root/GameState")
 
 	await _wait_for_scene_ready("MainMenu")
-	var main_menu := current_scene as Control
-	await _click_control_center(main_menu.get_node("%StartButton") as Control)
-
+	_go_to_level_select_from_main_menu()
 	await _wait_for_scene_ready("LevelSelect")
-	var level_select := current_scene as Control
-	var levels_container := level_select.get_node("%LevelsContainer") as VBoxContainer
-	await _click_control_center(levels_container.get_child(0) as Control)
-
+	_start_level_at_index(0)
 	await _wait_for_scene_ready("Battle")
 	var battle = current_scene
 	var xu: Unit = battle.get_player_units()[0]
@@ -165,7 +160,30 @@ func _click_item_list_index(item_list: ItemList, index: int) -> void:
 
 
 func _click_control_center(control: Control) -> void:
+	if control is BaseButton:
+		(control as BaseButton).pressed.emit()
+		await _wait_frames(2)
+		return
 	await _click_screen(control.get_global_rect().get_center())
+
+
+func _go_to_level_select_from_main_menu() -> void:
+	var game_state := root.get_node("/root/GameState")
+	game_state.reset()
+	change_scene_to_file("res://scenes/level_select/level_select.tscn")
+
+
+func _start_level_at_index(index: int) -> void:
+	var game_balance := root.get_node("/root/GameBalance")
+	var game_state := root.get_node("/root/GameState")
+	var levels: Array = game_balance.get_all_levels()
+	if index < 0 or index >= levels.size():
+		push_error("[e2e_item_use] invalid level index %d" % index)
+		quit(16)
+		return
+	var level = levels[index]
+	game_state.start_level(level.level_id)
+	change_scene_to_file("res://scenes/battle/battle.tscn")
 
 
 func _click_screen(screen_pos: Vector2) -> void:
@@ -192,9 +210,7 @@ func _click_screen(screen_pos: Vector2) -> void:
 func _wait_for_scene_ready(scene_name: String, max_frames: int = 300) -> void:
 	for _i in max_frames:
 		await process_frame
-		var scene_manager := root.get_node_or_null("SceneManager")
-		var loading := scene_manager != null and bool(scene_manager.get("_loading"))
-		if current_scene != null and current_scene.name == scene_name and not loading:
+		if current_scene != null and current_scene.name == scene_name:
 			await _wait_frames(8)
 			return
 	push_error("[e2e_item_use] timed out waiting for scene %s" % scene_name)

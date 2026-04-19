@@ -11,6 +11,20 @@ const ItemInstance = preload("res://scripts/core/item_instance.gd")
 const UnitData = preload("res://scripts/core/unit_data.gd")
 const WeaponTypes = preload("res://scripts/core/weapon_types.gd")
 const UNIT_DIR := "res://resources/data/units/"
+const STARTING_EQUIPMENT := {
+	"xu_fengnian": {
+		"item_id": "iron_blade",
+		"slot": ItemData.EquipSlot.WEAPON,
+	},
+	"li_chungang": {
+		"item_id": "plain_sword",
+		"slot": ItemData.EquipSlot.WEAPON,
+	},
+	"jiang_ni": {
+		"item_id": "cloth_robe",
+		"slot": ItemData.EquipSlot.ARMOR,
+	},
+}
 const PLAYER_CHAR_IDS := [
 	"xu_fengnian",
 	"jiang_ni",
@@ -92,6 +106,7 @@ func reset() -> void:
 		var unit_data := _load_unit_data(char_id)
 		if unit_data != null and not unit_data.unit_id.is_empty():
 			equipped[unit_data.unit_id] = _create_empty_slots()
+	_init_starting_equipment()
 
 
 func _ensure_equipped_slots(char_id: String) -> Dictionary:
@@ -116,11 +131,35 @@ func _load_unit_data(char_id: String) -> UnitData:
 	return load(path) as UnitData
 
 
+func _init_starting_equipment() -> void:
+	for char_id in STARTING_EQUIPMENT.keys():
+		var config := STARTING_EQUIPMENT[char_id] as Dictionary
+		if config == null:
+			continue
+		var item_id := String(config.get("item_id", ""))
+		var slot := config.get("slot", ItemData.EquipSlot.WEAPON) as ItemData.EquipSlot
+		if item_id.is_empty():
+			continue
+		inventory.add(item_id)
+		var item_instance := _find_inventory_item(item_id)
+		if item_instance == null:
+			continue
+		equip(String(char_id), slot, item_instance)
+
+
 func _weapon_type_matches(char_id: String, item_data: ItemData) -> bool:
 	var unit_data := _load_unit_data(char_id)
 	if unit_data == null:
 		return false
 	return _weapon_type_to_string(unit_data.weapon_type) == item_data.weapon_type.to_lower()
+
+
+func _find_inventory_item(item_id: String) -> ItemInstance:
+	for entry in inventory.unique_items:
+		var item_instance := entry as ItemInstance
+		if item_instance != null and item_instance.item_data != null and item_instance.item_data.id == item_id:
+			return item_instance
+	return null
 
 
 func _weapon_type_to_string(weapon_type: WeaponTypes.Type) -> String:

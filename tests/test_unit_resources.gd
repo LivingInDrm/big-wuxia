@@ -23,7 +23,7 @@ func _run() -> void:
 	print("[test_unit_resources] ==== BEGIN ====")
 
 	await _check_unit_resource_formula("xu_fengnian", 105, 42)
-	await _check_unit_resource_formula("jiang_ni", 80, 49)
+	await _check_unit_resource_formula("jiang_ni", 85, 49)
 	await _check_unit_resource_formula("li_chungang", 105, 54)
 	await _check_unit_resource_formula("enemy_soldier", 80, 24)
 	await _check_unit_resource_formula("yang_yuanzan", 135, 43)
