@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/item_data.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Icons/Icon_06.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+id = "leather_armor"
+name = "皮甲"
+description = "轻便护甲，P3 接装备属性后提供防御加成。"
+icon = ExtResource("2_icon")
+category = 1
+stackable = false
+max_stack = 1
+droppable = true
+equip_slot = "armor"
+stat_modifiers = {
+"defense": 3
+}
+enhancement_level = 0

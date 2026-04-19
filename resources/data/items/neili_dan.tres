@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/item_data.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Icons/Icon_07.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_script")
+id = "neili_dan"
+name = "内力丹"
+description = "温养经脉，立即恢复 20 点内力。"
+icon = ExtResource("2_icon")
+category = 0
+stackable = true
+max_stack = 99
+droppable = true
+effect_type = 1
+effect_value = 20.0
