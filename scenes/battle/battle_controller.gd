@@ -284,6 +284,11 @@ func _finish_unit_action(unit: Unit) -> void:
 func _on_turn_started(turn_num: int) -> void:
 	print("[BattleController] turn_started: %d" % turn_num)
 	ui.set_turn(turn_num, TurnManager.phase_label(turn_manager.current_phase))
+	if turn_num > 1:
+		for u in player_units + enemy_units:
+			if u == null or not is_instance_valid(u):
+				continue
+			u.tick_status_effects()
 	# 新回合重置 acted
 	for u in player_units + enemy_units:
 		u.set_acted(false)

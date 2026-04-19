@@ -13,6 +13,8 @@ const TILE_PX := 64
 const VFX = preload("res://scripts/systems/vfx.gd")
 const AttributeSet = preload("res://scripts/core/attribute_set.gd")
 const AttributeResolver = preload("res://scripts/systems/attribute_resolver.gd")
+const StatusEffect = preload("res://scripts/core/status_effect.gd")
+const TraitData = preload("res://scripts/core/trait_data.gd")
 
 @export var unit_data: UnitData
 
@@ -33,6 +35,8 @@ var facing: int = 1
 var _hurt_feedback_running: bool = false
 var skills: Array = []
 var temp_move_bonus: int = 0
+var traits: Array[TraitData] = []
+var status_effects: Array[StatusEffect] = []
 
 signal unit_selected(unit: Unit)
 signal unit_died(unit: Unit)
@@ -151,6 +155,35 @@ func get_max_hp() -> int:
 
 func get_max_mp() -> int:
 	return max_mp
+
+
+func add_trait(trait_id: String, modifier_dict: Dictionary) -> TraitData:
+	var trait_item := TraitData.new(trait_id, modifier_dict)
+	traits.append(trait_item)
+	_refresh_derived_resources()
+	return trait_item
+
+
+func add_status_effect(source: String, modifier_dict: Dictionary, remaining_turns: int) -> StatusEffect:
+	var effect := StatusEffect.new(source, modifier_dict, remaining_turns)
+	status_effects.append(effect)
+	_refresh_derived_resources()
+	return effect
+
+
+func tick_status_effects() -> void:
+	if status_effects.is_empty():
+		return
+
+	for effect in status_effects:
+		effect.remaining_turns -= 1
+
+	var remaining: Array[StatusEffect] = []
+	for effect in status_effects:
+		if effect.remaining_turns > 0:
+			remaining.append(effect)
+	status_effects = remaining
+	_refresh_derived_resources()
 
 
 func consume_mp(amount: int) -> bool:
@@ -340,11 +373,23 @@ func _on_hurt_feedback_finished(base_pos: Vector2) -> void:
 
 
 func _initialize_runtime_resources() -> void:
-	var attributes := _get_attributes()
-	max_hp = attributes.base_hp + attributes.constitution * 10 + 1 * 5
-	max_mp = attributes.base_mp + attributes.constitution * 2 + attributes.insight * 3
+	max_hp = int(AttributeResolver.get_max_hp(self)["total"])
+	max_mp = int(AttributeResolver.get_max_mp(self)["total"])
 	current_hp = max_hp
 	current_mp = 0
+
+
+func _refresh_derived_resources() -> void:
+	var prev_max_hp := max_hp
+	var prev_max_mp := max_mp
+	max_hp = int(AttributeResolver.get_max_hp(self)["total"])
+	max_mp = int(AttributeResolver.get_max_mp(self)["total"])
+	if prev_max_hp > 0:
+		current_hp = min(current_hp, max_hp)
+	if prev_max_mp > 0:
+		current_mp = min(current_mp, max_mp)
+	if is_inside_tree():
+		_refresh_health_bar()
 
 
 func _get_attributes() -> AttributeSet:
