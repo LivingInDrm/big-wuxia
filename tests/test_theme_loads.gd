@@ -16,6 +16,20 @@ const STYLEBOX_PATHS := [
 	"res://resources/ui/styleboxes/button_red_hover.tres",
 	"res://resources/ui/styleboxes/button_red_disabled.tres",
 ]
+const STYLEBOX_MARGINS := {
+	"res://resources/ui/styleboxes/panel_primary.tres": 48.0,
+	"res://resources/ui/styleboxes/panel_modal.tres": 56.0,
+	"res://resources/ui/styleboxes/panel_tooltip.tres": 32.0,
+	"res://resources/ui/styleboxes/slot_frame.tres": 40.0,
+	"res://resources/ui/styleboxes/button_blue_normal.tres": 64.0,
+	"res://resources/ui/styleboxes/button_blue_pressed.tres": 64.0,
+	"res://resources/ui/styleboxes/button_blue_hover.tres": 64.0,
+	"res://resources/ui/styleboxes/button_blue_disabled.tres": 64.0,
+	"res://resources/ui/styleboxes/button_red_normal.tres": 64.0,
+	"res://resources/ui/styleboxes/button_red_pressed.tres": 64.0,
+	"res://resources/ui/styleboxes/button_red_hover.tres": 64.0,
+	"res://resources/ui/styleboxes/button_red_disabled.tres": 64.0,
+}
 
 var _pass: int = 0
 var _fail: int = 0
@@ -32,7 +46,20 @@ func _run() -> void:
 	_assert(theme != null, "main_ui_theme.tres 可加载")
 
 	for path in STYLEBOX_PATHS:
-		_assert(load(path) != null, "StyleBox 可加载: %s" % path)
+		var sb := load(path) as StyleBoxTexture
+		_assert(sb != null, "StyleBox 可加载: %s" % path)
+		_assert(
+			sb.axis_stretch_horizontal == StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH,
+			"%s 横向 axis_stretch = STRETCH" % path
+		)
+		_assert(
+			sb.axis_stretch_vertical == StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH,
+			"%s 纵向 axis_stretch = STRETCH" % path
+		)
+		_assert(
+			sb.texture_margin_left == STYLEBOX_MARGINS[path],
+			"%s texture_margin_left = %s" % [path, STYLEBOX_MARGINS[path]]
+		)
 
 	_assert(UIColors.PAPER_GOLD == Color("#E7C98A"), "UIColors.PAPER_GOLD 常量值正确")
 	_assert(UIColors.INK_BROWN == Color("#3A2518"), "UIColors 常量可访问")
