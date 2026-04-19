@@ -198,7 +198,7 @@ theme_type_variation = &"caption"
 text = "(无 variation)"
 
 [node name="Sample" type="Button" parent="Scroll/Root/GroupButtons/VBox/Row_Default"]
-custom_minimum_size = Vector2(400, 140)
+custom_minimum_size = Vector2(400, 200)
 layout_mode = 2
 text = "默认按钮"
 
@@ -213,7 +213,7 @@ theme_type_variation = &"caption"
 text = "danger"
 
 [node name="Sample" type="Button" parent="Scroll/Root/GroupButtons/VBox/Row_Danger"]
-custom_minimum_size = Vector2(400, 140)
+custom_minimum_size = Vector2(400, 200)
 layout_mode = 2
 theme_type_variation = &"danger"
 text = "危险按钮"
