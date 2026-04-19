@@ -198,7 +198,7 @@ theme_type_variation = &"caption"
 text = "(无 variation)"
 
 [node name="Sample" type="Button" parent="Scroll/Root/GroupButtons/VBox/Row_Default"]
-custom_minimum_size = Vector2(200, 76)
+custom_minimum_size = Vector2(400, 140)
 layout_mode = 2
 text = "默认按钮"
 
@@ -213,7 +213,7 @@ theme_type_variation = &"caption"
 text = "danger"
 
 [node name="Sample" type="Button" parent="Scroll/Root/GroupButtons/VBox/Row_Danger"]
-custom_minimum_size = Vector2(200, 76)
+custom_minimum_size = Vector2(400, 140)
 layout_mode = 2
 theme_type_variation = &"danger"
 text = "危险按钮"
@@ -241,7 +241,7 @@ theme_type_variation = &"caption"
 text = "(无 variation)"
 
 [node name="Sample" type="PanelContainer" parent="Scroll/Root/GroupPanels/VBox/Row_Default"]
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(600, 800)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -262,7 +262,7 @@ theme_type_variation = &"caption"
 text = "modal"
 
 [node name="Sample" type="PanelContainer" parent="Scroll/Root/GroupPanels/VBox/Row_Modal"]
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(600, 800)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"modal"
@@ -284,7 +284,7 @@ theme_type_variation = &"caption"
 text = "tooltip"
 
 [node name="Sample" type="PanelContainer" parent="Scroll/Root/GroupPanels/VBox/Row_Tooltip"]
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(600, 400)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"tooltip"
@@ -306,7 +306,7 @@ theme_type_variation = &"caption"
 text = "slot"
 
 [node name="Sample" type="PanelContainer" parent="Scroll/Root/GroupPanels/VBox/Row_Slot"]
-custom_minimum_size = Vector2(140, 140)
+custom_minimum_size = Vector2(400, 400)
 layout_mode = 2
 theme_type_variation = &"slot"
 
