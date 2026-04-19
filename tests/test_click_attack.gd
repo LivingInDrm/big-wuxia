@@ -79,10 +79,9 @@ func _run() -> void:
 		"T2e (6,1) 敌兵应在攻击范围内")
 
 	# === 步骤 3（BUG 验证）：点击敌兵 → 期望 HP 下降 + 攻击动画播放 ===
-	# 关键：这一步必须同时推 _unhandled_input 事件（模拟真实鼠标事件冒泡）
-	#      如果 Unit 没有 set_input_as_handled 防冒泡，_unhandled_input 会把
-	#      这次点击当"点空格" → _finish_unit_action → select_state 瞬间变 IDLE
-	#      → 攻击要么不触发（state 变了）要么 HP 扣减 + acted 但视觉上没攻击动画
+	# 关键：真实管线里这次点击会先进入 _unhandled_input，再进入 Area2D.input_event。
+	#      修复前，前者会直接把单位点击误当作空格结束回合；修复后，点击敌兵应正常
+	#      进入攻击分支并扣减 HP。
 	await _click_unit(enemy_a, battle)
 	# attack 动画 + tween 回位，给充足时间
 	for _i in 120:

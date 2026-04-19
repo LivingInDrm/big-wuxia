@@ -127,10 +127,11 @@ func _spawn_units() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		# 全局左键：Unit 自己在 _on_area_input 里会 set_input_as_handled，
-		# 所以能走到这里的都是"点空格"。
+		# 真实事件顺序里 _unhandled_input 早于 Area2D.input_event。
+		# 先用 physics 点查询过滤掉落在 Unit 身上的点击，避免把"点敌兵"
+		# 误判成"点空格结束回合"。
 		# 用 event.position（视口坐标）→ canvas_transform 逆变换得到世界坐标，
-		# 避免依赖 get_global_mouse_position() 的缓存（测试场景下可能为 0）
+		# 避免依赖 get_global_mouse_position() 的缓存（测试场景下可能为 0）。
 		var mb := event as InputEventMouseButton
 		var world: Vector2 = get_viewport().get_canvas_transform().affine_inverse() * mb.position
 		if _is_click_on_unit(world):
