@@ -8,9 +8,9 @@ extends SceneTree
 ##   T1  Battle 场景可加载 + 实例化不 push_error
 ##   T2  GridSystem 自 TerrainLayer 初始化后 tile_count() == 120 （12×10）
 ##   T3  (0, 0) 格子非空（has_tile / get_tile 非 null）
-##   T4  (0, 0) 地形 tile_id == "grass" （map 左上角定义为 '.' = grass）
-##   T5  (0, 4) 地形 tile_id == "water" （MAP_LAYOUT row 4 col 0 = 'W' = water）
-##   T6  水域 is_walkable() == false （water TerrainTileData.is_obstacle = true）
+##   T4  (0, 0) 地形 tile_id == "grass" （S2 定稿：全 grass 平原）
+##   T5  (0, 4) 地形 tile_id == "grass" （全图均为 grass）
+##   T6  water TerrainTileData.is_obstacle=true → GridTile.is_walkable()=false （地形规则验证）
 ##   T7  grass 地形 is_walkable() == true
 ##   T8  越界坐标 get_tile() 返回 null
 ##
@@ -72,19 +72,21 @@ func _run() -> void:
 		_assert(tile_00.terrain.tile_id == "grass",
 			"T4 (0,0) terrain.tile_id == 'grass' (实际=%s)" % tile_00.terrain.tile_id)
 
-	# T5: (0, 4) 是 water （MAP_LAYOUT row 4 col 0 = 'W'）
+	# T5: (0, 4) 也是 grass（S2 定稿：12×10 全 grass 平原；水域暂未入场）
 	var tile_04 = grid.get_tile(Vector2i(0, 4))
 	_assert(tile_04 != null, "T5a get_tile((0,4)) 返回非 null")
 	if tile_04 != null and tile_04.terrain != null:
-		_assert(tile_04.terrain.tile_id == "water",
-			"T5b (0,4) terrain.tile_id == 'water' (实际=%s)" % tile_04.terrain.tile_id)
+		_assert(tile_04.terrain.tile_id == "grass",
+			"T5b (0,4) terrain.tile_id == 'grass' (实际=%s)" % tile_04.terrain.tile_id)
 
-	# T6: 水不可通行
-	if tile_04 != null:
-		_assert(not tile_04.is_walkable(),
-			"T6 water tile (0,4).is_walkable() == false")
-		_assert(not grid.is_walkable(Vector2i(0, 4)),
-			"T6b grid.is_walkable((0,4)) == false")
+	# T6: 地形规则 — water TerrainTileData.is_obstacle=true → GridTile.is_walkable()=false
+	#     （直接用 .tres 构造 GridTile 验证，不依赖地图上有没有水）
+	var water_terrain: TerrainTileData = load("res://resources/data/tiles/water.tres")
+	_assert(water_terrain != null, "T6a water.tres 可加载")
+	if water_terrain != null:
+		var water_tile := GridTile.new(Vector2i(99, 99), water_terrain)
+		_assert(not water_tile.is_walkable(),
+			"T6b water TerrainTileData → GridTile.is_walkable() == false")
 
 	# T7: 草地可通行
 	if tile_00 != null:
