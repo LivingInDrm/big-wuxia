@@ -1,0 +1,15 @@
+[gd_resource type="StyleBoxTexture" format=3]
+
+[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Buttons/BigRedButton_Regular.png" id="1_hwxhb"]
+
+[resource]
+content_margin_left = 52.0
+content_margin_top = 28.0
+content_margin_right = 52.0
+content_margin_bottom = 34.0
+texture = ExtResource("1_hwxhb")
+texture_margin_left = 64.0
+texture_margin_top = 64.0
+texture_margin_right = 64.0
+texture_margin_bottom = 64.0
+modulate_color = Color(0.6, 0.6, 0.6, 0.7)

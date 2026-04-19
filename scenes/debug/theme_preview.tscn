@@ -1,0 +1,483 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://resources/ui/theme/main_ui_theme.tres" id="1_jiu0d"]
+[ext_resource type="Script" path="res://scenes/debug/theme_preview.gd" id="2_1rkso"]
+[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Wood Table/WoodTable.png" id="3_duvuw"]
+[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Icons/Icon_05.png" id="4_awjjt"]
+[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Bars/BigBar_Base.png" id="5_u22jx"]
+[ext_resource type="Texture2D" path="res://Tiny Swords (Free Pack)/UI Elements/UI Elements/Bars/BigBar_Fill.png" id="6_0ajyc"]
+
+[node name="ThemePreview" type="Control" unique_id=1656057497]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_jiu0d")
+script = ExtResource("2_1rkso")
+
+[node name="BaseColor" type="ColorRect" parent="." unique_id=1671247747]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.84, 0.78, 0.68, 1)
+
+[node name="Background" type="NinePatchRect" parent="." unique_id=1574952604]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_duvuw")
+patch_margin_left = 96
+patch_margin_top = 96
+patch_margin_right = 96
+patch_margin_bottom = 96
+
+[node name="@Label@65" type="Label" parent="." unique_id=831285235]
+layout_mode = 0
+offset_top = 8.0
+offset_right = 1366.0
+offset_bottom = 100.0
+theme_type_variation = &"display"
+text = "UI Theme 预览"
+horizontal_alignment = 1
+
+[node name="@VBoxContainer@66" type="VBoxContainer" parent="." unique_id=1819006285]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 108.0
+offset_right = 486.0
+offset_bottom = 468.0
+theme_override_constants/separation = 12
+
+[node name="@Label@2" type="Label" parent="@VBoxContainer@66" unique_id=1809968921]
+layout_mode = 2
+theme_type_variation = &"title"
+text = "字号层级"
+
+[node name="@VBoxContainer@5" type="VBoxContainer" parent="@VBoxContainer@66" unique_id=1538275424]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="@Label@3" type="Label" parent="@VBoxContainer@66/@VBoxContainer@5" unique_id=846777088]
+layout_mode = 2
+theme_type_variation = &"display"
+text = "大标题"
+
+[node name="@Label@4" type="Label" parent="@VBoxContainer@66/@VBoxContainer@5" unique_id=1654647491]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "80px / 主展示标题"
+
+[node name="@VBoxContainer@8" type="VBoxContainer" parent="@VBoxContainer@66" unique_id=586779761]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="@Label@6" type="Label" parent="@VBoxContainer@66/@VBoxContainer@8" unique_id=1872473179]
+layout_mode = 2
+theme_type_variation = &"title"
+text = "标题"
+
+[node name="@Label@7" type="Label" parent="@VBoxContainer@66/@VBoxContainer@8" unique_id=130386678]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "48px / 模块标题"
+
+[node name="@VBoxContainer@11" type="VBoxContainer" parent="@VBoxContainer@66" unique_id=1465627256]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="@Label@9" type="Label" parent="@VBoxContainer@66/@VBoxContainer@11" unique_id=1821699059]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "小节"
+
+[node name="@Label@10" type="Label" parent="@VBoxContainer@66/@VBoxContainer@11" unique_id=1811944837]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "30px / 次级标题"
+
+[node name="@VBoxContainer@14" type="VBoxContainer" parent="@VBoxContainer@66" unique_id=724566824]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="@Label@12" type="Label" parent="@VBoxContainer@66/@VBoxContainer@14" unique_id=62161068]
+layout_mode = 2
+theme_type_variation = &"body"
+text = "正文"
+
+[node name="@Label@13" type="Label" parent="@VBoxContainer@66/@VBoxContainer@14" unique_id=1445480921]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "22px / 正文默认层级"
+
+[node name="@VBoxContainer@17" type="VBoxContainer" parent="@VBoxContainer@66" unique_id=1513984995]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="@Label@15" type="Label" parent="@VBoxContainer@66/@VBoxContainer@17" unique_id=1841670227]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "说明"
+
+[node name="@Label@16" type="Label" parent="@VBoxContainer@66/@VBoxContainer@17" unique_id=15491840]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "17px / 说明与注释"
+
+[node name="@VBoxContainer@20" type="VBoxContainer" parent="@VBoxContainer@66" unique_id=1491876620]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="@Label@18" type="Label" parent="@VBoxContainer@66/@VBoxContainer@20" unique_id=626325677]
+layout_mode = 2
+theme_type_variation = &"micro"
+text = "微字"
+
+[node name="@Label@19" type="Label" parent="@VBoxContainer@66/@VBoxContainer@20" unique_id=702924429]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "13px / 极小提示文案"
+
+[node name="@VBoxContainer@67" type="VBoxContainer" parent="." unique_id=1820425450]
+layout_mode = 0
+offset_left = 520.0
+offset_top = 108.0
+offset_right = 1330.0
+offset_bottom = 358.0
+theme_override_constants/separation = 12
+
+[node name="@Label@21" type="Label" parent="@VBoxContainer@67" unique_id=1637588209]
+layout_mode = 2
+theme_type_variation = &"title"
+text = "按钮系统"
+
+[node name="@GridContainer@22" type="GridContainer" parent="@VBoxContainer@67" unique_id=926797348]
+layout_mode = 2
+theme_override_constants/h_separation = 18
+theme_override_constants/v_separation = 18
+columns = 4
+
+[node name="BlueNormalButton" type="Button" parent="@VBoxContainer@67/@GridContainer@22" unique_id=2007429734]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(182, 76)
+layout_mode = 2
+focus_mode = 0
+text = "蓝 普通"
+
+[node name="BlueHoverButton" type="Button" parent="@VBoxContainer@67/@GridContainer@22" unique_id=1113502765]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(182, 76)
+layout_mode = 2
+focus_mode = 0
+text = "蓝 悬停"
+
+[node name="BluePressedButton" type="Button" parent="@VBoxContainer@67/@GridContainer@22" unique_id=1183481133]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(182, 76)
+layout_mode = 2
+focus_mode = 0
+text = "蓝 按下"
+
+[node name="BlueDisabledButton" type="Button" parent="@VBoxContainer@67/@GridContainer@22" unique_id=1023325128]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(182, 76)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+text = "蓝 禁用"
+
+[node name="RedNormalButton" type="Button" parent="@VBoxContainer@67/@GridContainer@22" unique_id=62125030]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(182, 76)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"danger"
+text = "红 普通"
+
+[node name="RedHoverButton" type="Button" parent="@VBoxContainer@67/@GridContainer@22" unique_id=1987999694]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(182, 76)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"danger"
+text = "红 悬停"
+
+[node name="RedPressedButton" type="Button" parent="@VBoxContainer@67/@GridContainer@22" unique_id=1170615086]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(182, 76)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"danger"
+text = "红 按下"
+
+[node name="RedDisabledButton" type="Button" parent="@VBoxContainer@67/@GridContainer@22" unique_id=1233960671]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(182, 76)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"danger"
+disabled = true
+text = "红 禁用"
+
+[node name="@VBoxContainer@68" type="VBoxContainer" parent="." unique_id=1833270254]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 396.0
+offset_right = 1330.0
+offset_bottom = 572.0
+theme_override_constants/separation = 12
+
+[node name="@Label@23" type="Label" parent="@VBoxContainer@68" unique_id=1241917467]
+layout_mode = 2
+theme_type_variation = &"title"
+text = "面板系统"
+
+[node name="@HBoxContainer@36" type="HBoxContainer" parent="@VBoxContainer@68" unique_id=1308826767]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="@PanelContainer@27" type="PanelContainer" parent="@VBoxContainer@68/@HBoxContainer@36" unique_id=569264648]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="@VBoxContainer@26" type="VBoxContainer" parent="@VBoxContainer@68/@HBoxContainer@36/@PanelContainer@27" unique_id=593265497]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="@Label@24" type="Label" parent="@VBoxContainer@68/@HBoxContainer@36/@PanelContainer@27/@VBoxContainer@26" unique_id=1484337128]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "默认面板"
+
+[node name="@Label@25" type="Label" parent="@VBoxContainer@68/@HBoxContainer@36/@PanelContainer@27/@VBoxContainer@26" unique_id=646515840]
+layout_mode = 2
+theme_type_variation = &"body"
+text = "山雨欲来，纸面层次偏厚，适合正文容器。"
+autowrap_mode = 3
+
+[node name="@PanelContainer@31" type="PanelContainer" parent="@VBoxContainer@68/@HBoxContainer@36" unique_id=1441567268]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"modal"
+
+[node name="@VBoxContainer@30" type="VBoxContainer" parent="@VBoxContainer@68/@HBoxContainer@36/@PanelContainer@31" unique_id=950162689]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="@Label@28" type="Label" parent="@VBoxContainer@68/@HBoxContainer@36/@PanelContainer@31/@VBoxContainer@30" unique_id=2096065632]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "模态面板"
+
+[node name="@Label@29" type="Label" parent="@VBoxContainer@68/@HBoxContainer@36/@PanelContainer@31/@VBoxContainer@30" unique_id=1911023945]
+layout_mode = 2
+theme_type_variation = &"body"
+text = "边缘更宽，视觉更正式，适合弹窗。"
+autowrap_mode = 3
+
+[node name="@PanelContainer@35" type="PanelContainer" parent="@VBoxContainer@68/@HBoxContainer@36" unique_id=975218906]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"tooltip"
+
+[node name="@VBoxContainer@34" type="VBoxContainer" parent="@VBoxContainer@68/@HBoxContainer@36/@PanelContainer@35" unique_id=1757669787]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="@Label@32" type="Label" parent="@VBoxContainer@68/@HBoxContainer@36/@PanelContainer@35/@VBoxContainer@34" unique_id=1517412690]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "提示面板"
+
+[node name="@Label@33" type="Label" parent="@VBoxContainer@68/@HBoxContainer@36/@PanelContainer@35/@VBoxContainer@34" unique_id=877203969]
+layout_mode = 2
+theme_type_variation = &"body"
+text = "窄边纸张，适合短信息与说明。"
+autowrap_mode = 3
+
+[node name="@VBoxContainer@69" type="VBoxContainer" parent="." unique_id=1796063328]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 586.0
+offset_right = 296.0
+offset_bottom = 734.0
+theme_override_constants/separation = 12
+
+[node name="@Label@37" type="Label" parent="@VBoxContainer@69" unique_id=905437520]
+layout_mode = 2
+theme_type_variation = &"title"
+text = "槽位系统"
+
+[node name="@HBoxContainer@42" type="HBoxContainer" parent="@VBoxContainer@69" unique_id=1198582640]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="@PanelContainer@40" type="PanelContainer" parent="@VBoxContainer@69/@HBoxContainer@42" unique_id=1378709230]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+theme_type_variation = &"slot"
+
+[node name="@CenterContainer@39" type="CenterContainer" parent="@VBoxContainer@69/@HBoxContainer@42/@PanelContainer@40" unique_id=702849125]
+layout_mode = 2
+
+[node name="@TextureRect@38" type="TextureRect" parent="@VBoxContainer@69/@HBoxContainer@42/@PanelContainer@40/@CenterContainer@39" unique_id=1912673037]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("4_awjjt")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="@Label@41" type="Label" parent="@VBoxContainer@69/@HBoxContainer@42" unique_id=2138380098]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"body"
+text = "Icon_05 铁刀放入 slot_frame，示意装备槽位的纹理边框。"
+autowrap_mode = 3
+
+[node name="@VBoxContainer@70" type="VBoxContainer" parent="." unique_id=509342559]
+layout_mode = 0
+offset_left = 316.0
+offset_top = 586.0
+offset_right = 876.0
+offset_bottom = 784.0
+theme_override_constants/separation = 12
+
+[node name="@Label@43" type="Label" parent="@VBoxContainer@70" unique_id=237845052]
+layout_mode = 2
+theme_type_variation = &"title"
+text = "色板系统"
+
+[node name="@GridContainer@62" type="GridContainer" parent="@VBoxContainer@70" unique_id=270922502]
+layout_mode = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 12
+columns = 3
+
+[node name="@VBoxContainer@46" type="VBoxContainer" parent="@VBoxContainer@70/@GridContainer@62" unique_id=1422395221]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="@ColorRect@44" type="ColorRect" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@46" unique_id=595103704]
+custom_minimum_size = Vector2(92, 56)
+layout_mode = 2
+color = Color(0.90588236, 0.7882353, 0.5411765, 1)
+
+[node name="@Label@45" type="Label" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@46" unique_id=1003751494]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "PAPER_GOLD"
+horizontal_alignment = 1
+
+[node name="@VBoxContainer@49" type="VBoxContainer" parent="@VBoxContainer@70/@GridContainer@62" unique_id=1460631583]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="@ColorRect@47" type="ColorRect" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@49" unique_id=1691278364]
+custom_minimum_size = Vector2(92, 56)
+layout_mode = 2
+color = Color(0.22745098, 0.14509805, 0.09411765, 1)
+
+[node name="@Label@48" type="Label" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@49" unique_id=1810035082]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "INK_BROWN"
+horizontal_alignment = 1
+
+[node name="@VBoxContainer@52" type="VBoxContainer" parent="@VBoxContainer@70/@GridContainer@62" unique_id=374428689]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="@ColorRect@50" type="ColorRect" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@52" unique_id=1655151659]
+custom_minimum_size = Vector2(92, 56)
+layout_mode = 2
+color = Color(0.1254902, 0.078431375, 0.050980393, 1)
+
+[node name="@Label@51" type="Label" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@52" unique_id=1301514177]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "WOOD_SHADOW"
+horizontal_alignment = 1
+
+[node name="@VBoxContainer@55" type="VBoxContainer" parent="@VBoxContainer@70/@GridContainer@62" unique_id=411643589]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="@ColorRect@53" type="ColorRect" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@55" unique_id=595520362]
+custom_minimum_size = Vector2(92, 56)
+layout_mode = 2
+color = Color(0.30588236, 0.43137255, 0.4862745, 1)
+
+[node name="@Label@54" type="Label" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@55" unique_id=415548836]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "JADE_BLUE"
+horizontal_alignment = 1
+
+[node name="@VBoxContainer@58" type="VBoxContainer" parent="@VBoxContainer@70/@GridContainer@62" unique_id=298252183]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="@ColorRect@56" type="ColorRect" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@58" unique_id=8705481]
+custom_minimum_size = Vector2(92, 56)
+layout_mode = 2
+color = Color(0.6039216, 0.29411766, 0.24705882, 1)
+
+[node name="@Label@57" type="Label" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@58" unique_id=597219486]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "CINNABAR"
+horizontal_alignment = 1
+
+[node name="@VBoxContainer@61" type="VBoxContainer" parent="@VBoxContainer@70/@GridContainer@62" unique_id=640743233]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="@ColorRect@59" type="ColorRect" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@61" unique_id=1409574280]
+custom_minimum_size = Vector2(92, 56)
+layout_mode = 2
+color = Color(0.43137255, 0.54509807, 0.2901961, 1)
+
+[node name="@Label@60" type="Label" parent="@VBoxContainer@70/@GridContainer@62/@VBoxContainer@61" unique_id=1690181596]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "HERB_GREEN"
+horizontal_alignment = 1
+
+[node name="@VBoxContainer@71" type="VBoxContainer" parent="." unique_id=1370460427]
+layout_mode = 0
+offset_left = 900.0
+offset_top = 586.0
+offset_right = 1330.0
+offset_bottom = 734.0
+theme_override_constants/separation = 12
+
+[node name="@Label@63" type="Label" parent="@VBoxContainer@71" unique_id=1320310609]
+layout_mode = 2
+theme_type_variation = &"title"
+text = "进度条系统"
+
+[node name="PreviewProgressBar" type="TextureProgressBar" parent="@VBoxContainer@71" unique_id=1010990651]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 64)
+layout_mode = 2
+value = 70.0
+nine_patch_stretch = true
+stretch_margin_left = 56
+stretch_margin_right = 56
+texture_under = ExtResource("5_u22jx")
+texture_progress = ExtResource("6_0ajyc")
+
+[node name="@Label@64" type="Label" parent="@VBoxContainer@71" unique_id=487987445]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "BigBar_Base / BigBar_Fill，当前值 70%"
