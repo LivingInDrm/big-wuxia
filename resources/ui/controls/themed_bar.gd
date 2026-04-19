@@ -58,20 +58,10 @@ func _draw() -> void:
 	if ratio <= 0.0:
 		return
 
-	var scale_x := 1.0
-	var scale_y := 1.0
-	if base != null:
-		var bw := float(base.get_width())
-		var bh := float(base.get_height())
-		if bw > 0.0:
-			scale_x = size.x / bw
-		if bh > 0.0:
-			scale_y = size.y / bh
-
-	var pad_l := _resolve_constant(FILL_PADDING_LEFT) * scale_x
-	var pad_r := _resolve_constant(FILL_PADDING_RIGHT) * scale_x
-	var pad_t := _resolve_constant(FILL_PADDING_TOP) * scale_y
-	var pad_b := _resolve_constant(FILL_PADDING_BOTTOM) * scale_y
+	var pad_l := _resolve_scaled_padding(FILL_PADDING_LEFT, true, base)
+	var pad_r := _resolve_scaled_padding(FILL_PADDING_RIGHT, true, base)
+	var pad_t := _resolve_scaled_padding(FILL_PADDING_TOP, false, base)
+	var pad_b := _resolve_scaled_padding(FILL_PADDING_BOTTOM, false, base)
 
 	var inner_width := maxf(size.x - pad_l - pad_r, 0.0)
 	var inner_height := maxf(size.y - pad_t - pad_b, 0.0)
@@ -110,3 +100,19 @@ func _resolve_constant(name: StringName) -> float:
 	if has_theme_constant(name):
 		return float(get_theme_constant(name))
 	return 0.0
+
+
+func _resolve_scaled_padding(name: StringName, horizontal: bool, base: Texture2D) -> float:
+	var raw_padding := _resolve_constant(name)
+	if raw_padding <= 0.0:
+		return 0.0
+
+	var reference_size := size.x if horizontal else size.y
+	if base == null:
+		return minf(raw_padding, reference_size)
+
+	var source_size := float(base.get_width()) if horizontal else float(base.get_height())
+	if source_size <= 0.0:
+		return minf(raw_padding, reference_size)
+
+	return reference_size * (raw_padding / source_size)
