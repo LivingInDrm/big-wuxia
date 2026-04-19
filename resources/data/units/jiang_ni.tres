@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="UnitData" load_steps=3 format=3 uid="uid://bwxunit0002"]
+[gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://bwxunit0002"]
 
 [ext_resource type="Script" uid="uid://djynxol3vtqtc" path="res://scripts/core/unit_data.gd" id="1_script"]
 [ext_resource type="SpriteFrames" path="res://resources/data/units/monk_sprite_frames.tres" id="2_sf"]
@@ -7,6 +7,7 @@
 script = ExtResource("1_script")
 unit_id = "jiang_ni"
 unit_name = "姜泥"
+is_enemy = false
 max_hp = 18
 atk = 3
 def = 3

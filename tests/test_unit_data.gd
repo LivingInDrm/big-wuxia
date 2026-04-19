@@ -25,19 +25,19 @@ func _run() -> void:
 	# T1+T2+T3+T4 按单位逐项校验
 	_check("xu_fengnian", {
 		"unit_name": "徐凤年", "max_hp": 28, "atk": 8, "def": 5, "spd": 6, "mov": 4,
-		"weapon_type": 1, "sf_contains": "warrior",
+		"weapon_type": 1, "sf_contains": "warrior", "is_enemy": false,
 	})
 	_check("jiang_ni", {
 		"unit_name": "姜泥", "max_hp": 18, "atk": 3, "def": 3, "spd": 8, "mov": 5,
-		"weapon_type": 3, "sf_contains": "monk",
+		"weapon_type": 3, "sf_contains": "monk", "is_enemy": false,
 	})
 	_check("li_chungang", {
 		"unit_name": "李淳罡", "max_hp": 22, "atk": 12, "def": 4, "spd": 5, "mov": 3,
-		"weapon_type": 2, "sf_contains": "warrior",
+		"weapon_type": 2, "sf_contains": "warrior", "is_enemy": false,
 	})
 	_check("enemy_soldier", {
 		"unit_name": "北莽普通兵", "max_hp": 12, "atk": 4, "def": 2, "spd": 4, "mov": 3,
-		"weapon_type": 0, "sf_contains": "warrior",
+		"weapon_type": 0, "sf_contains": "warrior", "is_enemy": true,
 	})
 
 	_finish()
@@ -58,6 +58,8 @@ func _check(id: String, expected: Dictionary) -> void:
 	_assert(u.mov == expected["mov"], "%s mov=%d (exp=%d)" % [id, u.mov, expected["mov"]])
 	_assert(u.weapon_type == expected["weapon_type"],
 		"%s weapon_type=%d (exp=%d)" % [id, u.weapon_type, expected["weapon_type"]])
+	_assert(u.is_enemy == expected["is_enemy"],
+		"%s is_enemy=%s (exp=%s)" % [id, u.is_enemy, expected["is_enemy"]])
 	_assert(u.sprite_frames != null, "%s sprite_frames 非 null" % id)
 	if u.sprite_frames != null:
 		var path: String = u.sprite_frames.resource_path

@@ -53,6 +53,8 @@ func _run() -> void:
 			"T2c animation == idle (实际=%s)" % u.anim_sprite.animation)
 		_assert(u.anim_sprite.modulate == data_xu.modulate,
 			"T2d modulate 与 data 一致")
+		_assert(u.anim_sprite.flip_h == false,
+			"T2d2 玩家 flip_h=false (实际=%s)" % u.anim_sprite.flip_h)
 	_assert(u.health_bar.max_value == float(data_xu.max_hp),
 		"T2e health_bar.max_value")
 	_assert(u.health_bar.value == float(data_xu.max_hp),
@@ -64,6 +66,17 @@ func _run() -> void:
 	_check_hp_color(u, 0.1, Color(0.9, 0.25, 0.25), "T3c 低血量红色")
 
 	u.queue_free()
+	await process_frame
+
+	# T4: 敌方 flip_h=true
+	var data_enemy: UnitData = load("res://resources/data/units/enemy_soldier.tres")
+	var e: Unit = packed.instantiate()
+	e.setup(data_enemy, Vector2i(5, 5))
+	root.add_child(e)
+	await process_frame
+	_assert(e.anim_sprite.flip_h == true,
+		"T4a 敌方 flip_h=true (实际=%s)" % e.anim_sprite.flip_h)
+	e.queue_free()
 	await process_frame
 
 	_finish()

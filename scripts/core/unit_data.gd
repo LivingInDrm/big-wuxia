@@ -17,6 +17,7 @@ class_name UnitData
 @export_group("Identity")
 @export var unit_id: String = ""
 @export var unit_name: String = ""
+@export var is_enemy: bool = false
 
 @export_group("Attributes")
 @export var max_hp: int = 20

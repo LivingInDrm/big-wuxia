@@ -43,6 +43,8 @@ func _ready() -> void:
 	anim_sprite.sprite_frames = unit_data.sprite_frames
 	anim_sprite.offset = unit_data.sprite_offset
 	anim_sprite.modulate = unit_data.modulate
+	# 敌方单位面向左（flip_h），玩家单位保持默认（面向右）
+	anim_sprite.flip_h = unit_data.is_enemy
 	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("idle"):
 		anim_sprite.play("idle")
 
