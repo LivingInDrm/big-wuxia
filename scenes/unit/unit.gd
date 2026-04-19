@@ -53,6 +53,7 @@ func setup(data: UnitData, grid_pos: Vector2i = Vector2i.ZERO) -> void:
 	current_position = grid_pos
 	if is_inside_tree():
 		_initialize_runtime_resources()
+		_ensure_game_state_connection()
 		_refresh_health_bar()
 		_load_skills()
 
@@ -73,6 +74,7 @@ func _ready() -> void:
 
 	# 运行时资源
 	_initialize_runtime_resources()
+	_ensure_game_state_connection()
 	_refresh_health_bar()
 	_load_skills()
 
@@ -384,23 +386,54 @@ func _initialize_runtime_resources() -> void:
 	current_mp = 0
 
 
-func _refresh_derived_resources() -> void:
+func recalc_stats() -> void:
 	var prev_max_hp := max_hp
 	var prev_max_mp := max_mp
+	var prev_current_hp := current_hp
 	max_hp = int(AttributeResolver.get_max_hp(self)["total"])
 	max_mp = int(AttributeResolver.get_max_mp(self)["total"])
 	if prev_max_hp > 0:
-		current_hp = min(current_hp, max_hp)
+		current_hp = clampi(
+			int(roundi(float(prev_current_hp) * float(max_hp) / float(prev_max_hp))),
+			0,
+			max_hp
+		)
+	else:
+		current_hp = clampi(current_hp, 0, max_hp)
 	if prev_max_mp > 0:
 		current_mp = min(current_mp, max_mp)
+	else:
+		current_mp = clampi(current_mp, 0, max_mp)
 	if is_inside_tree():
 		_refresh_health_bar()
+
+
+func _refresh_derived_resources() -> void:
+	recalc_stats()
 
 
 func _get_attributes() -> AttributeSet:
 	if unit_data != null and unit_data.attributes != null:
 		return unit_data.attributes
 	return AttributeSet.new()
+
+
+func _exit_tree() -> void:
+	var game_state := get_node_or_null("/root/GameState")
+	if game_state != null and game_state.equipment_changed.is_connected(_on_game_state_equipment_changed):
+		game_state.equipment_changed.disconnect(_on_game_state_equipment_changed)
+
+
+func _ensure_game_state_connection() -> void:
+	var game_state := get_node_or_null("/root/GameState")
+	if game_state != null and not game_state.equipment_changed.is_connected(_on_game_state_equipment_changed):
+		game_state.equipment_changed.connect(_on_game_state_equipment_changed)
+
+
+func _on_game_state_equipment_changed(char_id: String) -> void:
+	if unit_data == null or unit_data.unit_id != char_id:
+		return
+	recalc_stats()
 
 
 func _grant_loot_drops() -> void:
@@ -421,4 +454,3 @@ func _grant_loot_drops() -> void:
 		if item_id.is_empty() or count <= 0:
 			continue
 		game_state.inventory.add(item_id, count)
-

@@ -18,6 +18,7 @@ const PLAYER_CHAR_IDS := [
 ]
 
 signal level_completed(level_name: String)
+signal equipment_changed(char_id: String)
 
 var current_level: String = ""
 var selected_characters: Array[String] = []
@@ -60,6 +61,7 @@ func equip(char_id: String, slot: ItemData.EquipSlot, item_instance: ItemInstanc
 		inventory.unique_items.append(previous)
 	char_equipped[slot] = item_instance
 	equipped[char_id] = char_equipped
+	equipment_changed.emit(char_id)
 	return true
 
 
@@ -72,6 +74,7 @@ func unequip(char_id: String, slot: ItemData.EquipSlot) -> ItemInstance:
 	inventory.unique_items.append(previous)
 	char_equipped[slot] = null
 	equipped[char_id] = char_equipped
+	equipment_changed.emit(char_id)
 	return previous
 
 

@@ -10,7 +10,7 @@ static func get_attack(unit) -> Dictionary:
 	var base := 0
 	var attribute := attrs.strength * 2
 	var specialty := int(_get_specialty_for_weapon(unit) * 1.5)
-	var equip := 0
+	var equip := _get_equip_modifier(unit, "attack")
 	var technique := 0
 	var status := _get_status_modifier(unit, "attack")
 	return _build_result(base, attribute, specialty, equip, technique, status)
@@ -21,7 +21,7 @@ static func get_defense(unit) -> Dictionary:
 	var base := 0
 	var attribute := int(attrs.constitution * 1.5)
 	var specialty := 0
-	var equip := 0
+	var equip := _get_equip_modifier(unit, "defense")
 	var technique := 0
 	var status := _get_status_modifier(unit, "defense")
 	return _build_result(base, attribute, specialty, equip, technique, status)
@@ -32,7 +32,7 @@ static func get_qinggong(unit) -> Dictionary:
 	var base := 0
 	var attribute := attrs.agility
 	var specialty := 0
-	var equip := 0
+	var equip := _get_equip_modifier(unit, "qinggong")
 	var technique := 0
 	var status := _get_status_modifier(unit, "qinggong")
 	return _build_result(base, attribute, specialty, equip, technique, status)
@@ -44,7 +44,7 @@ static func get_qi_speed(unit) -> Dictionary:
 	var base := 0
 	var attribute := int(attrs.agility * 0.5 + qinggong_total * 0.3)
 	var specialty := 0
-	var equip := 0
+	var equip := _get_equip_modifier(unit, "qi_speed")
 	var technique := 0
 	var status := _get_status_modifier(unit, "qi_speed")
 	return _build_result(base, attribute, specialty, equip, technique, status)
@@ -55,7 +55,7 @@ static func get_max_hp(unit) -> Dictionary:
 	var base := attrs.base_hp + 1 * 5
 	var attribute := attrs.constitution * 10
 	var specialty := 0
-	var equip := 0
+	var equip := _get_equip_modifier(unit, "max_hp")
 	var technique := 0
 	var status := _get_status_modifier(unit, "max_hp")
 	return _build_result(base, attribute, specialty, equip, technique, status)
@@ -66,7 +66,7 @@ static func get_max_mp(unit) -> Dictionary:
 	var base := attrs.base_mp
 	var attribute := attrs.constitution * 2 + attrs.insight * 3
 	var specialty := 0
-	var equip := 0
+	var equip := _get_equip_modifier(unit, "max_mp")
 	var technique := 0
 	var status := _get_status_modifier(unit, "max_mp")
 	return _build_result(base, attribute, specialty, equip, technique, status)
@@ -110,9 +110,12 @@ static func _build_result(base: int, attribute: int, specialty: int, equip: int,
 	var sources := {
 		"base": base,
 		"attribute": attribute,
+		"talent": attribute,
 		"specialty": specialty,
 		"equip": equip,
+		"equipment": equip,
 		"technique": technique,
+		"skill": technique,
 		"status": status,
 	}
 	return {
@@ -160,6 +163,27 @@ static func _get_status_modifier(unit, key: String) -> int:
 			if effect == null:
 				continue
 			total += _get_modifier_value(effect.modifier_dict, key)
+	return total
+
+
+static func _get_equip_modifier(unit, stat_name: String) -> int:
+	if unit == null or unit.unit_data == null:
+		return 0
+
+	var char_id := String(unit.unit_data.unit_id)
+	if char_id.is_empty() or not (unit is Node):
+		return 0
+
+	var game_state := (unit as Node).get_node_or_null("/root/GameState")
+	if game_state == null:
+		return 0
+
+	var equipped_items: Dictionary = game_state.equipped.get(char_id, {})
+	var total := 0
+	for item_instance in equipped_items.values():
+		if item_instance == null or item_instance.item_data == null:
+			continue
+		total += int(item_instance.item_data.stat_modifiers.get(stat_name, 0))
 	return total
 
 
