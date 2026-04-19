@@ -122,12 +122,13 @@ func _run() -> void:
 
 
 func _click_unit(unit: Unit, battle) -> void:
+	var viewport: Viewport = battle.get_viewport()
 	var ev := InputEventMouseButton.new()
 	ev.button_index = MOUSE_BUTTON_LEFT
 	ev.pressed = true
 	ev.position = _world_to_screen(unit.position, battle)
 	ev.global_position = ev.position
-	root.push_input(ev, true)
+	viewport.push_input(ev, true)
 	await process_frame
 	await physics_frame
 
@@ -136,19 +137,20 @@ func _click_unit(unit: Unit, battle) -> void:
 	release.pressed = false
 	release.position = ev.position
 	release.global_position = ev.global_position
-	root.push_input(release, true)
+	viewport.push_input(release, true)
 	await process_frame
 	await physics_frame
 
 
 ## 模拟点击空格（不经过 Area2D，直接走 _unhandled_input）
 func _click_empty_cell(world_pos: Vector2, battle) -> void:
+	var viewport: Viewport = battle.get_viewport()
 	var ev := InputEventMouseButton.new()
 	ev.button_index = MOUSE_BUTTON_LEFT
 	ev.pressed = true
 	ev.position = _world_to_screen(world_pos, battle)
 	ev.global_position = ev.position
-	root.push_input(ev, true)
+	viewport.push_input(ev, true)
 	await process_frame
 	await physics_frame
 
@@ -157,7 +159,7 @@ func _click_empty_cell(world_pos: Vector2, battle) -> void:
 	release.pressed = false
 	release.position = ev.position
 	release.global_position = ev.global_position
-	root.push_input(release, true)
+	viewport.push_input(release, true)
 	await process_frame
 	await physics_frame
 

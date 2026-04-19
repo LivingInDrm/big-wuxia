@@ -10,19 +10,26 @@ extends Control
 ##   CharacterSelect 会在 S3 引入 Unit 后加回来，届时再插回菜单链路。
 
 const LEVEL_SELECT_SCENE := "res://scenes/level_select/level_select.tscn"
+const INVENTORY_SCENE := "res://scenes/inventory/inventory_panel.tscn"
 
 @onready var start_button: Button = %StartButton
+@onready var inventory_button: Button = %InventoryButton
 @onready var quit_button: Button = %QuitButton
 
 
 func _ready() -> void:
 	start_button.pressed.connect(_on_start_pressed)
+	inventory_button.pressed.connect(_on_inventory_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 
 
 func _on_start_pressed() -> void:
 	GameState.reset()
 	SceneManager.change_scene_to_file(LEVEL_SELECT_SCENE)
+
+
+func _on_inventory_pressed() -> void:
+	SceneManager.change_scene_to_file(INVENTORY_SCENE)
 
 
 func _on_quit_pressed() -> void:
