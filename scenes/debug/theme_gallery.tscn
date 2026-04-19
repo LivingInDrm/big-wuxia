@@ -1,0 +1,385 @@
+[gd_scene format=3 uid="uid://bt1pyp5fsg157"]
+
+[ext_resource type="Theme" uid="uid://jxaglfd1r2m5" path="res://resources/ui/theme/main_ui_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://resources/ui/controls/themed_bar.gd" id="2_themedbar"]
+
+[node name="ThemeGallery" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+
+[node name="BaseColor" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.84, 0.78, 0.68, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Root" type="VBoxContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="PageTitle" type="Label" parent="Scroll/Root"]
+layout_mode = 2
+theme_type_variation = &"title"
+text = "Theme 组件画廊 · 当前 Theme 提供的所有变体"
+horizontal_alignment = 1
+
+[node name="Intro" type="Label" parent="Scroll/Root"]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "每行左侧 caption 为 theme_type_variation 字段名，右侧为该变体的实际渲染效果。复制字段名即可在自己的界面里套用。"
+autowrap_mode = 3
+
+[node name="GroupLabels" type="PanelContainer" parent="Scroll/Root"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Scroll/Root/GroupLabels"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="GroupTitle" type="Label" parent="Scroll/Root/GroupLabels/VBox"]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "分组 1 · Label 变体"
+
+[node name="Row_Display" type="HBoxContainer" parent="Scroll/Root/GroupLabels/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Display"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "display (80px)"
+
+[node name="Sample" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Display"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"display"
+text = "Display 80 超大展示"
+
+[node name="Row_Title" type="HBoxContainer" parent="Scroll/Root/GroupLabels/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Title"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "title (48px)"
+
+[node name="Sample" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Title"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"title"
+text = "Title 48 标题"
+
+[node name="Row_Section" type="HBoxContainer" parent="Scroll/Root/GroupLabels/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Section"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "section (30px)"
+
+[node name="Sample" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Section"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"section"
+text = "Section 30 小节"
+
+[node name="Row_Body" type="HBoxContainer" parent="Scroll/Root/GroupLabels/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Body"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "body (22px)"
+
+[node name="Sample" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"body"
+text = "Body 22 正文内容"
+
+[node name="Row_Caption" type="HBoxContainer" parent="Scroll/Root/GroupLabels/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Caption"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "caption (17px)"
+
+[node name="Sample" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Caption"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"caption"
+text = "Caption 17 说明"
+
+[node name="Row_Micro" type="HBoxContainer" parent="Scroll/Root/GroupLabels/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Micro"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "micro (13px)"
+
+[node name="Sample" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Micro"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"micro"
+text = "Micro 13 细节"
+
+[node name="Row_Default" type="HBoxContainer" parent="Scroll/Root/GroupLabels/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Default"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "(无 variation)"
+
+[node name="Sample" type="Label" parent="Scroll/Root/GroupLabels/VBox/Row_Default"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Default Label 默认标签"
+
+[node name="GroupButtons" type="PanelContainer" parent="Scroll/Root"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Scroll/Root/GroupButtons"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="GroupTitle" type="Label" parent="Scroll/Root/GroupButtons/VBox"]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "分组 2 · Button 变体"
+
+[node name="Row_Default" type="HBoxContainer" parent="Scroll/Root/GroupButtons/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupButtons/VBox/Row_Default"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "(无 variation)"
+
+[node name="Sample" type="Button" parent="Scroll/Root/GroupButtons/VBox/Row_Default"]
+custom_minimum_size = Vector2(200, 76)
+layout_mode = 2
+text = "默认按钮"
+
+[node name="Row_Danger" type="HBoxContainer" parent="Scroll/Root/GroupButtons/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupButtons/VBox/Row_Danger"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "danger"
+
+[node name="Sample" type="Button" parent="Scroll/Root/GroupButtons/VBox/Row_Danger"]
+custom_minimum_size = Vector2(200, 76)
+layout_mode = 2
+theme_type_variation = &"danger"
+text = "危险按钮"
+
+[node name="GroupPanels" type="PanelContainer" parent="Scroll/Root"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Scroll/Root/GroupPanels"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="GroupTitle" type="Label" parent="Scroll/Root/GroupPanels/VBox"]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "分组 3 · PanelContainer 变体"
+
+[node name="Row_Default" type="HBoxContainer" parent="Scroll/Root/GroupPanels/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupPanels/VBox/Row_Default"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "(无 variation)"
+
+[node name="Sample" type="PanelContainer" parent="Scroll/Root/GroupPanels/VBox/Row_Default"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Inner" type="Label" parent="Scroll/Root/GroupPanels/VBox/Row_Default/Sample"]
+layout_mode = 2
+theme_type_variation = &"body"
+text = "默认 PanelContainer · 主要正文容器"
+autowrap_mode = 3
+
+[node name="Row_Modal" type="HBoxContainer" parent="Scroll/Root/GroupPanels/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupPanels/VBox/Row_Modal"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "modal"
+
+[node name="Sample" type="PanelContainer" parent="Scroll/Root/GroupPanels/VBox/Row_Modal"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"modal"
+
+[node name="Inner" type="Label" parent="Scroll/Root/GroupPanels/VBox/Row_Modal/Sample"]
+layout_mode = 2
+theme_type_variation = &"body"
+text = "modal · 弹窗 / 对话框，边距更宽"
+autowrap_mode = 3
+
+[node name="Row_Tooltip" type="HBoxContainer" parent="Scroll/Root/GroupPanels/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupPanels/VBox/Row_Tooltip"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "tooltip"
+
+[node name="Sample" type="PanelContainer" parent="Scroll/Root/GroupPanels/VBox/Row_Tooltip"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"tooltip"
+
+[node name="Inner" type="Label" parent="Scroll/Root/GroupPanels/VBox/Row_Tooltip/Sample"]
+layout_mode = 2
+theme_type_variation = &"body"
+text = "tooltip · 短提示，窄边纸张"
+autowrap_mode = 3
+
+[node name="Row_Slot" type="HBoxContainer" parent="Scroll/Root/GroupPanels/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupPanels/VBox/Row_Slot"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "slot"
+
+[node name="Sample" type="PanelContainer" parent="Scroll/Root/GroupPanels/VBox/Row_Slot"]
+custom_minimum_size = Vector2(140, 140)
+layout_mode = 2
+theme_type_variation = &"slot"
+
+[node name="Inner" type="Label" parent="Scroll/Root/GroupPanels/VBox/Row_Slot/Sample"]
+layout_mode = 2
+theme_type_variation = &"body"
+text = "slot · 装备槽位"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="GroupBars" type="PanelContainer" parent="Scroll/Root"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Scroll/Root/GroupBars"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="GroupTitle" type="Label" parent="Scroll/Root/GroupBars/VBox"]
+layout_mode = 2
+theme_type_variation = &"section"
+text = "分组 4 · ThemedBar (Range) 变体"
+
+[node name="Hint" type="Label" parent="Scroll/Root/GroupBars/VBox"]
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "注：进度条基类为 Range，脚本为 res://resources/ui/controls/themed_bar.gd。"
+
+[node name="Row_HP" type="HBoxContainer" parent="Scroll/Root/GroupBars/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupBars/VBox/Row_HP"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "bar_hp · HP"
+
+[node name="Sample" type="Range" parent="Scroll/Root/GroupBars/VBox/Row_HP"]
+custom_minimum_size = Vector2(400, 64)
+layout_mode = 2
+theme_type_variation = &"bar_hp"
+script = ExtResource("2_themedbar")
+max_value = 100.0
+value = 60.0
+
+[node name="Row_MP" type="HBoxContainer" parent="Scroll/Root/GroupBars/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupBars/VBox/Row_MP"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "bar_mp · MP"
+
+[node name="Sample" type="Range" parent="Scroll/Root/GroupBars/VBox/Row_MP"]
+custom_minimum_size = Vector2(400, 64)
+layout_mode = 2
+theme_type_variation = &"bar_mp"
+script = ExtResource("2_themedbar")
+max_value = 100.0
+value = 40.0
+
+[node name="Row_EXP" type="HBoxContainer" parent="Scroll/Root/GroupBars/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Tag" type="Label" parent="Scroll/Root/GroupBars/VBox/Row_EXP"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_type_variation = &"caption"
+text = "bar_exp · EXP"
+
+[node name="Sample" type="Range" parent="Scroll/Root/GroupBars/VBox/Row_EXP"]
+custom_minimum_size = Vector2(400, 64)
+layout_mode = 2
+theme_type_variation = &"bar_exp"
+script = ExtResource("2_themedbar")
+max_value = 100.0
+value = 25.0
