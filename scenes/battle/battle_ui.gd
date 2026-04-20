@@ -14,6 +14,7 @@ const ItemData = preload("res://scripts/core/item_data.gd")
 ]
 @onready var item_button: Button = $Root/ActionPanel/Margin/VBox/ItemButton
 @onready var item_select_panel = $Root/ItemSelectPanel
+@onready var battle_hud_v3 = $Root/BattleHUDV3
 
 signal skill_button_pressed(skill_index: int)
 signal item_button_pressed()
@@ -46,7 +47,7 @@ func show_skills(unit: Unit) -> void:
 	if unit == null:
 		hide_actions()
 		return
-	action_panel.visible = true
+	action_panel.visible = false
 	for idx in skill_buttons.size():
 		var button := skill_buttons[idx]
 		var skill = unit.get_skill(idx)
@@ -114,3 +115,7 @@ func _refresh_item_button() -> void:
 			has_usable = true
 			break
 	item_button.disabled = not has_usable
+
+
+func get_battle_hud_v3():
+	return battle_hud_v3

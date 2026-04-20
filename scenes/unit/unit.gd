@@ -45,6 +45,7 @@ signal unit_died(unit: Unit)
 signal hurt_started(unit: Unit)
 signal hurt_finished(unit: Unit)
 signal skill_state_changed(unit: Unit)
+signal hud_state_changed(unit: Unit)
 
 
 ## 场景预设或代码构造时调用；add_child 之后 _ready 会按 unit_data 初始化视觉。
@@ -131,6 +132,7 @@ func take_damage(amount: int) -> void:
 		amount = 0
 	current_hp = max(0, current_hp - amount)
 	_refresh_health_bar()
+	hud_state_changed.emit(self)
 	if amount > 0 and prev_hp > 0:
 		var parent_node := get_parent() if get_parent() != null else self
 		VFX.spawn_damage_number(parent_node, global_position + Vector2(0, -40), amount, false)
@@ -147,6 +149,7 @@ func heal(amount: int) -> void:
 	var prev_hp := current_hp
 	current_hp = min(max_hp, current_hp + amount)
 	_refresh_health_bar()
+	hud_state_changed.emit(self)
 	var actual := current_hp - prev_hp
 	if actual > 0:
 		var parent_node := get_parent() if get_parent() != null else self
@@ -172,6 +175,7 @@ func add_status_effect(source: String, modifier_dict: Dictionary, remaining_turn
 	var effect := StatusEffect.new(source, modifier_dict, remaining_turns)
 	status_effects.append(effect)
 	_refresh_derived_resources()
+	hud_state_changed.emit(self)
 	return effect
 
 
@@ -188,6 +192,7 @@ func tick_status_effects() -> void:
 			remaining.append(effect)
 	status_effects = remaining
 	_refresh_derived_resources()
+	hud_state_changed.emit(self)
 
 
 func consume_mp(amount: int) -> bool:
@@ -196,6 +201,7 @@ func consume_mp(amount: int) -> bool:
 	if current_mp < amount:
 		return false
 	current_mp -= amount
+	hud_state_changed.emit(self)
 	return true
 
 
@@ -203,6 +209,7 @@ func restore_mp(amount: int) -> void:
 	if amount <= 0:
 		return
 	current_mp = min(max_mp, current_mp + amount)
+	hud_state_changed.emit(self)
 
 
 ## 沿 path 逐格 tween 过去（每格 0.15s）。Coroutine：await unit.move_along_path(...)。
@@ -347,11 +354,13 @@ func get_qi_regen_amount() -> int:
 func set_move_buff(amount: int) -> void:
 	temp_move_bonus = max(temp_move_bonus, amount)
 	skill_state_changed.emit(self)
+	hud_state_changed.emit(self)
 
 
 func clear_temp_buffs() -> void:
 	temp_move_bonus = 0
 	skill_state_changed.emit(self)
+	hud_state_changed.emit(self)
 
 
 func _play_hurt_feedback() -> void:
@@ -406,6 +415,7 @@ func recalc_stats() -> void:
 		current_mp = clampi(current_mp, 0, max_mp)
 	if is_inside_tree():
 		_refresh_health_bar()
+	hud_state_changed.emit(self)
 
 
 func _refresh_derived_resources() -> void:

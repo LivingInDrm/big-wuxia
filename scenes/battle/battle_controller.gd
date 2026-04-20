@@ -29,6 +29,7 @@ const ITEM_EFFECT_EXECUTOR = preload("res://scripts/systems/item_effect_executor
 const VFX = preload("res://scripts/systems/vfx.gd")
 const ItemData = preload("res://scripts/core/item_data.gd")
 const LevelData = preload("res://scripts/core/level_data.gd")
+const BattleHUDV3VM = preload("res://scripts/ui/battle_hud_v3_vm.gd")
 const TILE_PX := 64
 const TERRAIN_SET_ID := 0
 const GRASS_TERRAIN_ID := 0
@@ -43,6 +44,7 @@ enum SelectState { IDLE, UNIT_SELECTED, MOVED_AWAIT_ACTION, SKILL_TARGETING, ITE
 @onready var camera: Camera2D = $Camera2D
 @onready var turn_manager: TurnManager = $TurnManager
 @onready var ui: BattleUI = $UI
+@onready var hud_v3 = $UI.get_battle_hud_v3()
 
 var grid: GridSystem
 var enemy_ai: EnemyAI
@@ -63,6 +65,7 @@ var current_item_range: Array[Vector2i] = []
 var _item_return_state: SelectState = SelectState.IDLE
 var _pending_finish_after_move: bool = false
 var _battle_ended: bool = false
+var hud_vm
 
 
 func _ready() -> void:
@@ -86,6 +89,12 @@ func _ready() -> void:
 	ui.item_button_pressed.connect(_on_item_button_pressed)
 	ui.item_selected.connect(_on_item_selected)
 	ui.item_panel_closed.connect(_on_item_panel_closed)
+	hud_vm = BattleHUDV3VM.new()
+	add_child(hud_vm)
+	hud_v3.bind_vm(hud_vm)
+	if not hud_v3.emit_menu_action.is_connected(_on_hud_menu_action):
+		hud_v3.emit_menu_action.connect(_on_hud_menu_action)
+	_refresh_battle_hud()
 	turn_manager.start_battle()
 
 
@@ -117,6 +126,9 @@ func _spawn_units() -> void:
 # ============ 输入处理 ============
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _handle_hud_shortcut(event):
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if _battle_ended:
 			return
@@ -210,6 +222,7 @@ func _select_unit(unit: Unit) -> void:
 	ui.show_skills(unit)
 	ui.refresh_items()
 	ui.set_message("选中 %s — 点击高亮格移动" % unit.unit_data.unit_name)
+	_refresh_battle_hud()
 
 
 func _cancel_selection() -> void:
@@ -227,6 +240,7 @@ func _cancel_selection() -> void:
 	range_overlay.clear()
 	ui.hide_actions()
 	ui.set_message("")
+	_refresh_battle_hud()
 
 
 func _execute_move(unit: Unit, target: Vector2i) -> void:
@@ -257,6 +271,7 @@ func _execute_move(unit: Unit, target: Vector2i) -> void:
 	select_state = SelectState.MOVED_AWAIT_ACTION
 	ui.show_skills(unit)
 	ui.set_message("选择攻击目标或点击空格结束")
+	_refresh_battle_hud()
 
 
 func _execute_attack(attacker: Unit, defender: Unit) -> void:
@@ -272,6 +287,7 @@ func _execute_attack(attacker: Unit, defender: Unit) -> void:
 		VFX.spawn_damage_number(parent_node, defender.global_position + Vector2(0, -40), "MISS", false)
 		ui.set_message("%s 的攻击落空" % attacker.unit_data.unit_name)
 	_finish_unit_action(attacker)
+	_refresh_battle_hud()
 
 
 func _finish_unit_action(unit: Unit) -> void:
@@ -292,6 +308,7 @@ func _finish_unit_action(unit: Unit) -> void:
 	range_overlay.clear()
 	ui.hide_actions()
 	ui.set_message("")
+	_refresh_battle_hud()
 	if _check_battle_end():
 		return
 
@@ -317,10 +334,12 @@ func _on_turn_started(turn_num: int) -> void:
 		u.tick_cooldowns()
 		if turn_num > 1:
 			u.restore_mp(u.get_qi_regen_amount())
+	_refresh_battle_hud()
 
 
 func _on_phase_changed(phase: TurnManager.Phase) -> void:
 	ui.set_turn(turn_manager.current_turn, TurnManager.phase_label(phase))
+	_refresh_battle_hud()
 	if phase == TurnManager.Phase.ENEMY_TURN and not _battle_ended:
 		_run_enemy_phase()
 
@@ -349,7 +368,10 @@ func _on_unit_died(unit: Unit) -> void:
 		enemy_units.erase(unit)
 	else:
 		player_units.erase(unit)
+	if selected_unit == unit:
+		selected_unit = null
 	_check_battle_end()
+	_refresh_battle_hud()
 
 
 func _all_acted(units: Array[Unit]) -> bool:
@@ -399,6 +421,7 @@ func _on_skill_button_pressed(idx: int) -> void:
 	)
 	ui.show_skills(selected_unit)
 	ui.set_message("选择 %s 的目标格" % skill.skill_name)
+	_refresh_battle_hud()
 
 
 func _execute_skill(caster: Unit, skill, target: Vector2i) -> void:
@@ -413,6 +436,7 @@ func _execute_skill(caster: Unit, skill, target: Vector2i) -> void:
 		select_state = SelectState.UNIT_SELECTED
 		ui.show_skills(caster)
 		ui.set_message("轻功发动 — 选择新的落点")
+		_refresh_battle_hud()
 		return
 	range_overlay.clear()
 	if skill.effect_type == 0:
@@ -433,6 +457,7 @@ func _restore_after_skill_cancel() -> void:
 	select_state = _skill_return_state
 	ui.show_skills(selected_unit)
 	ui.refresh_items()
+	_refresh_battle_hud()
 
 
 func _on_item_button_pressed() -> void:
@@ -445,6 +470,7 @@ func _on_item_button_pressed() -> void:
 		return
 	ui.show_item_panel(consumables)
 	ui.set_message("选择一个消耗品")
+	_refresh_battle_hud()
 
 
 func _on_item_selected(item_id: String) -> void:
@@ -464,6 +490,7 @@ func _on_item_selected(item_id: String) -> void:
 	ui.hide_item_panel()
 	ui.show_skills(selected_unit)
 	ui.set_message("选择 %s 的目标单位" % item.name)
+	_refresh_battle_hud()
 
 
 func _on_item_panel_closed() -> void:
@@ -502,6 +529,7 @@ func _restore_after_item_cancel() -> void:
 	select_state = _item_return_state
 	ui.show_skills(selected_unit)
 	ui.refresh_items()
+	_refresh_battle_hud()
 
 
 func _can_target_with_item(unit: Unit) -> bool:
@@ -677,6 +705,7 @@ func _spawn_unit_entry(entry: Dictionary, is_enemy: bool) -> void:
 	units_container.add_child(unit)
 	unit.unit_selected.connect(_on_unit_clicked)
 	unit.unit_died.connect(_on_unit_died)
+	unit.hud_state_changed.connect(_on_unit_hud_state_changed)
 
 	var tile: GridTile = grid.get_tile(spawn_coord) if grid != null else null
 	if tile != null:
@@ -686,6 +715,49 @@ func _spawn_unit_entry(entry: Dictionary, is_enemy: bool) -> void:
 		enemy_units.append(unit)
 	else:
 		player_units.append(unit)
+
+
+func _refresh_battle_hud() -> void:
+	if hud_vm == null or hud_v3 == null:
+		return
+	hud_vm.refresh(selected_unit, self)
+	hud_v3.refresh()
+
+
+func _on_unit_hud_state_changed(unit: Unit) -> void:
+	if unit == selected_unit:
+		_refresh_battle_hud()
+
+
+func _handle_hud_shortcut(event: InputEvent) -> bool:
+	if not (event is InputEventKey):
+		return false
+	var key_event := event as InputEventKey
+	if not key_event.pressed or key_event.echo:
+		return false
+	if key_event.keycode == KEY_CTRL:
+		return _emit_hud_menu_action(&"auto_battle", "[hud] Ctrl pressed → 自动战斗")
+	match key_event.keycode:
+		KEY_V:
+			return _emit_hud_menu_action(&"martial", "[hud] V pressed → 武功")
+		KEY_B:
+			return _emit_hud_menu_action(&"item", "[hud] B pressed → 道具")
+		KEY_Z:
+			return _emit_hud_menu_action(&"meditate", "[hud] Z pressed → 原地打坐")
+		KEY_R:
+			return _emit_hud_menu_action(&"escape", "[hud] R pressed → 逃跑")
+	return false
+
+
+func _emit_hud_menu_action(action: StringName, log_text: String) -> bool:
+	print(log_text)
+	if hud_v3 != null:
+		hud_v3.emit_menu_action.emit(action)
+	return true
+
+
+func _on_hud_menu_action(action: StringName) -> void:
+	print("[hud] emit_menu_action → %s" % action)
 
 
 func _center_camera() -> void:

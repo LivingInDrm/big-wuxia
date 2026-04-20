@@ -1,5 +1,6 @@
 extends Control
 class_name BattleHUDV3
+signal emit_menu_action(action: StringName)
 
 const UIColors := preload("res://resources/ui/colors.gd")
 const PORTRAIT_LI_PATH := "res://resources/ui/portraits/half/li_chungang.png"
@@ -39,6 +40,7 @@ var _hp_value_label: Label
 var _qg_label: Label
 var _mp_bar: ProgressBar
 var _mp_value_label: Label
+var _vm = null
 
 
 func _ready() -> void:
@@ -50,12 +52,41 @@ func apply_mock(data: Dictionary) -> void:
 	if _turn_number_label == null:
 		return
 
-	_turn_number_label.text = str(data.get("turn", 1))
-	_name_label.text = str(data.get("name", "李淳罡"))
-	_exp_label.text = "经验  %s/%s" % [data.get("exp_current", 0), data.get("exp_max", 1)]
-	_level_label.text = "等级  ·  %s/100" % [data.get("level", 1)]
+	_apply_state(data)
 
-	var hp_current: int = int(data.get("hp_current", 1))
+
+func bind_vm(vm) -> void:
+	_vm = vm
+
+
+func refresh() -> void:
+	if _vm == null:
+		push_warning("[BattleHUDV3] refresh called without VM")
+		return
+	_apply_state({
+		"turn": _vm.turn,
+		"char_name": _vm.char_name,
+		"portrait_path": _vm.portrait_path,
+		"exp": _vm.exp,
+		"exp_max": _vm.exp_max,
+		"level": _vm.level,
+		"level_max": _vm.level_max,
+		"hp": _vm.hp,
+		"hp_max": _vm.hp_max,
+		"mp": _vm.mp,
+		"mp_max": _vm.mp_max,
+		"qinggong": _vm.qinggong,
+		"buffs": _vm.buffs,
+	})
+
+
+func _apply_state(data: Dictionary) -> void:
+	_turn_number_label.text = str(data.get("turn", 1))
+	_name_label.text = str(data.get("char_name", data.get("name", "李淳罡")))
+	_exp_label.text = "经验  %s/%s" % [data.get("exp", data.get("exp_current", 0)), data.get("exp_max", 1)]
+	_level_label.text = "等级  ·  %s/%s" % [data.get("level", 1), data.get("level_max", 100)]
+
+	var hp_current: int = int(data.get("hp", data.get("hp_current", 1)))
 	var hp_max: int = max(int(data.get("hp_max", 1)), 1)
 	_hp_bar.max_value = float(hp_max)
 	_hp_bar.value = float(hp_current)
@@ -63,13 +94,13 @@ func apply_mock(data: Dictionary) -> void:
 
 	_qg_label.text = "轻功  %s" % [data.get("qinggong", 0)]
 
-	var mp_current: int = int(data.get("mp_current", 1))
+	var mp_current: int = int(data.get("mp", data.get("mp_current", 1)))
 	var mp_max: int = max(int(data.get("mp_max", 1)), 1)
 	_mp_bar.max_value = float(mp_max)
 	_mp_bar.value = float(mp_current)
 	_mp_value_label.text = "%s/%s" % [mp_current, mp_max]
 
-	var portrait_input: Variant = data.get("portrait", PORTRAIT_LI_PATH)
+	var portrait_input: Variant = data.get("portrait_path", data.get("portrait", PORTRAIT_LI_PATH))
 	var portrait: Texture2D = _coerce_texture(portrait_input)
 	_portrait_rect.texture = portrait
 
@@ -432,7 +463,7 @@ func _coerce_texture(value: Variant) -> Texture2D:
 	if value is Texture2D:
 		return value as Texture2D
 	if value is String:
-		return _load_texture(value)
+		return load(value) as Texture2D
 	return _load_texture(PORTRAIT_LI_PATH)
 
 
