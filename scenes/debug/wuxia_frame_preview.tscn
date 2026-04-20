@@ -17,18 +17,131 @@ offset_right = 1558.0
 offset_bottom = 1052.0
 scale = Vector2(0.72, 0.72)
 
-[node name="Grid" type="GridContainer" parent="Board"]
+[node name="Layout" type="VBoxContainer" parent="Board"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 28
+
+[node name="CompareRow" type="HBoxContainer" parent="Board/Layout"]
+custom_minimum_size = Vector2(0, 230)
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="LabelCompare" type="Label" parent="Board/Layout/CompareRow"]
+custom_minimum_size = Vector2(220, 200)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
+theme_override_font_sizes/font_size = 24
+text = "hui_double\nvs\nhui_double_hollow"
+vertical_alignment = 1
+
+[node name="FrameCompareDoubleLarge" type="PanelContainer" parent="Board/Layout/CompareRow"]
+custom_minimum_size = Vector2(410, 200)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_double"
+
+[node name="Center" type="CenterContainer" parent="Board/Layout/CompareRow/FrameCompareDoubleLarge"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Layout/CompareRow/FrameCompareDoubleLarge/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 24
+text = "演示文字"
+
+[node name="FrameCompareHollowLarge" type="PanelContainer" parent="Board/Layout/CompareRow"]
+custom_minimum_size = Vector2(410, 200)
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_double_hollow"
+
+[node name="Center" type="CenterContainer" parent="Board/Layout/CompareRow/FrameCompareHollowLarge"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Layout/CompareRow/FrameCompareHollowLarge/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 24
+text = "演示文字"
+
+[node name="FrameCompareDoubleMedium" type="PanelContainer" parent="Board/Layout/CompareRow"]
+custom_minimum_size = Vector2(250, 80)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_double"
+
+[node name="Center" type="CenterContainer" parent="Board/Layout/CompareRow/FrameCompareDoubleMedium"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Layout/CompareRow/FrameCompareDoubleMedium/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 18
+text = "演示文字"
+
+[node name="FrameCompareHollowMedium" type="PanelContainer" parent="Board/Layout/CompareRow"]
+custom_minimum_size = Vector2(250, 80)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_double_hollow"
+
+[node name="Center" type="CenterContainer" parent="Board/Layout/CompareRow/FrameCompareHollowMedium"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Layout/CompareRow/FrameCompareHollowMedium/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 18
+text = "演示文字"
+
+[node name="FrameCompareDoubleSmall" type="PanelContainer" parent="Board/Layout/CompareRow"]
+custom_minimum_size = Vector2(170, 50)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_double"
+
+[node name="Center" type="CenterContainer" parent="Board/Layout/CompareRow/FrameCompareDoubleSmall"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Layout/CompareRow/FrameCompareDoubleSmall/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 16
+text = "演示文字"
+
+[node name="FrameCompareHollowSmall" type="PanelContainer" parent="Board/Layout/CompareRow"]
+custom_minimum_size = Vector2(170, 50)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_double_hollow"
+
+[node name="Center" type="CenterContainer" parent="Board/Layout/CompareRow/FrameCompareHollowSmall"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Layout/CompareRow/FrameCompareHollowSmall/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 16
+text = "演示文字"
+
+[node name="Grid" type="GridContainer" parent="Board/Layout"]
+layout_mode = 2
 columns = 4
 theme_override_constants/h_separation = 28
 theme_override_constants/v_separation = 18
 
-[node name="LabelHuiDouble" type="Label" parent="Board/Grid"]
+[node name="LabelHuiDouble" type="Label" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(180, 200)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
@@ -36,54 +149,54 @@ theme_override_font_sizes/font_size = 24
 text = "hui_double"
 vertical_alignment = 1
 
-[node name="FrameHuiDoubleLarge" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameHuiDoubleLarge" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(600, 200)
 layout_mode = 2
 script = ExtResource("1_wuxia_frame")
 corner_style = "hui_double"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiDoubleLarge"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameHuiDoubleLarge"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameHuiDoubleLarge/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameHuiDoubleLarge/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 30
 text = "演示文字"
 
-[node name="FrameHuiDoubleMedium" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameHuiDoubleMedium" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(320, 80)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("1_wuxia_frame")
 corner_style = "hui_double"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiDoubleMedium"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameHuiDoubleMedium"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameHuiDoubleMedium/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameHuiDoubleMedium/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 20
 text = "演示文字"
 
-[node name="FrameHuiDoubleSmall" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameHuiDoubleSmall" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(180, 50)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("1_wuxia_frame")
 corner_style = "hui_double"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiDoubleSmall"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameHuiDoubleSmall"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameHuiDoubleSmall/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameHuiDoubleSmall/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 16
 text = "演示文字"
 
-[node name="LabelHuiGrid" type="Label" parent="Board/Grid"]
+[node name="LabelHuiGrid" type="Label" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(180, 200)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
@@ -91,54 +204,54 @@ theme_override_font_sizes/font_size = 24
 text = "hui_grid"
 vertical_alignment = 1
 
-[node name="FrameHuiGridLarge" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameHuiGridLarge" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(600, 200)
 layout_mode = 2
 script = ExtResource("1_wuxia_frame")
 corner_style = "hui_grid"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiGridLarge"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameHuiGridLarge"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameHuiGridLarge/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameHuiGridLarge/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 30
 text = "演示文字"
 
-[node name="FrameHuiGridMedium" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameHuiGridMedium" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(320, 80)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("1_wuxia_frame")
 corner_style = "hui_grid"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiGridMedium"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameHuiGridMedium"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameHuiGridMedium/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameHuiGridMedium/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 20
 text = "演示文字"
 
-[node name="FrameHuiGridSmall" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameHuiGridSmall" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(180, 50)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("1_wuxia_frame")
 corner_style = "hui_grid"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiGridSmall"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameHuiGridSmall"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameHuiGridSmall/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameHuiGridSmall/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 16
 text = "演示文字"
 
-[node name="LabelHuiStripes" type="Label" parent="Board/Grid"]
+[node name="LabelHuiStripes" type="Label" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(180, 200)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
@@ -146,54 +259,54 @@ theme_override_font_sizes/font_size = 24
 text = "hui_stripes"
 vertical_alignment = 1
 
-[node name="FrameHuiStripesLarge" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameHuiStripesLarge" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(600, 200)
 layout_mode = 2
 script = ExtResource("1_wuxia_frame")
 corner_style = "hui_stripes"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiStripesLarge"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameHuiStripesLarge"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameHuiStripesLarge/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameHuiStripesLarge/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 30
 text = "演示文字"
 
-[node name="FrameHuiStripesMedium" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameHuiStripesMedium" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(320, 80)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("1_wuxia_frame")
 corner_style = "hui_stripes"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiStripesMedium"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameHuiStripesMedium"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameHuiStripesMedium/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameHuiStripesMedium/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 20
 text = "演示文字"
 
-[node name="FrameHuiStripesSmall" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameHuiStripesSmall" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(180, 50)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("1_wuxia_frame")
 corner_style = "hui_stripes"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiStripesSmall"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameHuiStripesSmall"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameHuiStripesSmall/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameHuiStripesSmall/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 16
 text = "演示文字"
 
-[node name="LabelCornerScroll" type="Label" parent="Board/Grid"]
+[node name="LabelCornerScroll" type="Label" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(180, 200)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
@@ -201,54 +314,54 @@ theme_override_font_sizes/font_size = 24
 text = "corner_scroll"
 vertical_alignment = 1
 
-[node name="FrameCornerScrollLarge" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameCornerScrollLarge" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(600, 200)
 layout_mode = 2
 script = ExtResource("1_wuxia_frame")
 corner_style = "corner_scroll"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameCornerScrollLarge"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameCornerScrollLarge"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameCornerScrollLarge/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameCornerScrollLarge/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 30
 text = "演示文字"
 
-[node name="FrameCornerScrollMedium" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameCornerScrollMedium" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(320, 80)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("1_wuxia_frame")
 corner_style = "corner_scroll"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameCornerScrollMedium"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameCornerScrollMedium"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameCornerScrollMedium/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameCornerScrollMedium/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 20
 text = "演示文字"
 
-[node name="FrameCornerScrollSmall" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameCornerScrollSmall" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(180, 50)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("1_wuxia_frame")
 corner_style = "corner_scroll"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameCornerScrollSmall"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameCornerScrollSmall"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameCornerScrollSmall/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameCornerScrollSmall/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 16
 text = "演示文字"
 
-[node name="LabelLotusPetal" type="Label" parent="Board/Grid"]
+[node name="LabelLotusPetal" type="Label" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(180, 200)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
@@ -256,48 +369,48 @@ theme_override_font_sizes/font_size = 24
 text = "lotus_petal"
 vertical_alignment = 1
 
-[node name="FrameLotusPetalLarge" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameLotusPetalLarge" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(600, 200)
 layout_mode = 2
 script = ExtResource("1_wuxia_frame")
 corner_style = "lotus_petal"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameLotusPetalLarge"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameLotusPetalLarge"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameLotusPetalLarge/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameLotusPetalLarge/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 30
 text = "演示文字"
 
-[node name="FrameLotusPetalMedium" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameLotusPetalMedium" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(320, 80)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("1_wuxia_frame")
 corner_style = "lotus_petal"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameLotusPetalMedium"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameLotusPetalMedium"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameLotusPetalMedium/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameLotusPetalMedium/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 20
 text = "演示文字"
 
-[node name="FrameLotusPetalSmall" type="PanelContainer" parent="Board/Grid"]
+[node name="FrameLotusPetalSmall" type="PanelContainer" parent="Board/Layout/Grid"]
 custom_minimum_size = Vector2(180, 50)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("1_wuxia_frame")
 corner_style = "lotus_petal"
 
-[node name="Center" type="CenterContainer" parent="Board/Grid/FrameLotusPetalSmall"]
+[node name="Center" type="CenterContainer" parent="Board/Layout/Grid/FrameLotusPetalSmall"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Board/Grid/FrameLotusPetalSmall/Center"]
+[node name="Label" type="Label" parent="Board/Layout/Grid/FrameLotusPetalSmall/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 16

@@ -5,6 +5,7 @@ extends PanelContainer
 const DEFAULT_BG := Color("1F1914")
 const DEFAULT_BORDER := Color("B89050")
 const STYLE_HUI_DOUBLE := "hui_double"
+const STYLE_HUI_DOUBLE_HOLLOW := "hui_double_hollow"
 const STYLE_HUI_GRID := "hui_grid"
 const STYLE_HUI_STRIPES := "hui_stripes"
 const STYLE_CORNER_SCROLL := "corner_scroll"
@@ -32,7 +33,7 @@ const STYLE_LOTUS_PETAL := "lotus_petal"
 		_refresh_layout()
 		queue_redraw()
 
-@export_enum("hui_double", "hui_grid", "hui_stripes", "corner_scroll", "lotus_petal")
+@export_enum("hui_double", "hui_double_hollow", "hui_grid", "hui_stripes", "corner_scroll", "lotus_petal")
 var corner_style: String = STYLE_HUI_DOUBLE:
 	set(value):
 		corner_style = _normalize_corner_style(value)
@@ -92,7 +93,7 @@ func _refresh_layout() -> void:
 
 func _normalize_corner_style(value: String) -> String:
 	match value:
-		STYLE_HUI_DOUBLE, STYLE_HUI_GRID, STYLE_HUI_STRIPES, STYLE_CORNER_SCROLL, STYLE_LOTUS_PETAL:
+		STYLE_HUI_DOUBLE, STYLE_HUI_DOUBLE_HOLLOW, STYLE_HUI_GRID, STYLE_HUI_STRIPES, STYLE_CORNER_SCROLL, STYLE_LOTUS_PETAL:
 			return value
 		_:
 			return STYLE_HUI_DOUBLE
@@ -100,6 +101,8 @@ func _normalize_corner_style(value: String) -> String:
 
 func _draw_corner_pattern(anchor: Vector2, direction: Vector2) -> void:
 	match corner_style:
+		STYLE_HUI_DOUBLE_HOLLOW:
+			_draw_hui_double_hollow(anchor, direction)
 		STYLE_HUI_GRID:
 			_draw_hui_grid(anchor, direction)
 		STYLE_HUI_STRIPES:
@@ -113,6 +116,14 @@ func _draw_corner_pattern(anchor: Vector2, direction: Vector2) -> void:
 
 
 func _draw_hui_double(anchor: Vector2, direction: Vector2) -> void:
+	_draw_hui_double_variant(anchor, direction, true)
+
+
+func _draw_hui_double_hollow(anchor: Vector2, direction: Vector2) -> void:
+	_draw_hui_double_variant(anchor, direction, false)
+
+
+func _draw_hui_double_variant(anchor: Vector2, direction: Vector2, draw_core: bool) -> void:
 	var outer := _effective_corner_size()
 	var width := _ornament_stroke_width()
 	var inner_offset := outer * 0.26
@@ -122,7 +133,8 @@ func _draw_hui_double(anchor: Vector2, direction: Vector2) -> void:
 
 	_draw_l_shape(anchor, direction, outer, width)
 	_draw_l_shape(anchor + direction * Vector2(inner_offset, inner_offset), direction, inner, width)
-	_draw_square(anchor + direction * Vector2(core_offset, core_offset), direction, core, width)
+	if draw_core:
+		_draw_square(anchor + direction * Vector2(core_offset, core_offset), direction, core, width)
 
 
 func _draw_hui_grid(anchor: Vector2, direction: Vector2) -> void:
