@@ -89,23 +89,24 @@ func _refresh_character_panel() -> void:
 	if character_name.is_empty():
 		character_name = unit_id
 
-	var hp_cur: int = int(unit.get("current_hp"))
-	var hp_max: int = max(int(unit.get("max_hp")), 1)
-	var mp_cur: int = int(unit.get("current_mp"))
-	var mp_max: int = max(int(unit.get("max_mp")), 1)
+	var hp_cur: int = int(_vm.hp)
+	var hp_max: int = maxi(int(_vm.hp_max), 1)
+	var mp_cur: int = int(_vm.mp)
+	var mp_max: int = maxi(int(_vm.mp_max), 1)
+	var buffs: Array = _vm.buffs.duplicate(true) if _vm.buffs is Array else []
 
 	_apply_panel_data({
 		"character_name": character_name,
-		"level": 54,
-		"exp_cur": 5,
-		"exp_max": 8050,
+		"level": int(_vm.level),
+		"exp_cur": int(_vm.exp),
+		"exp_max": maxi(int(_vm.exp_max), 1),
 		"hp_cur": hp_cur,
 		"hp_max": hp_max,
 		"mp_cur": mp_cur,
 		"mp_max": mp_max,
-		"qinggong": 398,
+		"qinggong": int(_vm.qinggong),
 		"portrait_texture": _portrait_for_unit(unit_id),
-		"buffs": [],
+		"buffs": buffs,
 	})
 
 
