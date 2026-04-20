@@ -108,6 +108,8 @@ func advance() -> void:
 		return
 
 	_execute_actions(current_node.on_exit_actions)
+	if current_node == null:
+		return
 	if current_node.next_node_id.is_empty():
 		end()
 		return
@@ -126,7 +128,11 @@ func select_choice(index: int) -> void:
 
 	var choice := _visible_choices[index]
 	_execute_actions(current_node.on_exit_actions)
+	if current_node == null:
+		return
 	_execute_actions(choice.actions)
+	if current_node == null:
+		return
 	if choice.next_node_id.is_empty():
 		end()
 		return
@@ -327,18 +333,20 @@ func _execute_action(action: DialogueAction) -> void:
 		"start_battle":
 			var level_id := String(payload.get("level_id", payload.get("level", "")))
 			var return_context := {
-				"type": "dialogue_battle",
-				"dialogue_id": current_dialogue_id,
-				"node_id": current_node.node_id if current_node != null else "",
 				"level_id": level_id,
+				"return_to_poi": String(payload.get("return_to_poi", "")),
+				"on_victory_dialogue": String(payload.get("on_victory_dialogue", "")),
+				"on_defeat_dialogue": String(payload.get("on_defeat_dialogue", "")),
+				"allow_retry": bool(payload.get("allow_retry", false)),
 			}
-			if payload.has("resume_dialogue_id"):
-				return_context["resume_dialogue_id"] = payload["resume_dialogue_id"]
-			if payload.has("resume_node_id"):
-				return_context["resume_node_id"] = payload["resume_node_id"]
-			if not level_id.is_empty():
-				GameState.current_level = level_id
+			var poi_id := String(payload.get("return_to_poi", ""))
+			if not poi_id.is_empty():
+				var poi_data: POIData = POIRegistry.get_data(poi_id)
+				if poi_data != null:
+					return_context["return_scene"] = poi_data.scene_path
+					return_context["entry_spawn_name"] = poi_data.entry_spawn_point
 			GameState.begin_battle_from(return_context)
+			end(false)
 			SceneManager.change_scene_to_file(BATTLE_SCENE_PATH)
 		"play_sfx":
 			print("[SFX] %s" % String(payload.get("name", payload.get("path", ""))))

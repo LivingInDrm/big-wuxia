@@ -12,6 +12,7 @@ const OVERWORLD_SCENE := "res://scenes/overworld/overworld.tscn"
 
 var _player_near_exit: bool = false
 var _current_npc: Node = null
+var _pending_dialogue_id: String = ""
 
 
 func _ready() -> void:
@@ -20,10 +21,12 @@ func _ready() -> void:
 	exit_hint_label.text = "按 E / 点击返回大地图"
 
 	var resume_context: Dictionary = GameState.return_context.duplicate(true)
-	if resume_context.get("target_poi", "") == poi_id and resume_context.has("player_position_in_poi"):
+	if bool(resume_context.get("from_battle", false)) and String(resume_context.get("return_to_poi", "")) == poi_id:
+		_restore_from_battle_context(resume_context)
+	elif resume_context.get("target_poi", "") == poi_id and resume_context.has("player_position_in_poi"):
 		player.global_position = resume_context["player_position_in_poi"]
 	else:
-		player.global_position = entry_spawn.global_position
+		player.global_position = _resolve_entry_spawn(resume_context).global_position
 
 	player.interactable_area_entered.connect(_on_player_interactable_entered)
 	player.interactable_area_exited.connect(_on_player_interactable_exited)
@@ -33,6 +36,9 @@ func _ready() -> void:
 	for npc in get_node("NPCNodes").get_children():
 		npc.interaction_available.connect(_on_npc_interaction_available)
 		npc.interaction_unavailable.connect(_on_npc_interaction_unavailable)
+
+	if not _pending_dialogue_id.is_empty():
+		call_deferred("_start_pending_dialogue")
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -59,6 +65,30 @@ func _return_to_overworld() -> void:
 	}
 	GameState.location = "overworld"
 	SceneManager.change_scene_to_file(OVERWORLD_SCENE)
+
+
+func _restore_from_battle_context(resume_context: Dictionary) -> void:
+	player.global_position = _resolve_entry_spawn(resume_context).global_position
+	var result := String(resume_context.get("battle_result", ""))
+	if result == "victory":
+		_pending_dialogue_id = String(resume_context.get("on_victory_dialogue", ""))
+	elif result == "defeat":
+		_pending_dialogue_id = String(resume_context.get("on_defeat_dialogue", ""))
+	GameState.return_context = {}
+
+
+func _resolve_entry_spawn(resume_context: Dictionary) -> Marker2D:
+	var spawn_name := String(resume_context.get("entry_spawn_name", "EntrySpawn"))
+	var marker := get_node_or_null(spawn_name) as Marker2D
+	return marker if marker != null else entry_spawn
+
+
+func _start_pending_dialogue() -> void:
+	var dialogue_id := _pending_dialogue_id
+	_pending_dialogue_id = ""
+	if dialogue_id.is_empty():
+		return
+	DialogueSystem.start(dialogue_id)
 
 
 func _on_exit_area_entered(area: Area2D) -> void:

@@ -1,6 +1,7 @@
 extends Control
 
 const LEVEL_SELECT_SCENE := "res://scenes/level_select/level_select.tscn"
+const OVERWORLD_SCENE := "res://scenes/overworld/overworld.tscn"
 
 @onready var return_button: Button = %ReturnButton
 @onready var message_label: Label = %MessageLabel
@@ -20,4 +21,7 @@ func _ready() -> void:
 
 
 func _on_return_pressed() -> void:
-	SceneManager.change_scene_to_file(LEVEL_SELECT_SCENE)
+	var target_path := GameState.resume_from_battle("victory")
+	if target_path.is_empty():
+		target_path = OVERWORLD_SCENE if not GameState.overworld_player_position.is_zero_approx() else LEVEL_SELECT_SCENE
+	SceneManager.change_scene_to_file(target_path)

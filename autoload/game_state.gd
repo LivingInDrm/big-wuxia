@@ -80,7 +80,30 @@ func clear_flag(key: String) -> void:
 
 func begin_battle_from(context: Dictionary) -> void:
 	return_context = context.duplicate(true)
+	_capture_current_world_position()
+	var level_id := String(return_context.get("level_id", ""))
+	if not level_id.is_empty():
+		current_level = level_id
+	return_context["from_battle"] = true
 	location = "battle"
+
+
+func resume_from_battle(result: String) -> String:
+	if return_context.is_empty():
+		return ""
+	var scene_path := _resolve_return_scene_path()
+	if not scene_path.is_empty():
+		return_context["battle_result"] = result
+	location = "poi:%s" % String(return_context.get("return_to_poi", return_context.get("poi_id", "")))
+	return scene_path
+
+
+func abort_battle() -> String:
+	if return_context.is_empty():
+		return ""
+	return_context.erase("on_victory_dialogue")
+	return_context.erase("on_defeat_dialogue")
+	return resume_from_battle("defeat")
 
 
 func equip(char_id: String, slot: ItemData.EquipSlot, item_instance: ItemInstance) -> bool:
@@ -135,6 +158,33 @@ func reset() -> void:
 		if unit_data != null and not unit_data.unit_id.is_empty():
 			equipped[unit_data.unit_id] = _create_empty_slots()
 	_init_starting_equipment()
+
+
+func _capture_current_world_position() -> void:
+	if location != "overworld" and not location.begins_with("poi:"):
+		return
+	var tree := get_tree()
+	if tree == null or tree.current_scene == null:
+		return
+	var player := tree.current_scene.get_node_or_null("Player") as Node2D
+	if player != null:
+		overworld_player_position = player.global_position
+
+
+func _resolve_return_scene_path() -> String:
+	var scene_path := String(return_context.get("return_scene", return_context.get("scene", "")))
+	if not scene_path.is_empty():
+		return scene_path
+	var poi_id := String(return_context.get("return_to_poi", return_context.get("poi_id", "")))
+	if poi_id.is_empty():
+		return ""
+	var registry := get_node_or_null("/root/POIRegistry")
+	if registry == null:
+		return ""
+	var poi_data: POIData = registry.get_data(poi_id) as POIData
+	if poi_data == null:
+		return ""
+	return poi_data.scene_path
 
 
 func _ensure_equipped_slots(char_id: String) -> Dictionary:
