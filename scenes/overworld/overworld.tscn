@@ -1,0 +1,75 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scenes/overworld/overworld.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/overworld/overworld_player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/overworld/poi_marker.tscn" id="3_poi_marker"]
+[ext_resource type="Texture2D" path="res://resources/generated/overworld/overworld_bg.png" id="4_bg"]
+[ext_resource type="Script" path="res://resources/ui/controls/wuxia_frame.gd" id="5_frame_script"]
+[ext_resource type="FontFile" path="res://resources/fonts/NotoSerifCJKsc-Regular.otf" id="6_font"]
+
+[node name="Overworld" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("4_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="POINodes" type="Node2D" parent="." unique_name_in_owner=true]
+
+[node name="POI_Beiliang" parent="POINodes" instance=ExtResource("3_poi_marker")]
+poi_id = "beiliang"
+
+[node name="POI_Wudang" parent="POINodes" instance=ExtResource("3_poi_marker")]
+poi_id = "wudang"
+
+[node name="POI_Qingliang" parent="POINodes" instance=ExtResource("3_poi_marker")]
+poi_id = "qingliang"
+
+[node name="Player" parent="." instance=ExtResource("2_player") unique_name_in_owner=true]
+position = Vector2(520, 720)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_name_in_owner=true]
+enabled = true
+position_smoothing_enabled = true
+position_smoothing_speed = 6.0
+limit_left = 0
+limit_top = 0
+limit_right = 1920
+limit_bottom = 1080
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="PoiNameLabel" type="Label" parent="UILayer" unique_name_in_owner=true]
+visible = false
+offset_left = 760.0
+offset_top = 28.0
+offset_right = 1160.0
+offset_bottom = 76.0
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 34
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+horizontal_alignment = 1
+
+[node name="InteractionHintFrame" type="PanelContainer" parent="UILayer" unique_name_in_owner=true]
+visible = false
+offset_left = 700.0
+offset_top = 960.0
+offset_right = 1220.0
+offset_bottom = 1032.0
+script = ExtResource("5_frame_script")
+bg_color = Color(0.95, 0.92, 0.85, 0.92)
+border_color = Color(0.13, 0.1, 0.07, 1)
+corner_color = Color(0.38, 0.26, 0.14, 1)
+corner_style = "regular"
+
+[node name="InteractionHintLabel" type="Label" parent="UILayer/InteractionHintFrame" unique_name_in_owner=true]
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+text = "按 E / 点击进入"
+horizontal_alignment = 1

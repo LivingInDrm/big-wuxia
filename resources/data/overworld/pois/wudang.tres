@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="POIData" format=3]
+[gd_resource type="Resource" script_class="POIData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/core/poi_data.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://resources/generated/overworld/poi_marker_wudang.png" id="2_marker"]
 
 [resource]
 script = ExtResource("1_script")
@@ -8,6 +9,7 @@ id = "wudang"
 display_name = "武当山"
 position_on_overworld = Vector2(960, 280)
 scene_path = "res://scenes/overworld/poi_map_wudang.tscn"
+marker_sprite = ExtResource("2_marker")
 marker_label_offset = Vector2(0, -48)
 required_flags = Array[String]([])
 unlock_flag = ""
