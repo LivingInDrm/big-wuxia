@@ -78,6 +78,11 @@ func clear_flag(key: String) -> void:
 	dialogue_flags.erase(key)
 
 
+func begin_battle_from(context: Dictionary) -> void:
+	return_context = context.duplicate(true)
+	location = "battle"
+
+
 func equip(char_id: String, slot: ItemData.EquipSlot, item_instance: ItemInstance) -> bool:
 	if item_instance == null or item_instance.item_data == null:
 		return false
