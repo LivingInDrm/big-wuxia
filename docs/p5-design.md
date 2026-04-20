@@ -1020,7 +1020,7 @@ DialogueSystem.force_close() -> void
 
 ---
 
-## 附录 A：关键引用
+## 附录 B：关键引用
 
 - 素材盘点：`docs/v2-audit.md` §1（UI/图标/sprite/地图/对话框）
 - 现有 Registry 模板：`scripts/systems/registries/unit_registry.gd`
@@ -1032,3 +1032,33 @@ DialogueSystem.force_close() -> void
 ---
 
 *End of p5-design.md*
+
+## 附录 A — 已落地版本（v0.2 开发中）
+
+本节由 Sprint P5-S5 收官时自动追加。
+
+### 已实现
+- P5-S1：POI / NPC / Dialogue 三套 Resource 与 Registry，GameState 增补 `dialogue_flags`、`location`、`overworld_player_position`、`return_context`
+- P5-S2：`DialogueSystem` + `dialogue_box.tscn`，支持逐字显示、跳过、分支选项、条件分支、portrait fallback
+- P5-S3：`overworld.tscn`、3 个 POI 场景、`OverworldPlayer`、`POIMarker`、`NPCNode`、overworld ↔ POI 往返
+- P5-S4：`start_battle` / Victory / Defeat / `return_context` 闭环，战后恢复 POI 与后续对话
+- P5-S5：`validate_dialogues.gd`、文字速度设置、ESC 返回主菜单确认框、hover/呼吸动画、Overworld 顶部 POI 名提示
+- 3 个 POI（北凉/武当/清凉）+ 主线闭环
+- 5 段正式剧情 `.tres`（共 25 个 DialogueNode / 8 个 DialogueChoice）
+- 7 种 DialogueAction 全实装
+- Registry 系统（POI/NPC/Dialogue）
+- `validate_dialogues` 校验工具
+
+### 已知局限
+- OverworldPlayer 四方向仅用 flip/modulate，无独立上下帧美术
+- 主菜单→overworld 异步淡入在 `SceneTree --script` 模式存在时序抖动（E2E 用直接切场兜底）
+- ObjectDB leaked at exit（项目既有，非本阶段引入）
+- 对话不能回放已读剧情（无 replay）
+- 战斗中无法存档（战斗内状态）
+
+### 建议的 P6 入口
+- 更多 POI / NPC / 剧情
+- 对话存档 / 回放
+- UI 文字速度 cfg 的设置页最终入口（当前放在 settings_menu，可独立成对话设置）
+- NPC 动画系统（四方向美术）
+- 战斗中存档

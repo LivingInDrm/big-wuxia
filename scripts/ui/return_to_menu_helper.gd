@@ -35,7 +35,16 @@ static func _ensure_dialog(tree: SceneTree) -> CanvasLayer:
 static func _on_confirmed(dialog: CanvasLayer) -> void:
 	if dialog != null and is_instance_valid(dialog):
 		dialog.queue_free()
-	GameState.return_context = {}
-	GameState.location = ""
-	DialogueSystem.end(false)
-	SceneManager.change_scene_to_file(MAIN_MENU_SCENE)
+	var tree := Engine.get_main_loop() as SceneTree
+	if tree == null:
+		return
+	var game_state := tree.root.get_node_or_null("GameState")
+	if game_state != null:
+		game_state.return_context = {}
+		game_state.location = ""
+	var dialogue_system := tree.root.get_node_or_null("DialogueSystem")
+	if dialogue_system != null:
+		dialogue_system.end(false)
+	var scene_manager := tree.root.get_node_or_null("SceneManager")
+	if scene_manager != null:
+		scene_manager.change_scene_to_file(MAIN_MENU_SCENE)

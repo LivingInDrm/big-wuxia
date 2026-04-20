@@ -5,8 +5,8 @@ signal confirmed
 @onready var _root: Control = $Root
 @onready var _backdrop: ColorRect = $Root/Backdrop
 @onready var _frame: PanelContainer = $Root/Center/Frame
-@onready var _confirm_button: Button = %ConfirmButton
-@onready var _cancel_button: Button = %CancelButton
+@onready var _confirm_button: Button = $Root/Center/Frame/Margin/VBox/Buttons/ConfirmButton
+@onready var _cancel_button: Button = $Root/Center/Frame/Margin/VBox/Buttons/CancelButton
 
 
 func _ready() -> void:
@@ -32,7 +32,6 @@ func _unhandled_input(event: InputEvent) -> void:
 func open() -> void:
 	visible = true
 	_root.visible = true
-	_confirm_button.grab_focus()
 
 
 func close() -> void:
