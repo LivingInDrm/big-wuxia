@@ -317,11 +317,20 @@ func _load_skills() -> void:
 	skills.clear()
 	if unit_data == null:
 		return
-	var balance = get_node_or_null("/root/GameBalance")
+	var registry := get_node_or_null("/root/SkillRegistry")
+	if registry == null:
+		# 回退：SkillRegistry 未注册时走 GameBalance（旧路径）
+		var balance := get_node_or_null("/root/GameBalance")
+		for skill_id in unit_data.skill_ids:
+			if balance == null:
+				break
+			var skill = balance.get_skill_data(skill_id)
+			if skill == null:
+				continue
+			skills.append(skill.duplicate_runtime())
+		return
 	for skill_id in unit_data.skill_ids:
-		if balance == null:
-			break
-		var skill = balance.get_skill_data(skill_id)
+		var skill = registry.get_data(skill_id)
 		if skill == null:
 			continue
 		skills.append(skill.duplicate_runtime())
