@@ -10,6 +10,7 @@ signal player_exited(poi_id: String)
 
 var poi_data: POIData = null
 var _player_inside: bool = false
+var _hovered: bool = false
 
 
 func _ready() -> void:
@@ -24,12 +25,17 @@ func _ready() -> void:
 	visible = _is_unlocked()
 	interaction_area.area_entered.connect(_on_area_entered)
 	interaction_area.area_exited.connect(_on_area_exited)
+	interaction_area.mouse_entered.connect(_on_mouse_entered)
+	interaction_area.mouse_exited.connect(_on_mouse_exited)
+	_apply_hover_visual()
 
 
 func refresh_visibility() -> void:
 	visible = _is_unlocked()
 	if not visible:
 		_player_inside = false
+		_hovered = false
+	_apply_hover_visual()
 
 
 func is_player_inside() -> bool:
@@ -61,3 +67,20 @@ func _on_area_exited(area: Area2D) -> void:
 		return
 	_player_inside = false
 	player_exited.emit(poi_id)
+
+
+func _on_mouse_entered() -> void:
+	_hovered = true
+	_apply_hover_visual()
+
+
+func _on_mouse_exited() -> void:
+	_hovered = false
+	_apply_hover_visual()
+
+
+func _apply_hover_visual() -> void:
+	if sprite == null:
+		return
+	sprite.scale = Vector2.ONE * (1.1 if _hovered and visible else 1.0)
+	sprite.modulate = Color(1.0, 0.95, 0.78, 1.0) if _hovered and visible else Color.WHITE

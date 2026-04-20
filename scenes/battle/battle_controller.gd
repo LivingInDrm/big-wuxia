@@ -26,6 +26,7 @@ extends Node2D
 const UNIT_SCENE: PackedScene = preload("res://scenes/unit/unit.tscn")
 const SKILL_EXECUTOR = preload("res://scripts/systems/skill_executor.gd")
 const ITEM_EFFECT_EXECUTOR = preload("res://scripts/systems/item_effect_executor.gd")
+const ReturnToMenuHelper = preload("res://scripts/ui/return_to_menu_helper.gd")
 const VFX = preload("res://scripts/systems/vfx.gd")
 const ItemData = preload("res://scripts/core/item_data.gd")
 const LevelData = preload("res://scripts/core/level_data.gd")
@@ -881,9 +882,13 @@ func _handle_hud_shortcut(event: InputEvent) -> bool:
 	var key_event := event as InputEventKey
 	if not key_event.pressed or key_event.echo:
 		return false
+	if ReturnToMenuHelper.is_open(get_tree()):
+		return true
 	match key_event.keycode:
 		KEY_ESCAPE:
-			return _handle_back_action()
+			if _handle_back_action():
+				return true
+			return ReturnToMenuHelper.request(get_tree())
 		KEY_A:
 			return _emit_hud_menu_action(&"attack")
 		KEY_V:

@@ -7,6 +7,7 @@ const DialogueData = preload("res://scripts/core/dialogue_data.gd")
 const DialogueNode = preload("res://scripts/core/dialogue_node.gd")
 const DialogueBoxScene = preload("res://scenes/dialogue/dialogue_box.tscn")
 const NPCData = preload("res://scripts/core/npc_data.gd")
+const ReturnToMenuHelper = preload("res://scripts/ui/return_to_menu_helper.gd")
 const UnitData = preload("res://scripts/core/unit_data.gd")
 const BATTLE_SCENE_PATH := "res://scenes/battle/battle.tscn"
 const DEFAULT_PORTRAIT_PATH := "res://resources/ui/portraits/_default.png"
@@ -70,7 +71,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		var key_event := event as InputEventKey
 		if key_event.keycode == KEY_ESCAPE:
-			end()
+			if not ReturnToMenuHelper.is_open(get_tree()) and ReturnToMenuHelper.request(get_tree()):
+				get_viewport().set_input_as_handled()
+			return
+		if ReturnToMenuHelper.is_open(get_tree()):
 			get_viewport().set_input_as_handled()
 			return
 		if key_event.keycode == KEY_SPACE or key_event.keycode == KEY_ENTER or key_event.keycode == KEY_KP_ENTER:

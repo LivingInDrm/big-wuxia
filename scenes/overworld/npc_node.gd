@@ -12,10 +12,12 @@ signal interaction_unavailable(npc: Node)
 var npc_data: NPCData = null
 var _player_inside: bool = false
 var _can_interact: bool = true
+var _prompt_breathe_time: float = 0.0
 
 
 func _ready() -> void:
 	add_to_group("npc_node")
+	set_process(true)
 	npc_data = NPCRegistry.get_data(npc_id)
 	if npc_data == null:
 		push_warning("[NPCNode] Missing NPC data: %s" % npc_id)
@@ -36,6 +38,15 @@ func _ready() -> void:
 		DialogueSystem.dialogue_started.connect(_on_dialogue_started)
 	if not DialogueSystem.dialogue_ended.is_connected(_on_dialogue_ended):
 		DialogueSystem.dialogue_ended.connect(_on_dialogue_ended)
+
+
+func _process(delta: float) -> void:
+	if not prompt_label.visible:
+		_prompt_breathe_time = 0.0
+		prompt_label.modulate.a = 1.0
+		return
+	_prompt_breathe_time += delta * 2.2
+	prompt_label.modulate.a = 0.7 + 0.3 * (0.5 + 0.5 * sin(_prompt_breathe_time))
 
 
 func interact() -> bool:

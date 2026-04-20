@@ -1,6 +1,7 @@
 extends Node2D
 
 const DEFAULT_SPAWN := Vector2(520, 720)
+const ReturnToMenuHelper = preload("res://scripts/ui/return_to_menu_helper.gd")
 
 @onready var player: CharacterBody2D = get_node("Player")
 @onready var camera: Camera2D = get_node("Camera2D")
@@ -34,6 +35,12 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if ReturnToMenuHelper.is_open(get_tree()):
+		return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
+		if ReturnToMenuHelper.request(get_tree()):
+			get_viewport().set_input_as_handled()
+		return
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E:
 		if _try_enter_current_poi():
 			get_viewport().set_input_as_handled()

@@ -1,6 +1,7 @@
 extends Node2D
 
 const OVERWORLD_SCENE := "res://scenes/overworld/overworld.tscn"
+const ReturnToMenuHelper = preload("res://scripts/ui/return_to_menu_helper.gd")
 
 @export var poi_id: String = ""
 
@@ -42,6 +43,12 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if ReturnToMenuHelper.is_open(get_tree()):
+		return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
+		if ReturnToMenuHelper.request(get_tree()):
+			get_viewport().set_input_as_handled()
+		return
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_E:
 		if _current_npc != null and _current_npc.interact():
 			get_viewport().set_input_as_handled()
