@@ -1,7 +1,40 @@
-[gd_scene format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scenes/defeat/defeat.gd" id="1_script"]
 [ext_resource type="FontFile" path="res://resources/fonts/NotoSerifCJKsc-Regular.otf" id="2_font"]
+[ext_resource type="Texture2D" uid="uid://buis1cgjfnf4u" path="res://resources/sprites/backgrounds/mountain_bg.png" id="3_bg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+content_margin_left = 48.0
+content_margin_top = 32.0
+content_margin_right = 48.0
+content_margin_bottom = 32.0
+bg_color = Color(0.96, 0.92, 0.82, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.46, 0.22, 0.2, 0.95)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn"]
+content_margin_left = 24.0
+content_margin_top = 14.0
+content_margin_right = 24.0
+content_margin_bottom = 16.0
+bg_color = Color(0.945, 0.898, 0.776, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.35, 0.25, 0.18, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="Defeat" type="Control"]
 layout_mode = 3
@@ -12,14 +45,25 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.09, 0.05, 0.06, 1)
+texture = ExtResource("3_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Shade" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.06, 0.03, 0.03, 0.65)
 
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -29,30 +73,49 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="Center"]
+[node name="Card" type="PanelContainer" parent="Center"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
-[node name="TitleLabel" type="Label" parent="Center/VBox"]
+[node name="VBox" type="VBoxContainer" parent="Center/Card"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="TitleLabel" type="Label" parent="Center/Card/VBox"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 64
-theme_override_colors/font_color = Color(0.95, 0.75, 0.72, 1)
-text = "失败"
+theme_override_font_sizes/font_size = 72
+theme_override_colors/font_color = Color(0.42, 0.18, 0.15, 1)
+theme_override_colors/font_shadow_color = Color(0.55, 0.35, 0.25, 0.3)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+text = "败退"
 horizontal_alignment = 1
 
-[node name="RetryButton" type="Button" parent="Center/VBox" unique_id=1301]
+[node name="RetryButton" type="Button" parent="Center/Card/VBox" unique_id=1301]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(260, 64)
+custom_minimum_size = Vector2(300, 72)
 layout_mode = 2
+theme_override_colors/font_color = Color(0.15, 0.1, 0.07, 1)
+theme_override_colors/font_pressed_color = Color(0.1, 0.06, 0.04, 1)
+theme_override_colors/font_hover_color = Color(0.35, 0.18, 0.08, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn")
 text = "重试"
 
-[node name="ReturnButton" type="Button" parent="Center/VBox" unique_id=1302]
+[node name="ReturnButton" type="Button" parent="Center/Card/VBox" unique_id=1302]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(260, 64)
+custom_minimum_size = Vector2(300, 72)
 layout_mode = 2
+theme_override_colors/font_color = Color(0.15, 0.1, 0.07, 1)
+theme_override_colors/font_pressed_color = Color(0.1, 0.06, 0.04, 1)
+theme_override_colors/font_hover_color = Color(0.35, 0.18, 0.08, 1)
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn")
 text = "返回选关"
