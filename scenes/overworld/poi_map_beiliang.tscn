@@ -1,0 +1,74 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scenes/overworld/poi_map_beiliang.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://resources/generated/overworld/poi_bg_beiliang.png" id="2_bg"]
+[ext_resource type="PackedScene" path="res://scenes/overworld/overworld_player.tscn" id="3_player"]
+[ext_resource type="PackedScene" path="res://scenes/overworld/npc_node.tscn" id="4_npc"]
+[ext_resource type="Script" path="res://resources/ui/controls/wuxia_frame.gd" id="5_frame_script"]
+[ext_resource type="FontFile" path="res://resources/fonts/NotoSerifCJKsc-Regular.otf" id="6_font"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_exit"]
+size = Vector2(180, 180)
+
+[node name="POIMapBeiliang" type="Node2D"]
+script = ExtResource("1_script")
+poi_id = "beiliang"
+
+[node name="Background" type="TextureRect" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="EntrySpawn" type="Marker2D" parent="." unique_name_in_owner=true]
+position = Vector2(960, 760)
+
+[node name="Player" parent="." instance=ExtResource("3_player") unique_name_in_owner=true]
+position = Vector2(960, 760)
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+enabled = true
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+limit_left = 0
+limit_top = 0
+limit_right = 1920
+limit_bottom = 1080
+
+[node name="NPCNodes" type="Node2D" parent="." unique_name_in_owner=true]
+
+[node name="NPC_XuXiao" parent="NPCNodes" instance=ExtResource("4_npc")]
+position = Vector2(1180, 660)
+npc_id = "xu_xiao"
+
+[node name="ExitArea" type="Area2D" parent="." unique_name_in_owner=true]
+position = Vector2(180, 860)
+collision_layer = 2
+collision_mask = 8
+monitoring = true
+monitorable = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitArea"]
+shape = SubResource("RectangleShape2D_exit")
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="ExitHintFrame" type="PanelContainer" parent="UILayer" unique_name_in_owner=true]
+visible = false
+offset_left = 640.0
+offset_top = 960.0
+offset_right = 1280.0
+offset_bottom = 1032.0
+script = ExtResource("5_frame_script")
+bg_color = Color(0.95, 0.92, 0.85, 0.92)
+border_color = Color(0.13, 0.1, 0.07, 1)
+corner_color = Color(0.38, 0.26, 0.14, 1)
+corner_style = "regular"
+
+[node name="ExitHintLabel" type="Label" parent="UILayer/ExitHintFrame" unique_name_in_owner=true]
+theme_override_fonts/font = ExtResource("6_font")
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.12, 0.1, 0.08, 1)
+text = "按 E / 点击返回大地图"
+horizontal_alignment = 1

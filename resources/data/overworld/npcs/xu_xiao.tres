@@ -2,16 +2,16 @@
 
 [ext_resource type="Script" path="res://scripts/core/npc_data.gd" id="1_script"]
 [ext_resource type="SpriteFrames" path="res://resources/data/units/warrior_sprite_frames.tres" id="2_frames"]
-[ext_resource type="Texture2D" path="res://resources/generated/overworld/npc_hong_xixiang.png" id="3_texture"]
+[ext_resource type="Texture2D" path="res://resources/generated/overworld/npc_xu_xiao.png" id="3_texture"]
 
 [resource]
 script = ExtResource("1_script")
-id = "hong_xixiang"
-display_name = "洪洗象"
+id = "xu_xiao"
+display_name = "徐骁"
 unit_id = ""
 sprite_frames = ExtResource("2_frames")
 overworld_texture = ExtResource("3_texture")
-default_dialogue_id = "wudang.hong_first_meet"
+default_dialogue_id = "beiliang.xu_xiao_placeholder"
 conditional_dialogues = Array[Dictionary]([])
-interaction_range = 64.0
+interaction_range = 48.0
 modulate = Color(1, 1, 1, 1)
