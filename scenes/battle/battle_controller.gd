@@ -841,7 +841,9 @@ func _refresh_battle_hud_visibility(animate: bool = true) -> void:
 	var should_show := selected_unit != null \
 		and select_state == SelectState.UNIT_SELECTED \
 		and turn_manager.current_phase != TurnManager.Phase.ENEMY_TURN \
-		and not selected_unit.acted
+		and not selected_unit.acted \
+		and selected_unit.unit_data != null \
+		and not selected_unit.unit_data.is_enemy
 	if not should_show:
 		hud_v3.set_character_card_visible(false, animate)
 		return
