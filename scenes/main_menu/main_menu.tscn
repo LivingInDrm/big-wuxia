@@ -154,7 +154,22 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
-text = "开始游戏"
+text = "继续旅程"
+
+[node name="DebugLevelSelectButton" type="Button" parent="ButtonContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(360, 84)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.15, 0.1, 0.07, 1)
+theme_override_colors/font_pressed_color = Color(0.1, 0.06, 0.04, 1)
+theme_override_colors/font_hover_color = Color(0.35, 0.18, 0.08, 1)
+theme_override_fonts/font = ExtResource("3_font")
+theme_override_font_sizes/font_size = 34
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
+text = "关卡调试"
 
 [node name="InventoryButton" type="Button" parent="ButtonContainer" unique_id=1968547291]
 unique_name_in_owner = true

@@ -17,7 +17,7 @@ extends SceneTree
 ## - 通过 monkey-patch SceneManager 捕获调用（记录调用参数），而非真正退出引擎
 
 const SCENE_PATH := "res://scenes/main_menu/main_menu.tscn"
-const EXPECTED_TARGET_SCENE := "res://scenes/level_select/level_select.tscn"
+const EXPECTED_TARGET_SCENE := "res://scenes/overworld/overworld.tscn"
 
 var _pass: int = 0
 var _fail: int = 0
@@ -57,11 +57,13 @@ func _run() -> void:
 
 	# T1: 按钮节点存在
 	var start_btn := scene.get_node_or_null("ButtonContainer/StartButton") as Button
+	var debug_btn := scene.get_node_or_null("ButtonContainer/DebugLevelSelectButton") as Button
 	var quit_btn := scene.get_node_or_null("ButtonContainer/QuitButton") as Button
 	_assert(start_btn != null, "T1a StartButton 存在")
-	_assert(quit_btn != null, "T1b QuitButton 存在")
-	_assert(start_btn != null and start_btn.text == "开始游戏", "T1c StartButton 文本为 '开始游戏'")
-	_assert(quit_btn != null and quit_btn.text == "退出江湖", "T1d QuitButton 文本为 '退出江湖'")
+	_assert(debug_btn != null, "T1b DebugLevelSelectButton 存在")
+	_assert(quit_btn != null, "T1c QuitButton 存在")
+	_assert(start_btn != null and start_btn.text == "继续旅程", "T1d StartButton 文本为 '继续旅程'")
+	_assert(quit_btn != null and quit_btn.text == "退出江湖", "T1e QuitButton 文本为 '退出江湖'")
 
 	# T2: 点"退出江湖" → SceneManager.quit_game() 被调用
 	if quit_btn != null:
@@ -70,7 +72,7 @@ func _run() -> void:
 		await process_frame
 		_assert(_quit_called, "T2 点击 QuitButton 触发 SceneManager.quit_game()")
 
-	# T3: 点"开始游戏" → SceneManager.change_scene_to_file(CharacterSelect)
+	# T3: 点"继续旅程" → SceneManager.change_scene_to_file(Overworld)
 	if start_btn != null:
 		_change_scene_calls.clear()
 		start_btn.pressed.emit()
@@ -79,6 +81,16 @@ func _run() -> void:
 		if _change_scene_calls.size() >= 1:
 			_assert(_change_scene_calls[0] == EXPECTED_TARGET_SCENE,
 				"T3b change_scene_to_file 参数为 %s（实际=%s）" % [EXPECTED_TARGET_SCENE, _change_scene_calls[0]])
+
+	# T4: 点"关卡调试" → SceneManager.change_scene_to_file(LevelSelect)
+	if debug_btn != null:
+		_change_scene_calls.clear()
+		debug_btn.pressed.emit()
+		await process_frame
+		_assert(_change_scene_calls.size() == 1, "T4a 点击 DebugLevelSelectButton 触发 1 次 change_scene_to_file")
+		if _change_scene_calls.size() >= 1:
+			_assert(_change_scene_calls[0] == "res://scenes/level_select/level_select.tscn",
+				"T4b DebugLevelSelectButton 跳转到 level_select（实际=%s）" % _change_scene_calls[0])
 
 	_finish()
 
