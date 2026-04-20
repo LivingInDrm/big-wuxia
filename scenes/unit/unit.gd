@@ -16,7 +16,6 @@ const AttributeResolver = preload("res://scripts/systems/attribute_resolver.gd")
 const StatusEffect = preload("res://scripts/core/status_effect.gd")
 const TraitData = preload("res://scripts/core/trait_data.gd")
 const ItemData = preload("res://scripts/core/item_data.gd")
-const ITEM_DIR := "res://resources/data/items/"
 
 @export var unit_data: UnitData
 

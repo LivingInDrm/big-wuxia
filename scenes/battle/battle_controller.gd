@@ -34,7 +34,6 @@ const TILE_PX := 64
 const TERRAIN_SET_ID := 0
 const GRASS_TERRAIN_ID := 0
 const DEFAULT_LEVEL_ID := "level_01"
-const ITEM_DIR := "res://resources/data/items/"
 
 enum SelectState { IDLE, UNIT_SELECTED, MOVED_AWAIT_ACTION, SKILL_TARGETING, ITEM_TARGETING }
 
@@ -768,6 +767,9 @@ func debug_attack(attacker: Unit, defender: Unit) -> void:
 func _load_item_data(item_id: String) -> ItemData:
 	if item_id.is_empty():
 		return null
+	var registry := get_node_or_null("/root/ItemRegistry")
+	if registry != null:
+		return registry.get_data(item_id)
 	var path := "res://resources/data/items/%s.tres" % item_id
 	if not ResourceLoader.exists(path):
 		return null

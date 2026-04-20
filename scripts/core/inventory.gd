@@ -1,7 +1,6 @@
 extends RefCounted
 class_name Inventory
 
-const ITEM_DIR := "res://resources/data/items/"
 const ItemData = preload("res://scripts/core/item_data.gd")
 const ItemInstance = preload("res://scripts/core/item_instance.gd")
 
@@ -116,7 +115,15 @@ func remove_instance(instance_id: int) -> bool:
 func _load_item_data(item_id: String) -> ItemData:
 	if item_id.is_empty():
 		return null
-	var path := "%s%s.tres" % [ITEM_DIR, item_id]
+	# 优先走 ItemRegistry 单例；启动早期 autoload 未入树时回退到直接 load。
+	var main_loop := Engine.get_main_loop()
+	if main_loop != null and main_loop is SceneTree:
+		var root := (main_loop as SceneTree).root
+		if root != null and root.is_inside_tree():
+			var registry := root.get_node_or_null("ItemRegistry")
+			if registry != null:
+				return registry.get_data(item_id)
+	var path := "res://resources/data/items/%s.tres" % item_id
 	if not ResourceLoader.exists(path):
 		return null
 	return load(path) as ItemData
