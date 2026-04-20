@@ -437,6 +437,10 @@ func show_item_panel() -> void:
 	_rebuild_submenu()
 
 
+func trigger_menu_action(action: StringName) -> void:
+	emit_menu_action.emit(action)
+
+
 func hide_submenu(expected_kind: StringName = &"") -> void:
 	if _submenu_panel == null:
 		return
@@ -549,7 +553,7 @@ func _build_submenu_button(entry: Dictionary) -> Control:
 
 
 func _on_action_button_pressed(action: StringName) -> void:
-	emit_menu_action.emit(action)
+	trigger_menu_action(action)
 
 
 func _on_skill_entry_pressed(skill_index: int) -> void:

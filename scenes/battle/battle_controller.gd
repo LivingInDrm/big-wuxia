@@ -879,7 +879,7 @@ func _handle_hud_shortcut(event: InputEvent) -> bool:
 
 func _emit_hud_menu_action(action: StringName) -> bool:
 	if hud_v3 != null:
-		hud_v3.emit_menu_action.emit(action)
+		hud_v3.trigger_menu_action(action)
 	return true
 
 
