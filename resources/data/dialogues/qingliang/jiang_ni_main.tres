@@ -1,0 +1,106 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/dialogue_data.gd" id="1_dialogue_data"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_node.gd" id="2_dialogue_node"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_choice.gd" id="3_dialogue_choice"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_action.gd" id="4_dialogue_action"]
+
+[sub_resource type="Resource" id="DialogueAction_set_jiang_met"]
+script = ExtResource("4_dialogue_action")
+type = "set_flag"
+payload = {
+"flag": "qingliang.jiang_ni_met",
+"value": true
+}
+
+[sub_resource type="Resource" id="DialogueChoice_soften"]
+script = ExtResource("3_dialogue_choice")
+text = "收起话锋"
+next_node_id = "soften"
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+actions = Array[ExtResource("4_dialogue_action")]([])
+
+[sub_resource type="Resource" id="DialogueChoice_tease"]
+script = ExtResource("3_dialogue_choice")
+text = "偏要逗她"
+next_node_id = "tease"
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+actions = Array[ExtResource("4_dialogue_action")]([])
+
+[sub_resource type="Resource" id="DialogueNode_start"]
+script = ExtResource("2_dialogue_node")
+node_id = "start"
+speaker_id = "jiang_ni"
+speaker_name_override = ""
+text = "你来得倒巧。我刚想清静一会儿，偏又看见你。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "reply"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([SubResource("DialogueAction_set_jiang_met")])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_reply"]
+script = ExtResource("2_dialogue_node")
+node_id = "reply"
+speaker_id = "xu_fengnian"
+speaker_name_override = "徐凤年"
+text = "清凉山风冷，我怕你一个人站久了，连怨气都冻住。"
+choices = Array[ExtResource("3_dialogue_choice")]([SubResource("DialogueChoice_soften"), SubResource("DialogueChoice_tease")])
+next_node_id = ""
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_soften"]
+script = ExtResource("2_dialogue_node")
+node_id = "soften"
+speaker_id = "jiang_ni"
+speaker_name_override = ""
+text = "少装好心。你若真懂冷暖，就不该总拿旧事刺人。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "close"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_tease"]
+script = ExtResource("2_dialogue_node")
+node_id = "tease"
+speaker_id = "jiang_ni"
+speaker_name_override = ""
+text = "再贫嘴，我便把你赶下山。北凉世子，也未必摔不疼。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "close"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_close"]
+script = ExtResource("2_dialogue_node")
+node_id = "close"
+speaker_id = "xu_fengnian"
+speaker_name_override = "徐凤年"
+text = "赶也好，骂也罢。你肯开口，总比拿我当路人强。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = ""
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[resource]
+script = ExtResource("1_dialogue_data")
+id = "qingliang.jiang_ni_main"
+entry_node_id = "start"
+nodes = Array[ExtResource("2_dialogue_node")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_reply"), SubResource("DialogueNode_soften"), SubResource("DialogueNode_tease"), SubResource("DialogueNode_close")])
+meta = {
+"author": "codex",
+"revision": 4,
+"tone": "冷硬中见松动"
+}

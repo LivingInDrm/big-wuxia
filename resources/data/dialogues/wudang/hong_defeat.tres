@@ -1,0 +1,42 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/dialogue_data.gd" id="1_dialogue_data"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_node.gd" id="2_dialogue_node"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_choice.gd" id="3_dialogue_choice"]
+
+[sub_resource type="Resource" id="DialogueNode_start"]
+script = ExtResource("2_dialogue_node")
+node_id = "start"
+speaker_id = "hong_xixiang"
+speaker_name_override = ""
+text = "世子出刀太急，气还未沉到底。再走几程山路，自会稳些。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "reply"
+on_enter_actions = Array[Resource]([])
+on_exit_actions = Array[Resource]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_reply"]
+script = ExtResource("2_dialogue_node")
+node_id = "reply"
+speaker_id = "xu_fengnian"
+speaker_name_override = "徐凤年"
+text = "一时失手罢了。待我下回上山，你这扫帚未必还能拦路。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = ""
+on_enter_actions = Array[Resource]([])
+on_exit_actions = Array[Resource]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[resource]
+script = ExtResource("1_dialogue_data")
+id = "wudang.hong_defeat"
+entry_node_id = "start"
+nodes = Array[ExtResource("2_dialogue_node")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_reply")])
+meta = {
+"author": "codex",
+"revision": 4,
+"tone": "温声劝诫"
+}

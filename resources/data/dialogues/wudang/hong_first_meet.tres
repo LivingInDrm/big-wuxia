@@ -1,22 +1,49 @@
-[gd_resource type="Resource" script_class="DialogueData" load_steps=8 format=3]
+[gd_resource type="Resource" script_class="DialogueData" load_steps=24 format=3]
 
 [ext_resource type="Script" path="res://scripts/core/dialogue_data.gd" id="1_dialogue_data"]
 [ext_resource type="Script" path="res://scripts/core/dialogue_node.gd" id="2_dialogue_node"]
 [ext_resource type="Script" path="res://scripts/core/dialogue_choice.gd" id="3_dialogue_choice"]
 [ext_resource type="Script" path="res://scripts/core/dialogue_action.gd" id="4_dialogue_action"]
 
-[sub_resource type="Resource" id="DialogueAction_start_flag"]
+[sub_resource type="Resource" id="DialogueAction_set_hong_met"]
 script = ExtResource("4_dialogue_action")
 type = "set_flag"
 payload = {
-"flag": "wudang.met_hong",
+"flag": "wudang.hong_met",
 "value": true
 }
 
-[sub_resource type="Resource" id="DialogueChoice_ask_name"]
+[sub_resource type="Resource" id="DialogueAction_start_battle"]
+script = ExtResource("4_dialogue_action")
+type = "start_battle"
+payload = {
+"allow_retry": true,
+"level_id": "level_01",
+"on_defeat_dialogue": "wudang.hong_defeat",
+"on_victory_dialogue": "wudang.hong_after_battle",
+"return_to_poi": "wudang"
+}
+
+[sub_resource type="Resource" id="DialogueChoice_ask_kungfu"]
 script = ExtResource("3_dialogue_choice")
-text = "请问小道长尊姓大名？"
-next_node_id = "reply"
+text = "问武当武功"
+next_node_id = "ask_kungfu"
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+actions = Array[ExtResource("4_dialogue_action")]([])
+
+[sub_resource type="Resource" id="DialogueChoice_ask_world"]
+script = ExtResource("3_dialogue_choice")
+text = "问天下大势"
+next_node_id = "ask_world"
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+actions = Array[ExtResource("4_dialogue_action")]([])
+
+[sub_resource type="Resource" id="DialogueChoice_fight"]
+script = ExtResource("3_dialogue_choice")
+text = "切磋一场"
+next_node_id = "fight"
 required_flags = Array[String]([])
 forbidden_flags = Array[String]([])
 actions = Array[ExtResource("4_dialogue_action")]([])
@@ -26,10 +53,10 @@ script = ExtResource("2_dialogue_node")
 node_id = "start"
 speaker_id = "hong_xixiang"
 speaker_name_override = ""
-text = "山门风大，公子从哪儿来？"
-choices = Array[ExtResource("3_dialogue_choice")]([SubResource("DialogueChoice_ask_name")])
-next_node_id = ""
-on_enter_actions = Array[ExtResource("4_dialogue_action")]([SubResource("DialogueAction_start_flag")])
+text = "山风正急，世子上山，是观云，还是问剑？"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "reply"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
 on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
 required_flags = Array[String]([])
 forbidden_flags = Array[String]([])
@@ -37,12 +64,103 @@ forbidden_flags = Array[String]([])
 [sub_resource type="Resource" id="DialogueNode_reply"]
 script = ExtResource("2_dialogue_node")
 node_id = "reply"
+speaker_id = "xu_fengnian"
+speaker_name_override = "徐凤年"
+text = "你认得我？一个扫阶道人，眼力倒不浅。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "menu"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_menu"]
+script = ExtResource("2_dialogue_node")
+node_id = "menu"
 speaker_id = "hong_xixiang"
 speaker_name_override = ""
-text = "洪洗象。若公子愿意，改日可在山上再会。"
+text = "贫道洪洗象。山上话不多，世子要问哪一桩？"
+choices = Array[ExtResource("3_dialogue_choice")]([SubResource("DialogueChoice_ask_kungfu"), SubResource("DialogueChoice_ask_world"), SubResource("DialogueChoice_fight")])
+next_node_id = ""
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_ask_kungfu"]
+script = ExtResource("2_dialogue_node")
+node_id = "ask_kungfu"
+speaker_id = "hong_xixiang"
+speaker_name_override = ""
+text = "武当武功不在快，在一个慢字。慢到极处，旁人便追不上。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "kungfu_answer"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([SubResource("DialogueAction_set_hong_met")])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_kungfu_answer"]
+script = ExtResource("2_dialogue_node")
+node_id = "kungfu_answer"
+speaker_id = "xu_fengnian"
+speaker_name_override = "徐凤年"
+text = "原来你们练的是等风来。行，这话我记下了。"
 choices = Array[ExtResource("3_dialogue_choice")]([])
 next_node_id = ""
 on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_ask_world"]
+script = ExtResource("2_dialogue_node")
+node_id = "ask_world"
+speaker_id = "hong_xixiang"
+speaker_name_override = ""
+text = "天下大势么，北边雪重，南边雨密。最难测的，还是人心。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "world_answer"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([SubResource("DialogueAction_set_hong_met")])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_world_answer"]
+script = ExtResource("2_dialogue_node")
+node_id = "world_answer"
+speaker_id = "xu_fengnian"
+speaker_name_override = "徐凤年"
+text = "你这话像卜卦，又像劝酒。罢了，算我白问半句。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = ""
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_fight"]
+script = ExtResource("2_dialogue_node")
+node_id = "fight"
+speaker_id = "xu_fengnian"
+speaker_name_override = "徐凤年"
+text = "空口无凭。你既拦山门，不如递我一招。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "fight_accept"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_fight_accept"]
+script = ExtResource("2_dialogue_node")
+node_id = "fight_accept"
+speaker_id = "hong_xixiang"
+speaker_name_override = ""
+text = "好。贫道不用剑，世子也莫留手。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = ""
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([SubResource("DialogueAction_start_battle")])
 on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
 required_flags = Array[String]([])
 forbidden_flags = Array[String]([])
@@ -51,8 +169,9 @@ forbidden_flags = Array[String]([])
 script = ExtResource("1_dialogue_data")
 id = "wudang.hong_first_meet"
 entry_node_id = "start"
-nodes = Array[ExtResource("2_dialogue_node")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_reply")])
+nodes = Array[ExtResource("2_dialogue_node")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_reply"), SubResource("DialogueNode_menu"), SubResource("DialogueNode_ask_kungfu"), SubResource("DialogueNode_kungfu_answer"), SubResource("DialogueNode_ask_world"), SubResource("DialogueNode_world_answer"), SubResource("DialogueNode_fight"), SubResource("DialogueNode_fight_accept")])
 meta = {
 "author": "codex",
-"revision": 1
+"revision": 4,
+"tone": "少年道人，轻淡藏锋"
 }

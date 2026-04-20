@@ -1,0 +1,85 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/dialogue_data.gd" id="1_dialogue_data"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_node.gd" id="2_dialogue_node"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_choice.gd" id="3_dialogue_choice"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_action.gd" id="4_dialogue_action"]
+
+[sub_resource type="Resource" id="DialogueAction_unlock_qingliang"]
+script = ExtResource("4_dialogue_action")
+type = "set_flag"
+payload = {
+"flag": "qingliang.unlocked",
+"value": true
+}
+
+[sub_resource type="Resource" id="DialogueAction_set_hong_defeated"]
+script = ExtResource("4_dialogue_action")
+type = "set_flag"
+payload = {
+"flag": "wudang.hong_defeated",
+"value": true
+}
+
+[sub_resource type="Resource" id="DialogueAction_set_hong_met"]
+script = ExtResource("4_dialogue_action")
+type = "set_flag"
+payload = {
+"flag": "wudang.hong_met",
+"value": true
+}
+
+[sub_resource type="Resource" id="DialogueAction_end_dialogue"]
+script = ExtResource("4_dialogue_action")
+type = "end_dialogue"
+payload = {}
+
+[sub_resource type="Resource" id="DialogueNode_start"]
+script = ExtResource("2_dialogue_node")
+node_id = "start"
+speaker_id = "hong_xixiang"
+speaker_name_override = ""
+text = "世子刀势不俗，贫道输了半步，也输了这一阵山风。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "hint"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([SubResource("DialogueAction_unlock_qingliang"), SubResource("DialogueAction_set_hong_defeated"), SubResource("DialogueAction_set_hong_met")])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_hint"]
+script = ExtResource("2_dialogue_node")
+node_id = "hint"
+speaker_id = "hong_xixiang"
+speaker_name_override = ""
+text = "清凉山那边有位故人，心气冷，名字却不冷。世子可去一寻。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "farewell"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_farewell"]
+script = ExtResource("2_dialogue_node")
+node_id = "farewell"
+speaker_id = "xu_fengnian"
+speaker_name_override = "徐凤年"
+text = "你这道士，输了还卖关子。好，清凉山我自会去。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = ""
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([SubResource("DialogueAction_end_dialogue")])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[resource]
+script = ExtResource("1_dialogue_data")
+id = "wudang.hong_after_battle"
+entry_node_id = "start"
+nodes = Array[ExtResource("2_dialogue_node")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_hint"), SubResource("DialogueNode_farewell")])
+meta = {
+"author": "codex",
+"revision": 4,
+"tone": "点到即止"
+}

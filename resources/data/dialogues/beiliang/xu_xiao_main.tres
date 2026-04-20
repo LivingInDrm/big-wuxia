@@ -1,0 +1,127 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/dialogue_data.gd" id="1_dialogue_data"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_node.gd" id="2_dialogue_node"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_choice.gd" id="3_dialogue_choice"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_action.gd" id="4_dialogue_action"]
+
+[sub_resource type="Resource" id="DialogueAction_set_met"]
+script = ExtResource("4_dialogue_action")
+type = "set_flag"
+payload = {
+"flag": "beiliang.xu_xiao_met",
+"value": true
+}
+
+[sub_resource type="Resource" id="DialogueChoice_ask_road"]
+script = ExtResource("3_dialogue_choice")
+text = "先去何处？"
+next_node_id = "road"
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+actions = Array[ExtResource("4_dialogue_action")]([])
+
+[sub_resource type="Resource" id="DialogueChoice_ask_people"]
+script = ExtResource("3_dialogue_choice")
+text = "清凉山寻的是谁？"
+next_node_id = "people"
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+actions = Array[ExtResource("4_dialogue_action")]([])
+
+[sub_resource type="Resource" id="DialogueChoice_accept"]
+script = ExtResource("3_dialogue_choice")
+text = "孩儿记下了。"
+next_node_id = "farewell"
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+actions = Array[ExtResource("4_dialogue_action")]([])
+
+[sub_resource type="Resource" id="DialogueNode_start"]
+script = ExtResource("2_dialogue_node")
+node_id = "start"
+speaker_id = "xu_xiao"
+speaker_name_override = ""
+text = "今日出府，莫当游山玩水。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "charge"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([SubResource("DialogueAction_set_met")])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_charge"]
+script = ExtResource("2_dialogue_node")
+node_id = "charge"
+speaker_id = "xu_xiao"
+speaker_name_override = ""
+text = "先上武当会友，再去清凉山寻人。"
+choices = Array[ExtResource("3_dialogue_choice")]([SubResource("DialogueChoice_ask_road"), SubResource("DialogueChoice_ask_people"), SubResource("DialogueChoice_accept")])
+next_node_id = ""
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_road"]
+script = ExtResource("2_dialogue_node")
+node_id = "road"
+speaker_id = "xu_xiao"
+speaker_name_override = ""
+text = "武当那帮道士眼高，你去碰一碰，才知天下门槛多高。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "advice"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_people"]
+script = ExtResource("2_dialogue_node")
+node_id = "people"
+speaker_id = "xu_xiao"
+speaker_name_override = ""
+text = "该见的人，自会见你。到了山里，少耍世子脾气。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "advice"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_advice"]
+script = ExtResource("2_dialogue_node")
+node_id = "advice"
+speaker_id = "xu_xiao"
+speaker_name_override = ""
+text = "出门在外，刀可慢拔，眼要放亮。北凉的脸，别丢。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "farewell"
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_farewell"]
+script = ExtResource("2_dialogue_node")
+node_id = "farewell"
+speaker_id = "xu_xiao"
+speaker_name_override = ""
+text = "去吧。路上若吃了亏，记住先忍一口气。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = ""
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[resource]
+script = ExtResource("1_dialogue_data")
+id = "beiliang.xu_xiao_main"
+entry_node_id = "start"
+nodes = Array[ExtResource("2_dialogue_node")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_charge"), SubResource("DialogueNode_road"), SubResource("DialogueNode_people"), SubResource("DialogueNode_advice"), SubResource("DialogueNode_farewell")])
+meta = {
+"author": "codex",
+"revision": 4,
+"tone": "沉稳克制"
+}
