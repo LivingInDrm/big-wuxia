@@ -65,6 +65,8 @@ var current_item_range: Array[Vector2i] = []
 var _item_return_state: SelectState = SelectState.IDLE
 var _pending_finish_after_move: bool = false
 var _battle_ended: bool = false
+var _move_origin: Vector2i = Vector2i(-1, -1)
+var _move_locked: bool = false
 var hud_vm
 
 
@@ -129,6 +131,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _handle_hud_shortcut(event):
 		get_viewport().set_input_as_handled()
 		return
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+		if _handle_back_action():
+			get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if _battle_ended:
 			return
@@ -168,19 +174,29 @@ func _on_unit_clicked(unit: Unit) -> void:
 		else:
 			_restore_after_item_cancel()
 		return
-	# 玩家点击单位：
-	# - 如果当前选中状态，并且点到范围内敌人 → 攻击
 	if select_state == SelectState.MOVED_AWAIT_ACTION and unit.unit_data.is_enemy \
 			and current_attack_range.has(unit.current_position):
 		await _execute_attack(selected_unit, unit)
 		return
+	if select_state == SelectState.MOVED_AWAIT_ACTION:
+		if unit == selected_unit:
+			ui.set_message("选择动作，或点红色范围内敌人")
+		elif unit.unit_data.is_enemy:
+			ui.set_message("目标不在攻击范围内")
+		else:
+			ui.set_message("请先完成当前单位的行动")
+		_show_action_menu()
+		return
 
-	# - 如果 IDLE 且点自己单位 → 选中
 	if select_state == SelectState.IDLE and not unit.unit_data.is_enemy and not unit.acted:
 		_select_unit(unit)
 		return
 
-	# 其他：取消选择
+	if select_state == SelectState.UNIT_SELECTED and unit == selected_unit:
+		return
+	if select_state == SelectState.IDLE and unit.unit_data.is_enemy:
+		ui.set_message("请先选择己方单位")
+		return
 	_cancel_selection()
 
 
@@ -194,8 +210,8 @@ func _on_cell_clicked(coord: Vector2i) -> void:
 			else:
 				_cancel_selection()
 		SelectState.MOVED_AWAIT_ACTION:
-			# 点空格 = 结束该单位回合
-			_finish_unit_action(selected_unit)
+			ui.set_message("选择动作，或点红色范围内敌人")
+			_show_action_menu()
 		SelectState.SKILL_TARGETING:
 			if current_skill != null and current_skill_range.has(coord):
 				await _execute_skill(selected_unit, current_skill, coord)
@@ -219,9 +235,13 @@ func _select_unit(unit: Unit) -> void:
 	current_item = null
 	current_item_range.clear()
 	_pending_finish_after_move = false
+	_move_origin = unit.current_position
+	_move_locked = false
 	ui.show_skills(unit)
 	ui.refresh_items()
+	ui.hide_actions()
 	ui.set_message("选中 %s — 点击高亮格移动" % unit.unit_data.unit_name)
+	hud_v3.set_hint_text("左键移动，V 武功，Esc 取消")
 	_refresh_battle_hud_visibility()
 
 
@@ -237,14 +257,18 @@ func _cancel_selection() -> void:
 	current_item_range.clear()
 	current_item = null
 	_pending_finish_after_move = false
+	_move_origin = Vector2i(-1, -1)
+	_move_locked = false
 	range_overlay.clear()
 	ui.hide_actions()
 	ui.set_message("")
+	hud_v3.set_hint_text("鼠标左键长按角色查看详细信息")
 	_refresh_battle_hud_visibility()
 
 
 func _execute_move(unit: Unit, target: Vector2i) -> void:
 	var from := unit.current_position
+	_move_origin = from
 	var path := grid.find_path(from, target, true)
 	if path.is_empty():
 		return
@@ -264,14 +288,91 @@ func _execute_move(unit: Unit, target: Vector2i) -> void:
 		_finish_unit_action(unit)
 		return
 
-	# 显示攻击范围
+	_enter_moved_await_action(unit)
+
+
+func _enter_moved_await_action(unit: Unit) -> void:
 	current_attack_range = grid.get_attack_range(
 		unit.current_position, unit.unit_data.weapon_range)
+	range_overlay.clear()
 	range_overlay.show_attack_range(current_attack_range)
 	select_state = SelectState.MOVED_AWAIT_ACTION
+	_move_locked = unit.current_position != _move_origin
 	ui.show_skills(unit)
-	ui.set_message("选择攻击目标或点击空格结束")
+	ui.refresh_items()
+	ui.set_message("移动完成 — 选择攻击、武功、道具或待机")
+	_show_action_menu()
+	hud_v3.set_hint_text("A 攻击，V 武功，B 道具，Z 待机，Esc 取消移动")
 	_refresh_battle_hud_visibility()
+
+
+func _show_action_menu() -> void:
+	if selected_unit == null:
+		ui.hide_actions()
+		return
+	var allow_attack := not current_attack_range.is_empty()
+	var allow_item := not _get_available_consumables().is_empty()
+	ui.show_action_menu(allow_attack, allow_item, true, _move_locked)
+
+
+func _cancel_move() -> void:
+	if selected_unit == null:
+		return
+	if select_state == SelectState.SKILL_TARGETING:
+		_restore_after_skill_cancel()
+		return
+	if select_state == SelectState.ITEM_TARGETING:
+		_restore_after_item_cancel()
+		return
+	if select_state != SelectState.MOVED_AWAIT_ACTION or not _move_locked:
+		_cancel_selection()
+		return
+	var current_tile: GridTile = grid.get_tile(selected_unit.current_position)
+	if current_tile != null and current_tile.occupant == selected_unit:
+		current_tile.occupant = null
+	selected_unit.current_position = _move_origin
+	selected_unit.position = Vector2(
+		_move_origin.x * TILE_PX + TILE_PX / 2.0,
+		_move_origin.y * TILE_PX + TILE_PX / 2.0
+	)
+	var origin_tile: GridTile = grid.get_tile(_move_origin)
+	if origin_tile != null:
+		origin_tile.occupant = selected_unit
+	select_state = SelectState.UNIT_SELECTED
+	current_attack_range.clear()
+	current_skill_range.clear()
+	current_skill = null
+	current_item_range.clear()
+	current_item = null
+	range_overlay.clear()
+	current_move_range = grid.get_move_range(selected_unit.current_position, selected_unit.get_current_mov(), true)
+	range_overlay.show_move_range(current_move_range)
+	ui.show_skills(selected_unit)
+	ui.refresh_items()
+	ui.hide_actions()
+	ui.set_message("已取消移动 — 重新选择落点")
+	hud_v3.set_hint_text("左键移动，V 武功，Esc 取消")
+	_move_locked = false
+	_refresh_battle_hud_visibility()
+
+
+func _handle_back_action() -> bool:
+	if _battle_ended or selected_unit == null:
+		return false
+	match select_state:
+		SelectState.SKILL_TARGETING:
+			_restore_after_skill_cancel()
+			return true
+		SelectState.ITEM_TARGETING:
+			_restore_after_item_cancel()
+			return true
+		SelectState.MOVED_AWAIT_ACTION:
+			_cancel_move()
+			return true
+		SelectState.UNIT_SELECTED:
+			_cancel_selection()
+			return true
+	return false
 
 
 func _execute_attack(attacker: Unit, defender: Unit) -> void:
@@ -306,8 +407,10 @@ func _finish_unit_action(unit: Unit) -> void:
 	current_item_range.clear()
 	current_item = null
 	range_overlay.clear()
+	_move_origin = Vector2i(-1, -1)
+	_move_locked = false
 	ui.hide_actions()
-	ui.set_message("")
+	hud_v3.set_hint_text("鼠标左键长按角色查看详细信息")
 	_refresh_battle_hud_visibility()
 	if _check_battle_end():
 		return
@@ -421,6 +524,8 @@ func _on_skill_button_pressed(idx: int) -> void:
 	)
 	ui.show_skills(selected_unit)
 	ui.set_message("选择 %s 的目标格" % skill.skill_name)
+	ui.show_action_menu(not current_attack_range.is_empty(), not _get_available_consumables().is_empty(), true, _move_locked)
+	hud_v3.set_hint_text("左键确认目标，Esc 返回上一级")
 	_refresh_battle_hud_visibility()
 
 
@@ -436,6 +541,8 @@ func _execute_skill(caster: Unit, skill, target: Vector2i) -> void:
 		select_state = SelectState.UNIT_SELECTED
 		ui.show_skills(caster)
 		ui.set_message("轻功发动 — 选择新的落点")
+		ui.hide_actions()
+		hud_v3.set_hint_text("左键移动，V 武功，Esc 取消")
 		_refresh_battle_hud_visibility()
 		return
 	range_overlay.clear()
@@ -457,6 +564,10 @@ func _restore_after_skill_cancel() -> void:
 	select_state = _skill_return_state
 	ui.show_skills(selected_unit)
 	ui.refresh_items()
+	if select_state == SelectState.MOVED_AWAIT_ACTION:
+		_show_action_menu()
+	else:
+		ui.hide_actions()
 	_refresh_battle_hud_visibility()
 
 
@@ -470,6 +581,7 @@ func _on_item_button_pressed() -> void:
 		return
 	ui.show_item_panel(consumables)
 	ui.set_message("选择一个消耗品")
+	_show_action_menu()
 	_refresh_battle_hud_visibility()
 
 
@@ -490,6 +602,8 @@ func _on_item_selected(item_id: String) -> void:
 	ui.hide_item_panel()
 	ui.show_skills(selected_unit)
 	ui.set_message("选择 %s 的目标单位" % item.name)
+	ui.show_action_menu(not current_attack_range.is_empty(), not _get_available_consumables().is_empty(), true, _move_locked)
+	hud_v3.set_hint_text("左键选择单位，Esc 返回上一级")
 	_refresh_battle_hud_visibility()
 
 
@@ -529,6 +643,10 @@ func _restore_after_item_cancel() -> void:
 	select_state = _item_return_state
 	ui.show_skills(selected_unit)
 	ui.refresh_items()
+	if select_state == SelectState.MOVED_AWAIT_ACTION:
+		_show_action_menu()
+	else:
+		ui.hide_actions()
 	_refresh_battle_hud_visibility()
 
 
@@ -735,6 +853,8 @@ func _refresh_battle_hud_visibility(animate: bool = true) -> void:
 func _on_unit_hud_state_changed(unit: Unit) -> void:
 	if unit == selected_unit:
 		_refresh_battle_hud_visibility()
+		if select_state == SelectState.MOVED_AWAIT_ACTION:
+			_show_action_menu()
 
 
 func _handle_hud_shortcut(event: InputEvent) -> bool:
@@ -743,29 +863,59 @@ func _handle_hud_shortcut(event: InputEvent) -> bool:
 	var key_event := event as InputEventKey
 	if not key_event.pressed or key_event.echo:
 		return false
-	if key_event.keycode == KEY_CTRL:
-		return _emit_hud_menu_action(&"auto_battle", "[hud] Ctrl pressed → 自动战斗")
 	match key_event.keycode:
+		KEY_ESCAPE:
+			return _handle_back_action()
+		KEY_A:
+			return _emit_hud_menu_action(&"attack")
 		KEY_V:
-			return _emit_hud_menu_action(&"martial", "[hud] V pressed → 武功")
+			return _emit_hud_menu_action(&"martial")
 		KEY_B:
-			return _emit_hud_menu_action(&"item", "[hud] B pressed → 道具")
+			return _emit_hud_menu_action(&"item")
 		KEY_Z:
-			return _emit_hud_menu_action(&"meditate", "[hud] Z pressed → 原地打坐")
-		KEY_R:
-			return _emit_hud_menu_action(&"escape", "[hud] R pressed → 逃跑")
+			return _emit_hud_menu_action(&"wait")
 	return false
 
 
-func _emit_hud_menu_action(action: StringName, log_text: String) -> bool:
-	print(log_text)
+func _emit_hud_menu_action(action: StringName) -> bool:
 	if hud_v3 != null:
 		hud_v3.emit_menu_action.emit(action)
 	return true
 
 
 func _on_hud_menu_action(action: StringName) -> void:
-	print("[hud] emit_menu_action → %s" % action)
+	if selected_unit == null or _battle_ended:
+		return
+	match action:
+		&"attack":
+			if select_state != SelectState.MOVED_AWAIT_ACTION:
+				return
+			range_overlay.clear()
+			range_overlay.show_attack_range(current_attack_range)
+			ui.hide_item_panel()
+			ui.set_message("攻击模式 — 点击红色范围内敌人")
+			_show_action_menu()
+			hud_v3.set_hint_text("A 攻击，V 武功，B 道具，Z 待机，Esc 取消移动")
+		&"martial":
+			if select_state != SelectState.UNIT_SELECTED and select_state != SelectState.MOVED_AWAIT_ACTION:
+				return
+			ui.show_skills(selected_unit)
+			hud_v3.show_skill_panel()
+			ui.set_message("选择武功")
+			if select_state == SelectState.MOVED_AWAIT_ACTION:
+				_show_action_menu()
+			else:
+				hud_v3.set_hint_text("选择武功，Esc 返回")
+		&"item":
+			if select_state != SelectState.UNIT_SELECTED and select_state != SelectState.MOVED_AWAIT_ACTION:
+				return
+			_on_item_button_pressed()
+		&"wait":
+			if select_state != SelectState.MOVED_AWAIT_ACTION:
+				return
+			_finish_unit_action(selected_unit)
+		&"cancel_move":
+			_cancel_move()
 
 
 func _center_camera() -> void:

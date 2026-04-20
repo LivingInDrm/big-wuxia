@@ -1,6 +1,9 @@
 extends Control
 class_name BattleHUDV3
 signal emit_menu_action(action: StringName)
+signal skill_selected(skill_index: int)
+signal item_selected(item_id: String)
+signal submenu_closed(kind: StringName)
 
 const UIColors := preload("res://resources/ui/colors.gd")
 const PORTRAIT_LI_PATH := "res://resources/ui/portraits/half/li_chungang.png"
@@ -12,16 +15,22 @@ const CARD_BORDER := Color(0.29, 0.23, 0.17, 0.7)
 const OVERLAY_BG := Color(0.94, 0.91, 0.84, 0.84)
 const BUFF_TEXT := Color("#D7A33D")
 
-const RIGHT_ACTIONS := [
-	{"key": "V", "icon": Color("#8B5C32"), "label": "武功"},
-	{"key": "B", "icon": Color("#7A6A46"), "label": "道具"},
-	{"key": "Z", "icon": Color("#A84036"), "label": "原地打坐"},
-	{"key": "Ctrl", "icon": Color("#4A6B7A"), "label": "自动战斗"},
-	{"key": "R", "icon": Color("#6D4B3A"), "label": "逃跑"},
+const ACTION_SPECS := [
+	{"id": &"attack", "key": "A", "icon": Color("#A84036"), "label": "攻击"},
+	{"id": &"martial", "key": "V", "icon": Color("#8B5C32"), "label": "武功"},
+	{"id": &"item", "key": "B", "icon": Color("#7A6A46"), "label": "道具"},
+	{"id": &"wait", "key": "Z", "icon": Color("#5E6C43"), "label": "待机"},
+	{"id": &"cancel_move", "key": "Esc", "icon": Color("#4A6B7A"), "label": "取消移动"},
 ]
 
 var _hint_label: Label
 var _character_card_container: Control
+var _action_menu_container: Control
+var _action_menu_title: Label
+var _action_menu_box: VBoxContainer
+var _submenu_panel: PanelContainer
+var _submenu_title: Label
+var _submenu_list: VBoxContainer
 var _portrait_rect: TextureRect
 var _buffs_box: VBoxContainer
 var _name_label: Label
@@ -35,6 +44,10 @@ var _mp_value_label: Label
 var _vm = null
 var _character_card_tween: Tween
 var _character_card_target_visible: bool = false
+var _action_buttons: Dictionary = {}
+var _skill_entries: Array[Dictionary] = []
+var _item_entries: Array[Dictionary] = []
+var _submenu_kind: StringName = &""
 
 
 func _ready() -> void:
@@ -113,34 +126,86 @@ func _build_ui() -> void:
 	add_child(_build_bottom_hint())
 	_apply_mouse_passthrough(self)
 	set_character_card_visible(false, false)
+	set_action_menu_visible(false)
+	hide_submenu()
 
 
 func _build_right_menu() -> Control:
-	var box := VBoxContainer.new()
-	box.name = "RightMenu"
-	box.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	box.offset_left = -320.0
-	box.offset_top = 138.0
-	box.offset_right = -28.0
-	box.offset_bottom = 620.0
-	box.add_theme_constant_override("separation", 12)
+	_action_menu_container = Control.new()
+	_action_menu_container.name = "RightMenu"
+	_action_menu_container.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	_action_menu_container.offset_left = -344.0
+	_action_menu_container.offset_top = -428.0
+	_action_menu_container.offset_right = -28.0
+	_action_menu_container.offset_bottom = -28.0
 
-	for action in RIGHT_ACTIONS:
-		box.add_child(_build_action_item(action))
+	var shell := VBoxContainer.new()
+	shell.set_anchors_preset(Control.PRESET_FULL_RECT)
+	shell.add_theme_constant_override("separation", 10)
+	_action_menu_container.add_child(shell)
 
-	return box
+	var title_panel := PanelContainer.new()
+	title_panel.custom_minimum_size = Vector2(0, 42)
+	title_panel.add_theme_stylebox_override("panel", _flat_style(CARD_BG, CARD_BORDER, 2, 4))
+	shell.add_child(title_panel)
+
+	_action_menu_title = _label("战术指令", &"caption")
+	_action_menu_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title_panel.add_child(_action_menu_title)
+
+	_action_menu_box = VBoxContainer.new()
+	_action_menu_box.add_theme_constant_override("separation", 8)
+	shell.add_child(_action_menu_box)
+
+	for action in ACTION_SPECS:
+		_action_menu_box.add_child(_build_action_item(action))
+
+	_submenu_panel = PanelContainer.new()
+	_submenu_panel.custom_minimum_size = Vector2(0, 132)
+	_submenu_panel.visible = false
+	_submenu_panel.add_theme_stylebox_override("panel", _flat_style(CARD_BG, CARD_BORDER, 2, 4))
+	shell.add_child(_submenu_panel)
+
+	var submenu_margin := MarginContainer.new()
+	submenu_margin.add_theme_constant_override("margin_left", 14)
+	submenu_margin.add_theme_constant_override("margin_top", 12)
+	submenu_margin.add_theme_constant_override("margin_right", 14)
+	submenu_margin.add_theme_constant_override("margin_bottom", 12)
+	_submenu_panel.add_child(submenu_margin)
+
+	var submenu_box := VBoxContainer.new()
+	submenu_box.add_theme_constant_override("separation", 8)
+	submenu_margin.add_child(submenu_box)
+
+	_submenu_title = _label("子面板", &"caption")
+	submenu_box.add_child(_submenu_title)
+
+	_submenu_list = VBoxContainer.new()
+	_submenu_list.add_theme_constant_override("separation", 6)
+	submenu_box.add_child(_submenu_list)
+
+	return _action_menu_container
 
 
 func _build_action_item(action: Dictionary) -> Control:
-	var item := PanelContainer.new()
-	item.theme_type_variation = &"tooltip"
-	item.custom_minimum_size = Vector2(292, 80)
+	var item := Button.new()
+	item.set_meta("retain_mouse_filter", true)
+	item.mouse_filter = Control.MOUSE_FILTER_STOP
+	item.custom_minimum_size = Vector2(292, 70)
+	item.flat = true
+	item.add_theme_stylebox_override("normal", _flat_style(CARD_BG, CARD_BORDER, 2, 4))
+	item.add_theme_stylebox_override("hover", _flat_style(Color(0.98, 0.95, 0.88, 0.98), CARD_BORDER, 2, 4))
+	item.add_theme_stylebox_override("pressed", _flat_style(Color(0.9, 0.86, 0.77, 0.98), CARD_BORDER, 2, 4))
+	item.add_theme_stylebox_override("disabled", _flat_style(Color(0.84, 0.82, 0.78, 0.86), CARD_BORDER, 1, 4))
+	item.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	item.focus_mode = Control.FOCUS_NONE
 
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 20)
-	margin.add_theme_constant_override("margin_top", 16)
-	margin.add_theme_constant_override("margin_right", 20)
-	margin.add_theme_constant_override("margin_bottom", 14)
+	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	margin.add_theme_constant_override("margin_left", 18)
+	margin.add_theme_constant_override("margin_top", 12)
+	margin.add_theme_constant_override("margin_right", 18)
+	margin.add_theme_constant_override("margin_bottom", 12)
 	item.add_child(margin)
 
 	var row := HBoxContainer.new()
@@ -157,6 +222,9 @@ func _build_action_item(action: Dictionary) -> Control:
 	var label := _label(str(action.get("label", "")), &"body")
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(label)
+	var action_id: StringName = action.get("id", &"")
+	_action_buttons[action_id] = item
+	item.pressed.connect(_on_action_button_pressed.bind(action_id))
 	return item
 
 
@@ -326,6 +394,69 @@ func _build_bottom_hint() -> Control:
 	return _hint_label
 
 
+func set_hint_text(text: String) -> void:
+	if _hint_label != null:
+		_hint_label.text = text
+
+
+func set_action_menu_visible(is_visible: bool, title: String = "战术指令") -> void:
+	if _action_menu_container == null:
+		return
+	_action_menu_container.visible = is_visible
+	if _action_menu_title != null:
+		_action_menu_title.text = title
+	if not is_visible:
+		hide_submenu()
+
+
+func set_action_enabled(action: StringName, enabled: bool) -> void:
+	var button = _action_buttons.get(action)
+	if button is Button:
+		(button as Button).disabled = not enabled
+
+
+func set_skill_entries(entries: Array[Dictionary]) -> void:
+	_skill_entries = entries.duplicate(true)
+	if _submenu_kind == &"skill":
+		_rebuild_submenu()
+
+
+func set_item_entries(entries: Array[Dictionary]) -> void:
+	_item_entries = entries.duplicate(true)
+	if _submenu_kind == &"item":
+		_rebuild_submenu()
+
+
+func show_skill_panel() -> void:
+	_submenu_kind = &"skill"
+	_rebuild_submenu()
+
+
+func show_item_panel() -> void:
+	_submenu_kind = &"item"
+	_rebuild_submenu()
+
+
+func hide_submenu(expected_kind: StringName = &"") -> void:
+	if _submenu_panel == null:
+		return
+	if expected_kind != &"" and _submenu_kind != expected_kind:
+		return
+	var previous_kind := _submenu_kind
+	_submenu_kind = &""
+	_submenu_panel.visible = false
+	for child in _submenu_list.get_children():
+		child.queue_free()
+	if previous_kind != &"":
+		submenu_closed.emit(previous_kind)
+
+
+func is_submenu_open(kind: StringName = &"") -> bool:
+	if _submenu_panel == null or not _submenu_panel.visible:
+		return false
+	return kind == &"" or _submenu_kind == kind
+
+
 func set_character_card_visible(is_visible: bool, animate: bool = true) -> void:
 	if _character_card_container == null:
 		return
@@ -368,6 +499,67 @@ func _apply_mouse_passthrough(node: Node) -> void:
 			control.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	for child in node.get_children():
 		_apply_mouse_passthrough(child)
+
+
+func _rebuild_submenu() -> void:
+	if _submenu_panel == null:
+		return
+	for child in _submenu_list.get_children():
+		child.queue_free()
+	var entries: Array[Dictionary] = []
+	match _submenu_kind:
+		&"skill":
+			_submenu_title.text = "武功"
+			entries = _skill_entries
+		&"item":
+			_submenu_title.text = "道具"
+			entries = _item_entries
+		_:
+			_submenu_panel.visible = false
+			return
+	for entry in entries:
+		_submenu_list.add_child(_build_submenu_button(entry))
+	_submenu_panel.visible = true
+
+
+func _build_submenu_button(entry: Dictionary) -> Control:
+	var button := Button.new()
+	button.set_meta("retain_mouse_filter", true)
+	button.mouse_filter = Control.MOUSE_FILTER_STOP
+	button.flat = true
+	button.focus_mode = Control.FOCUS_NONE
+	button.custom_minimum_size = Vector2(0, 46)
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.disabled = bool(entry.get("disabled", false))
+	button.add_theme_stylebox_override("normal", _flat_style(Color(0.98, 0.95, 0.9, 0.92), CARD_BORDER, 1, 3))
+	button.add_theme_stylebox_override("hover", _flat_style(Color(1.0, 0.97, 0.9, 0.98), CARD_BORDER, 1, 3))
+	button.add_theme_stylebox_override("pressed", _flat_style(Color(0.9, 0.86, 0.77, 0.98), CARD_BORDER, 1, 3))
+	button.add_theme_stylebox_override("disabled", _flat_style(Color(0.84, 0.82, 0.78, 0.86), CARD_BORDER, 1, 3))
+	var key_text := String(entry.get("key", ""))
+	var label_text := String(entry.get("label", ""))
+	var detail_text := String(entry.get("detail", ""))
+	button.text = "%s  %s" % [key_text, label_text] if not key_text.is_empty() else label_text
+	if not detail_text.is_empty():
+		button.text += "    %s" % detail_text
+	if entry.get("type") == &"skill":
+		button.pressed.connect(_on_skill_entry_pressed.bind(int(entry.get("index", -1))))
+	else:
+		button.pressed.connect(_on_item_entry_pressed.bind(String(entry.get("item_id", ""))))
+	return button
+
+
+func _on_action_button_pressed(action: StringName) -> void:
+	emit_menu_action.emit(action)
+
+
+func _on_skill_entry_pressed(skill_index: int) -> void:
+	hide_submenu(&"skill")
+	skill_selected.emit(skill_index)
+
+
+func _on_item_entry_pressed(item_id: String) -> void:
+	hide_submenu(&"item")
+	item_selected.emit(item_id)
 
 
 func _build_buff_tag(buff: Dictionary) -> Control:
