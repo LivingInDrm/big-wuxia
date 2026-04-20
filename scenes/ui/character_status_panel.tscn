@@ -1,0 +1,287 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/character_status_panel.gd" id="1_panel"]
+[ext_resource type="Script" path="res://resources/ui/controls/wuxia_frame.gd" id="2_frame"]
+[ext_resource type="Script" path="res://resources/ui/controls/themed_bar.gd" id="3_bar"]
+[ext_resource type="Texture2D" path="res://resources/ui/portraits/half/li_chungang.png" id="4_portrait"]
+
+[node name="CharacterStatusPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_panel")
+
+[node name="BottomAnchor" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 225.0
+offset_top = -340.0
+offset_right = -225.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="PanelRoot" type="Control" parent="BottomAnchor"]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BuffsBox" type="VBoxContainer" parent="BottomAnchor/PanelRoot"]
+unique_name_in_owner = true
+offset_left = 18.0
+offset_top = -92.0
+offset_right = 292.0
+offset_bottom = -8.0
+z_index = 2
+custom_minimum_size = Vector2(274, 78)
+theme_override_constants/separation = 8
+
+[node name="MainStack" type="VBoxContainer" parent="BottomAnchor/PanelRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="NameFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack"]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+script = ExtResource("2_frame")
+border_width = 2.0
+corner_style = "emphasis"
+
+[node name="NameRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/NameFrame"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="NameLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"body"
+theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 1)
+theme_override_font_sizes/font_size = 28
+text = "李淳罡"
+
+[node name="Spacer" type="Control" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MetaRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameRow"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 18
+
+[node name="ExpLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameRow/MetaRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"caption"
+theme_override_colors/font_color = Color(0.721569, 0.564706, 0.313726, 1)
+text = "经验 5/8050"
+
+[node name="LevelLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameRow/MetaRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"caption"
+theme_override_colors/font_color = Color(0.721569, 0.564706, 0.313726, 1)
+text = "等级 54/100"
+
+[node name="ExpFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+script = ExtResource("2_frame")
+corner_style = "plain"
+
+[node name="ExpMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/ExpFrame"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="ExpBar" type="Range" parent="BottomAnchor/PanelRoot/MainStack/ExpFrame/ExpMargin"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+theme_type_variation = &"bar_exp"
+script = ExtResource("3_bar")
+fill_tint_override = Color(0.721569, 0.533333, 0.247059, 1)
+max_value = 8050.0
+value = 5.0
+
+[node name="DataFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack"]
+custom_minimum_size = Vector2(0, 210)
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("2_frame")
+border_width = 2.0
+corner_style = "emphasis"
+
+[node name="DataRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="PortraitFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("2_frame")
+corner_style = "plain"
+
+[node name="PortraitMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/PortraitFrame"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="PortraitRect" type="TextureRect" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/PortraitFrame/PortraitMargin"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(102, 166)
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("4_portrait")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="StatsColumn" type="VBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="HPFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+script = ExtResource("2_frame")
+corner_style = "plain"
+
+[node name="HPMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/HPFrame"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="HPRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/HPFrame/HPMargin"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="HPLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/HPFrame/HPMargin/HPRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(54, 0)
+theme_type_variation = &"caption"
+theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 1)
+text = "气血"
+
+[node name="HpBar" type="Range" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/HPFrame/HPMargin/HPRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"bar_hp"
+script = ExtResource("3_bar")
+fill_tint_override = Color(0.658824, 0.25098, 0.211765, 1)
+max_value = 2877.0
+value = 2877.0
+
+[node name="HpValueLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/HPFrame/HPMargin/HPRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(124, 0)
+theme_type_variation = &"caption"
+theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 1)
+horizontal_alignment = 2
+text = "2877/2877"
+
+[node name="MPFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+script = ExtResource("2_frame")
+corner_style = "plain"
+
+[node name="MPMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/MPFrame"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="MPRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/MPFrame/MPMargin"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="MPLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/MPFrame/MPMargin/MPRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(54, 0)
+theme_type_variation = &"caption"
+theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 1)
+text = "内力"
+
+[node name="MpBar" type="Range" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/MPFrame/MPMargin/MPRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"bar_mp"
+script = ExtResource("3_bar")
+fill_tint_override = Color(0.290196, 0.419608, 0.478431, 1)
+max_value = 3765.0
+value = 3765.0
+
+[node name="MpValueLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/MPFrame/MPMargin/MPRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(124, 0)
+theme_type_variation = &"caption"
+theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 1)
+horizontal_alignment = 2
+text = "3765/3765"
+
+[node name="QinggongFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("2_frame")
+corner_style = "plain"
+
+[node name="QinggongCenter" type="CenterContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/QinggongFrame"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="QinggongBox" type="VBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/QinggongFrame/QinggongCenter"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 6
+
+[node name="QinggongLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/QinggongFrame/QinggongCenter/QinggongBox"]
+layout_mode = 2
+theme_type_variation = &"micro"
+theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 0.9)
+horizontal_alignment = 1
+text = "轻功"
+
+[node name="QinggongValueLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/QinggongFrame/QinggongCenter/QinggongBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"body"
+theme_override_colors/font_color = Color(0.721569, 0.533333, 0.247059, 1)
+theme_override_font_sizes/font_size = 34
+horizontal_alignment = 1
+text = "398"

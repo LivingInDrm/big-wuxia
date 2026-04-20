@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/character_status_panel.tscn" id="1_panel"]
+[ext_resource type="Theme" uid="uid://jxaglfd1r2m5" path="res://resources/ui/theme/main_ui_theme.tres" id="2_theme"]
+
+[node name="CharacterStatusPanelPreview" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.227451, 0.290196, 0.164706, 1)
+
+[node name="Panel" parent="." instance=ExtResource("1_panel")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
