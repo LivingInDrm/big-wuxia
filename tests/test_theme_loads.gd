@@ -225,8 +225,8 @@ func _run() -> void:
 	# Bar 基础类型（Theme Type "bar"）：fill padding 常量 + base/fill 图标
 	_assert(theme.has_constant("fill_padding_left", "bar"), "bar 变体存在 fill_padding_left 常量")
 	_assert(theme.has_constant("fill_padding_right", "bar"), "bar 变体存在 fill_padding_right 常量")
-	_assert(theme.get_constant("fill_padding_left", "bar") == 244, "bar fill_padding_left = 244 (源像素)")
-	_assert(theme.get_constant("fill_padding_right", "bar") == 252, "bar fill_padding_right = 252 (源像素)")
+	_assert(theme.get_constant("fill_padding_left", "bar") == 176, "bar fill_padding_left = 176 (源像素)")
+	_assert(theme.get_constant("fill_padding_right", "bar") == 183, "bar fill_padding_right = 183 (源像素)")
 	_assert(theme.has_icon("base_texture", "bar"), "bar 变体存在 base_texture 图标")
 	_assert(theme.has_icon("fill_texture", "bar"), "bar 变体存在 fill_texture 图标")
 	_assert(theme.get_icon("base_texture", "bar") != null, "bar.base_texture 可解析为 Texture2D")
