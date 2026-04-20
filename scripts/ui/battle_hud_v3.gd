@@ -28,6 +28,7 @@ const RIGHT_MENU_BOTTOM_MARGIN := 28.0
 const RIGHT_MENU_TOP_MARGIN := 48.0
 const ACTION_BUTTON_WIDTH := 332.0
 const SUBMENU_PANEL_WIDTH := 332.0
+const WUXIA_BUTTON_MIN_SIZE := Vector2(120, 32)
 
 var _hint_label: Label
 var _character_card_container: Control
@@ -195,40 +196,10 @@ func _build_right_menu() -> Control:
 
 
 func _build_action_item(action: Dictionary) -> Control:
-	var item := Button.new()
-	item.set_meta("retain_mouse_filter", true)
-	item.mouse_filter = Control.MOUSE_FILTER_STOP
-	item.custom_minimum_size = Vector2(ACTION_BUTTON_WIDTH, 70)
-	item.flat = true
-	item.add_theme_stylebox_override("normal", _flat_style(CARD_BG, CARD_BORDER, 2, 4))
-	item.add_theme_stylebox_override("hover", _flat_style(Color(0.98, 0.95, 0.88, 0.98), CARD_BORDER, 2, 4))
-	item.add_theme_stylebox_override("pressed", _flat_style(Color(0.9, 0.86, 0.77, 0.98), CARD_BORDER, 2, 4))
-	item.add_theme_stylebox_override("disabled", _flat_style(Color(0.84, 0.82, 0.78, 0.86), CARD_BORDER, 1, 4))
-	item.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	item.focus_mode = Control.FOCUS_NONE
-
-	var margin := MarginContainer.new()
-	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	margin.add_theme_constant_override("margin_left", 18)
-	margin.add_theme_constant_override("margin_top", 12)
-	margin.add_theme_constant_override("margin_right", 18)
-	margin.add_theme_constant_override("margin_bottom", 12)
-	item.add_child(margin)
-
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 10)
-	margin.add_child(row)
-
-	row.add_child(_build_key_box(str(action.get("key", ""))))
-
-	var icon := ColorRect.new()
-	icon.custom_minimum_size = Vector2(18, 18)
-	icon.color = action.get("icon", UIColors.OCHRE)
-	row.add_child(icon)
-
-	var label := _label(str(action.get("label", "")), &"body")
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(label)
+	var item := _create_wuxia_button(
+		_build_button_text(String(action.get("label", "")), String(action.get("key", ""))),
+		Vector2(maxf(ACTION_BUTTON_WIDTH, WUXIA_BUTTON_MIN_SIZE.x), 70)
+	)
 	var action_id: StringName = action.get("id", &"")
 	_action_buttons[action_id] = item
 	item.pressed.connect(_on_action_button_pressed.bind(action_id))
@@ -418,8 +389,8 @@ func set_action_menu_visible(is_visible: bool, title: String = "战术指令") -
 
 func set_action_enabled(action: StringName, enabled: bool) -> void:
 	var button = _action_buttons.get(action)
-	if button is Button:
-		(button as Button).disabled = not enabled
+	if button is WuxiaButton:
+		_set_wuxia_button_enabled(button as WuxiaButton, enabled)
 
 
 func set_skill_entries(entries: Array[Dictionary]) -> void:
@@ -534,56 +505,48 @@ func _rebuild_submenu() -> void:
 
 
 func _build_submenu_button(entry: Dictionary) -> Control:
-	var button := Button.new()
-	button.set_meta("retain_mouse_filter", true)
-	button.mouse_filter = Control.MOUSE_FILTER_STOP
-	button.flat = true
-	button.focus_mode = Control.FOCUS_NONE
-	button.custom_minimum_size = Vector2(0, 58)
-	button.disabled = bool(entry.get("disabled", false))
-	button.add_theme_stylebox_override("normal", _flat_style(Color(0.98, 0.95, 0.9, 0.92), CARD_BORDER, 1, 3))
-	button.add_theme_stylebox_override("hover", _flat_style(Color(1.0, 0.97, 0.9, 0.98), CARD_BORDER, 1, 3))
-	button.add_theme_stylebox_override("pressed", _flat_style(Color(0.9, 0.86, 0.77, 0.98), CARD_BORDER, 1, 3))
-	button.add_theme_stylebox_override("disabled", _flat_style(Color(0.84, 0.82, 0.78, 0.86), CARD_BORDER, 1, 3))
-
-	var margin := MarginContainer.new()
-	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	margin.add_theme_constant_override("margin_left", 12)
-	margin.add_theme_constant_override("margin_top", 10)
-	margin.add_theme_constant_override("margin_right", 12)
-	margin.add_theme_constant_override("margin_bottom", 10)
-	button.add_child(margin)
-
-	var row := HBoxContainer.new()
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation", 10)
-	margin.add_child(row)
-
 	var key_text := String(entry.get("key", ""))
 	var label_text := String(entry.get("label", ""))
 	var detail_text := String(entry.get("detail", ""))
-	if not key_text.is_empty():
-		row.add_child(_build_key_box(key_text))
-
-	var text_box := VBoxContainer.new()
-	text_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	text_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_box.add_theme_constant_override("separation", 2)
-	row.add_child(text_box)
-
-	var label := _label(label_text, &"body")
-	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	text_box.add_child(label)
-	if not detail_text.is_empty():
-		var detail := _label(detail_text, &"micro")
-		detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		detail.modulate = Color(1, 1, 1, 0.72)
-		text_box.add_child(detail)
+	var button := _create_wuxia_button(
+		_build_button_text(label_text, key_text),
+		Vector2(maxf(SUBMENU_PANEL_WIDTH - 28.0, WUXIA_BUTTON_MIN_SIZE.x), 58)
+	)
+	button.tooltip_text = detail_text
+	_set_wuxia_button_enabled(button, not bool(entry.get("disabled", false)))
 	if entry.get("type") == &"skill":
 		button.pressed.connect(_on_skill_entry_pressed.bind(int(entry.get("index", -1))))
 	else:
 		button.pressed.connect(_on_item_entry_pressed.bind(String(entry.get("item_id", ""))))
 	return button
+
+
+func _create_wuxia_button(text: String, minimum_size: Vector2) -> WuxiaButton:
+	var button := WuxiaButton.new()
+	button.set_meta("retain_mouse_filter", true)
+	button.mouse_filter = Control.MOUSE_FILTER_STOP
+	button.focus_mode = Control.FOCUS_NONE
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.custom_minimum_size = Vector2(
+		maxf(minimum_size.x, WUXIA_BUTTON_MIN_SIZE.x),
+		maxf(minimum_size.y, WUXIA_BUTTON_MIN_SIZE.y)
+	)
+	button.bg_color = CARD_BG
+	button.border_color = CARD_BORDER
+	button.pattern_color = CARD_BORDER
+	button.text = text
+	return button
+
+
+func _build_button_text(label_text: String, key_text: String = "") -> String:
+	if key_text.is_empty():
+		return label_text
+	return "%s  [%s]" % [label_text, key_text]
+
+
+func _set_wuxia_button_enabled(button: WuxiaButton, enabled: bool) -> void:
+	button.disabled = not enabled
+	button.modulate = Color(1, 1, 1, 1) if enabled else Color(0.74, 0.72, 0.68, 0.78)
 
 
 func _on_action_button_pressed(action: StringName) -> void:
