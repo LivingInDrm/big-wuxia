@@ -1,0 +1,304 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/ui/controls/wuxia_frame.gd" id="1_wuxia_frame"]
+
+[node name="WuxiaFramePreview" type="ColorRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.541176, 0.541176, 0.541176, 1)
+
+[node name="Board" type="Control" parent="."]
+offset_left = 48.0
+offset_top = 16.0
+offset_right = 1558.0
+offset_bottom = 1052.0
+scale = Vector2(0.72, 0.72)
+
+[node name="Grid" type="GridContainer" parent="Board"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 4
+theme_override_constants/h_separation = 28
+theme_override_constants/v_separation = 18
+
+[node name="LabelHuiDouble" type="Label" parent="Board/Grid"]
+custom_minimum_size = Vector2(180, 200)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
+theme_override_font_sizes/font_size = 24
+text = "hui_double"
+vertical_alignment = 1
+
+[node name="FrameHuiDoubleLarge" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(600, 200)
+layout_mode = 2
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_double"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiDoubleLarge"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameHuiDoubleLarge/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 30
+text = "演示文字"
+
+[node name="FrameHuiDoubleMedium" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(320, 80)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_double"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiDoubleMedium"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameHuiDoubleMedium/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 20
+text = "演示文字"
+
+[node name="FrameHuiDoubleSmall" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(180, 50)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_double"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiDoubleSmall"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameHuiDoubleSmall/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 16
+text = "演示文字"
+
+[node name="LabelHuiGrid" type="Label" parent="Board/Grid"]
+custom_minimum_size = Vector2(180, 200)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
+theme_override_font_sizes/font_size = 24
+text = "hui_grid"
+vertical_alignment = 1
+
+[node name="FrameHuiGridLarge" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(600, 200)
+layout_mode = 2
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_grid"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiGridLarge"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameHuiGridLarge/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 30
+text = "演示文字"
+
+[node name="FrameHuiGridMedium" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(320, 80)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_grid"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiGridMedium"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameHuiGridMedium/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 20
+text = "演示文字"
+
+[node name="FrameHuiGridSmall" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(180, 50)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_grid"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiGridSmall"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameHuiGridSmall/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 16
+text = "演示文字"
+
+[node name="LabelHuiStripes" type="Label" parent="Board/Grid"]
+custom_minimum_size = Vector2(180, 200)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
+theme_override_font_sizes/font_size = 24
+text = "hui_stripes"
+vertical_alignment = 1
+
+[node name="FrameHuiStripesLarge" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(600, 200)
+layout_mode = 2
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_stripes"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiStripesLarge"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameHuiStripesLarge/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 30
+text = "演示文字"
+
+[node name="FrameHuiStripesMedium" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(320, 80)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_stripes"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiStripesMedium"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameHuiStripesMedium/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 20
+text = "演示文字"
+
+[node name="FrameHuiStripesSmall" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(180, 50)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "hui_stripes"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameHuiStripesSmall"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameHuiStripesSmall/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 16
+text = "演示文字"
+
+[node name="LabelCornerScroll" type="Label" parent="Board/Grid"]
+custom_minimum_size = Vector2(180, 200)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
+theme_override_font_sizes/font_size = 24
+text = "corner_scroll"
+vertical_alignment = 1
+
+[node name="FrameCornerScrollLarge" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(600, 200)
+layout_mode = 2
+script = ExtResource("1_wuxia_frame")
+corner_style = "corner_scroll"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameCornerScrollLarge"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameCornerScrollLarge/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 30
+text = "演示文字"
+
+[node name="FrameCornerScrollMedium" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(320, 80)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "corner_scroll"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameCornerScrollMedium"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameCornerScrollMedium/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 20
+text = "演示文字"
+
+[node name="FrameCornerScrollSmall" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(180, 50)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "corner_scroll"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameCornerScrollSmall"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameCornerScrollSmall/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 16
+text = "演示文字"
+
+[node name="LabelLotusPetal" type="Label" parent="Board/Grid"]
+custom_minimum_size = Vector2(180, 200)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
+theme_override_font_sizes/font_size = 24
+text = "lotus_petal"
+vertical_alignment = 1
+
+[node name="FrameLotusPetalLarge" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(600, 200)
+layout_mode = 2
+script = ExtResource("1_wuxia_frame")
+corner_style = "lotus_petal"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameLotusPetalLarge"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameLotusPetalLarge/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 30
+text = "演示文字"
+
+[node name="FrameLotusPetalMedium" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(320, 80)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "lotus_petal"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameLotusPetalMedium"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameLotusPetalMedium/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 20
+text = "演示文字"
+
+[node name="FrameLotusPetalSmall" type="PanelContainer" parent="Board/Grid"]
+custom_minimum_size = Vector2(180, 50)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("1_wuxia_frame")
+corner_style = "lotus_petal"
+
+[node name="Center" type="CenterContainer" parent="Board/Grid/FrameLotusPetalSmall"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Grid/FrameLotusPetalSmall/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 16
+text = "演示文字"
