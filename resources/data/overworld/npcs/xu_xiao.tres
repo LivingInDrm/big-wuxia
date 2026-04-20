@@ -11,7 +11,11 @@ display_name = "徐骁"
 unit_id = ""
 sprite_frames = ExtResource("2_frames")
 overworld_texture = ExtResource("3_texture")
-default_dialogue_id = "beiliang.xu_xiao_placeholder"
-conditional_dialogues = Array[Dictionary]([])
+default_dialogue_id = "beiliang.xu_xiao_main"
+conditional_dialogues = Array[Dictionary]([{
+"dialogue_id": "beiliang.xu_xiao_main",
+"forbidden_flags": Array[String]([]),
+"required_flags": Array[String](["beiliang.xu_xiao_met"])
+}])
 interaction_range = 48.0
 modulate = Color(1, 1, 1, 1)

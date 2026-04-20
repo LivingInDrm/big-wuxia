@@ -11,7 +11,11 @@ display_name = "姜泥"
 unit_id = "jiang_ni"
 sprite_frames = ExtResource("2_frames")
 overworld_texture = ExtResource("3_texture")
-default_dialogue_id = "qingliang.jiang_ni_placeholder"
-conditional_dialogues = Array[Dictionary]([])
+default_dialogue_id = "qingliang.jiang_ni_main"
+conditional_dialogues = Array[Dictionary]([{
+"dialogue_id": "qingliang.jiang_ni_main",
+"forbidden_flags": Array[String]([]),
+"required_flags": Array[String](["qingliang.jiang_ni_met"])
+}])
 interaction_range = 48.0
 modulate = Color(1, 1, 1, 1)

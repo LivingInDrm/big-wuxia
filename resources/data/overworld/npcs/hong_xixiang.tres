@@ -12,6 +12,10 @@ unit_id = ""
 sprite_frames = ExtResource("2_frames")
 overworld_texture = ExtResource("3_texture")
 default_dialogue_id = "wudang.hong_first_meet"
-conditional_dialogues = Array[Dictionary]([])
+conditional_dialogues = Array[Dictionary]([{
+"dialogue_id": "wudang.hong_after_battle",
+"forbidden_flags": Array[String]([]),
+"required_flags": Array[String](["wudang.hong_defeated"])
+}])
 interaction_range = 64.0
 modulate = Color(1, 1, 1, 1)

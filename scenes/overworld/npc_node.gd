@@ -41,13 +41,46 @@ func _ready() -> void:
 func interact() -> bool:
 	if not _player_inside or not _can_interact or npc_data == null:
 		return false
-	if npc_data.default_dialogue_id.is_empty():
+	var dialogue_id := _resolve_dialogue_id()
+	if dialogue_id.is_empty():
 		return false
-	var started: bool = DialogueSystem.start(npc_data.default_dialogue_id)
+	var started: bool = DialogueSystem.start(dialogue_id)
 	if started:
 		_can_interact = false
 		prompt_label.visible = false
 	return started
+
+
+func _resolve_dialogue_id() -> String:
+	if npc_data == null:
+		return ""
+	for entry in npc_data.conditional_dialogues:
+		if not (entry is Dictionary):
+			continue
+		var required_flags: Array[String] = Array(entry.get("required_flags", []), TYPE_STRING, "", null)
+		var forbidden_flags: Array[String] = Array(entry.get("forbidden_flags", []), TYPE_STRING, "", null)
+		if not _has_required_flags(required_flags):
+			continue
+		if not _has_no_forbidden_flags(forbidden_flags):
+			continue
+		var dialogue_id := String(entry.get("dialogue_id", ""))
+		if not dialogue_id.is_empty():
+			return dialogue_id
+	return npc_data.default_dialogue_id
+
+
+func _has_required_flags(flags: Array[String]) -> bool:
+	for flag in flags:
+		if not bool(GameState.get_flag(flag, false)):
+			return false
+	return true
+
+
+func _has_no_forbidden_flags(flags: Array[String]) -> bool:
+	for flag in flags:
+		if bool(GameState.get_flag(flag, false)):
+			return false
+	return true
 
 
 func _on_area_entered(area: Area2D) -> void:
