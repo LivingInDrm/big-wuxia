@@ -1,0 +1,174 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/ui/controls/wuxia_button.gd" id="1_wuxia_button"]
+
+[node name="WuxiaButtonPreview" type="ColorRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.227451, 0.176471, 0.121569, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 56.0
+offset_top = 40.0
+offset_right = -56.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="Rows" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="RowHui" type="VBoxContainer" parent="Margin/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="Margin/Rows/RowHui"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.945098, 0.901961, 0.8, 1)
+theme_override_font_sizes/font_size = 18
+text = "回字纹"
+
+[node name="Buttons" type="HBoxContainer" parent="Margin/Rows/RowHui"]
+layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="Large" type="Button" parent="Margin/Rows/RowHui/Buttons"]
+custom_minimum_size = Vector2(500, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "特性"
+script = ExtResource("1_wuxia_button")
+pattern_style = "回字"
+
+[node name="Medium" type="Button" parent="Margin/Rows/RowHui/Buttons"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+text = "特性"
+script = ExtResource("1_wuxia_button")
+pattern_style = "回字"
+
+[node name="Small" type="Button" parent="Margin/Rows/RowHui/Buttons"]
+custom_minimum_size = Vector2(180, 40)
+layout_mode = 2
+text = "特性"
+script = ExtResource("1_wuxia_button")
+pattern_style = "回字"
+
+[node name="RowCloud" type="VBoxContainer" parent="Margin/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="Margin/Rows/RowCloud"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.945098, 0.901961, 0.8, 1)
+theme_override_font_sizes/font_size = 18
+text = "云纹"
+
+[node name="Buttons" type="HBoxContainer" parent="Margin/Rows/RowCloud"]
+layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="Large" type="Button" parent="Margin/Rows/RowCloud/Buttons"]
+custom_minimum_size = Vector2(500, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "特性"
+script = ExtResource("1_wuxia_button")
+pattern_style = "云"
+
+[node name="Medium" type="Button" parent="Margin/Rows/RowCloud/Buttons"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+text = "特性"
+script = ExtResource("1_wuxia_button")
+pattern_style = "云"
+
+[node name="Small" type="Button" parent="Margin/Rows/RowCloud/Buttons"]
+custom_minimum_size = Vector2(180, 40)
+layout_mode = 2
+text = "特性"
+script = ExtResource("1_wuxia_button")
+pattern_style = "云"
+
+[node name="RowInk" type="VBoxContainer" parent="Margin/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="Margin/Rows/RowInk"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.945098, 0.901961, 0.8, 1)
+theme_override_font_sizes/font_size = 18
+text = "折角墨点"
+
+[node name="Buttons" type="HBoxContainer" parent="Margin/Rows/RowInk"]
+layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="Large" type="Button" parent="Margin/Rows/RowInk/Buttons"]
+custom_minimum_size = Vector2(500, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "特性"
+script = ExtResource("1_wuxia_button")
+pattern_style = "折角"
+
+[node name="Medium" type="Button" parent="Margin/Rows/RowInk/Buttons"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+text = "特性"
+script = ExtResource("1_wuxia_button")
+pattern_style = "折角"
+
+[node name="Small" type="Button" parent="Margin/Rows/RowInk/Buttons"]
+custom_minimum_size = Vector2(180, 40)
+layout_mode = 2
+text = "特性"
+script = ExtResource("1_wuxia_button")
+pattern_style = "折角"
+
+[node name="RowBamboo" type="VBoxContainer" parent="Margin/Rows"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="Margin/Rows/RowBamboo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.945098, 0.901961, 0.8, 1)
+theme_override_font_sizes/font_size = 18
+text = "竹节纹"
+
+[node name="Buttons" type="HBoxContainer" parent="Margin/Rows/RowBamboo"]
+layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="Large" type="Button" parent="Margin/Rows/RowBamboo/Buttons"]
+custom_minimum_size = Vector2(500, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "特性"
+script = ExtResource("1_wuxia_button")
+pattern_style = "竹节"
+
+[node name="Medium" type="Button" parent="Margin/Rows/RowBamboo/Buttons"]
+custom_minimum_size = Vector2(300, 60)
+layout_mode = 2
+text = "特性"
+script = ExtResource("1_wuxia_button")
+pattern_style = "竹节"
+
+[node name="Small" type="Button" parent="Margin/Rows/RowBamboo/Buttons"]
+custom_minimum_size = Vector2(180, 40)
+layout_mode = 2
+text = "特性"
+script = ExtResource("1_wuxia_button")
+pattern_style = "竹节"
