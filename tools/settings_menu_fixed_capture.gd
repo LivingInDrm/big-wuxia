@@ -1,6 +1,6 @@
 extends SceneTree
 
-const OUTPUT_PATH := "res://tools/screenshots/settings_menu_fixed.png"
+const OUTPUT_PATH := "res://tools/screenshots/settings_menu_v2.png"
 const SETTINGS_MENU_SCENE := "res://scenes/ui/settings_menu.tscn"
 
 

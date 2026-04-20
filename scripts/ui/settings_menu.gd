@@ -7,15 +7,23 @@ const RESOLUTION_OPTIONS := [
 	Vector2i(1920, 1080),
 	Vector2i(2560, 1440),
 ]
+const TITLE_COLOR := UIColors.OCHRE
+const LABEL_COLOR := UIColors.PAPER_WHITE
+const SUBTEXT_COLOR := Color("#B8A898")
 
 @onready var resolution_option: OptionButton = %ResolutionOption
 @onready var fullscreen_toggle: CheckButton = %FullscreenToggle
 @onready var apply_button: Button = %ApplyButton
 @onready var back_button: Button = %BackButton
 @onready var status_label: Label = %StatusLabel
+@onready var title_label: Label = $Center/Panel/Margin/VBox/Title
+@onready var resolution_label: Label = $Center/Panel/Margin/VBox/Body/ResolutionRow/ResolutionLabel
+@onready var fullscreen_label: Label = $Center/Panel/Margin/VBox/Body/FullscreenRow/FullscreenLabel
+@onready var hint_label: Label = $Center/Panel/Margin/VBox/HintLabel
 
 
 func _ready() -> void:
+	_apply_text_colors()
 	_populate_resolution_options()
 	_load_current_settings()
 	apply_button.pressed.connect(_on_apply_pressed)
@@ -64,6 +72,14 @@ func _on_back_pressed() -> void:
 
 func _settings_bootstrap() -> Node:
 	return get_node("/root/SettingsBootstrap")
+
+
+func _apply_text_colors() -> void:
+	title_label.add_theme_color_override("font_color", TITLE_COLOR)
+	resolution_label.add_theme_color_override("font_color", LABEL_COLOR)
+	fullscreen_label.add_theme_color_override("font_color", LABEL_COLOR)
+	hint_label.add_theme_color_override("font_color", SUBTEXT_COLOR)
+	status_label.add_theme_color_override("font_color", SUBTEXT_COLOR)
 
 
 func _format_status(prefix: String, resolution: Vector2i, fullscreen: bool) -> String:
