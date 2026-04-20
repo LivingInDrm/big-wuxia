@@ -35,12 +35,30 @@ func is_fullscreen_enabled() -> bool:
 	return _fullscreen
 
 
-func apply_settings(window_size: Vector2i, fullscreen: bool, persist: bool = false) -> void:
+func is_embedded_window_mode() -> bool:
+	var tree := get_tree()
+	if tree == null or tree.root == null:
+		return false
+
+	if tree.root.has_method("get_embedder"):
+		return tree.root.call("get_embedder") != null
+
+	for arg in OS.get_cmdline_args():
+		if arg == "--wid" or arg.begins_with("--wid="):
+			return true
+		if arg == "--parent-window-id" or arg.begins_with("--parent-window-id="):
+			return true
+
+	return false
+
+
+func apply_settings(window_size: Vector2i, fullscreen: bool, persist: bool = false) -> bool:
 	_window_size = window_size
 	_fullscreen = fullscreen
-	_apply_display(_window_size, _fullscreen)
+	var applied_to_window := _apply_display(_window_size, _fullscreen)
 	if persist:
 		save_settings()
+	return applied_to_window
 
 
 func toggle_fullscreen() -> void:
@@ -68,11 +86,22 @@ func _load_settings() -> void:
 	_fullscreen = bool(cfg.get_value("display", "fullscreen", DEFAULT_FULLSCREEN))
 
 
-func _apply_display(window_size: Vector2i, fullscreen: bool) -> void:
+func _apply_display(window_size: Vector2i, fullscreen: bool) -> bool:
+	if is_embedded_window_mode():
+		print(
+			"[SettingsBootstrap] Embedded editor window detected; saved display settings %dx%d (%s) without resizing the editor pane." % [
+				window_size.x,
+				window_size.y,
+				"fullscreen" if fullscreen else "windowed",
+			]
+		)
+		return false
+
 	if fullscreen:
 		DisplayServer.window_set_size(window_size)
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-		return
+		return true
 
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 	DisplayServer.window_set_size(window_size)
+	return true

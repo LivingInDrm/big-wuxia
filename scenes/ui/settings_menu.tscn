@@ -1,10 +1,75 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/settings_menu.gd" id="1_script"]
 [ext_resource type="Theme" path="res://resources/ui/theme/main_ui_theme.tres" id="2_theme"]
 [ext_resource type="Texture2D" uid="uid://buis1cgjfnf4u" path="res://resources/sprites/backgrounds/mountain_bg.png" id="3_bg"]
 [ext_resource type="Script" path="res://resources/ui/controls/wuxia_frame.gd" id="4_frame"]
 [ext_resource type="FontFile" uid="uid://cwxwvmrose854" path="res://resources/fonts/NotoSerifCJKsc-Regular.otf" id="5_font"]
+[ext_resource type="Script" path="res://resources/ui/controls/wuxia_button.gd" id="6_wuxia_button"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_field_normal"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.94902, 0.92549, 0.866667, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.435294, 0.329412, 0.227451, 0.72)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_field_hover"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.976471, 0.94902, 0.890196, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.556863, 0.396078, 0.25098, 0.86)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_field_pressed"]
+content_margin_left = 18.0
+content_margin_top = 13.0
+content_margin_right = 18.0
+content_margin_bottom = 11.0
+bg_color = Color(0.909804, 0.862745, 0.756863, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.345098, 0.239216, 0.152941, 0.92)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_field_focus"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.968627, 0.941176, 0.878431, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.627451, 0.443137, 0.247059, 0.96)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3
@@ -83,6 +148,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.180392, 0.129412, 0.0901961, 1)
+theme_override_colors/font_hover_color = Color(0.180392, 0.129412, 0.0901961, 1)
+theme_override_colors/font_pressed_color = Color(0.180392, 0.129412, 0.0901961, 1)
+theme_override_colors/font_focus_color = Color(0.180392, 0.129412, 0.0901961, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_field_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_field_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_field_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_field_focus")
 
 [node name="FullscreenRow" type="HBoxContainer" parent="Center/Panel/Margin/VBox/Body"]
 layout_mode = 2
@@ -103,6 +176,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.180392, 0.129412, 0.0901961, 1)
+theme_override_colors/font_hover_color = Color(0.180392, 0.129412, 0.0901961, 1)
+theme_override_colors/font_pressed_color = Color(0.180392, 0.129412, 0.0901961, 1)
+theme_override_colors/font_focus_color = Color(0.180392, 0.129412, 0.0901961, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_field_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_field_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_field_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_field_focus")
 text = "启用全屏"
 
 [node name="HintLabel" type="Label" parent="Center/Panel/Margin/VBox"]
@@ -127,16 +208,22 @@ theme_override_constants/separation = 18
 
 [node name="ApplyButton" type="Button" parent="Center/Panel/Margin/VBox/Buttons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(180, 64)
+custom_minimum_size = Vector2(200, 72)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 28
+script = ExtResource("6_wuxia_button")
+pattern_style = "折角"
+show_icon_placeholder = false
 text = "应用"
 
 [node name="BackButton" type="Button" parent="Center/Panel/Margin/VBox/Buttons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(180, 64)
+custom_minimum_size = Vector2(200, 72)
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 28
+script = ExtResource("6_wuxia_button")
+pattern_style = "折角"
+show_icon_placeholder = false
 text = "返回"

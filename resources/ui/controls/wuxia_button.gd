@@ -6,6 +6,14 @@ const HOVER_BG := Color("EAE3D0")
 const PRESSED_BORDER_FACTOR := 0.7
 const DEFAULT_ICON_COLOR := Color("2C241C")
 
+@export var label_text: String = "":
+	set(value):
+		_label_text = value
+		if is_instance_valid(_text_label) and _text_label.text != _label_text:
+			_text_label.text = _label_text
+	get:
+		return _label_text
+
 @export_enum("hui", "回字", "云", "折角", "竹节") var pattern_style: String = "hui":
 	set(value):
 		pattern_style = _normalize_pattern_style(value)
@@ -37,12 +45,18 @@ const DEFAULT_ICON_COLOR := Color("2C241C")
 		icon_texture = value
 		_refresh_icon()
 
+@export var show_icon_placeholder: bool = true:
+	set(value):
+		show_icon_placeholder = value
+		_refresh_icon()
+
 var _content_margin: MarginContainer
 var _content_row: HBoxContainer
 var _icon_holder: Control
 var _icon_placeholder: ColorRect
 var _icon_texture_rect: TextureRect
 var _text_label: Label
+var _label_text := ""
 var _is_hovered := false
 var _is_pressed_visual := false
 
@@ -112,6 +126,7 @@ func _ensure_content() -> void:
 	_content_row.name = "ContentRow"
 	_content_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_content_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	_content_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_content_row.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_content_row.add_theme_constant_override("separation", 8)
 	_content_margin.add_child(_content_row)
@@ -143,8 +158,8 @@ func _ensure_content() -> void:
 	_text_label.name = "TextLabel"
 	_text_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_text_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_text_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_text_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_text_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_content_row.add_child(_text_label)
 
@@ -183,7 +198,8 @@ func _refresh_icon() -> void:
 	_icon_texture_rect.texture = icon_texture
 	var show_texture: bool = icon_texture != null
 	_icon_texture_rect.visible = show_texture
-	_icon_placeholder.visible = not show_texture
+	_icon_placeholder.visible = show_icon_placeholder and not show_texture
+	_icon_holder.visible = show_texture or show_icon_placeholder
 
 
 func _apply_text_theme() -> void:
@@ -195,8 +211,11 @@ func _apply_text_theme() -> void:
 
 
 func _sync_text() -> void:
-	if is_instance_valid(_text_label) and _text_label.text != text:
-		_text_label.text = text
+	if not text.is_empty():
+		_label_text = text
+		text = ""
+	if is_instance_valid(_text_label) and _text_label.text != _label_text:
+		_text_label.text = _label_text
 
 
 func _normalize_pattern_style(value: String) -> String:

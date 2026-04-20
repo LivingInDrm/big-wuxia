@@ -40,22 +40,22 @@ func _load_current_settings() -> void:
 
 	resolution_option.select(selected_index)
 	fullscreen_toggle.button_pressed = settings_bootstrap.is_fullscreen_enabled()
-	status_label.text = "当前：%d×%d%s" % [
-		current_size.x,
-		current_size.y,
-		" · 全屏" if fullscreen_toggle.button_pressed else " · 窗口",
-	]
+	status_label.text = _format_status("当前", current_size, fullscreen_toggle.button_pressed)
 
 
 func _on_apply_pressed() -> void:
 	var resolution: Vector2i = RESOLUTION_OPTIONS[resolution_option.get_selected_id()]
 	var fullscreen: bool = fullscreen_toggle.button_pressed
-	_settings_bootstrap().apply_settings(resolution, fullscreen, true)
-	status_label.text = "已应用：%d×%d%s" % [
-		resolution.x,
-		resolution.y,
-		" · 全屏" if fullscreen else " · 窗口",
-	]
+	var settings_bootstrap := _settings_bootstrap()
+	var applied_to_window: bool = settings_bootstrap.apply_settings(resolution, fullscreen, true)
+	if not applied_to_window and settings_bootstrap.is_embedded_window_mode():
+		print(
+			"[SettingsMenu] Embedded editor preview detected; display settings were saved and will apply in a standalone run."
+		)
+		status_label.text = _format_status("已保存", resolution, fullscreen) + "（编辑器嵌入运行未改窗口）"
+		return
+
+	status_label.text = _format_status("已应用", resolution, fullscreen)
 
 
 func _on_back_pressed() -> void:
@@ -64,3 +64,12 @@ func _on_back_pressed() -> void:
 
 func _settings_bootstrap() -> Node:
 	return get_node("/root/SettingsBootstrap")
+
+
+func _format_status(prefix: String, resolution: Vector2i, fullscreen: bool) -> String:
+	return "%s：%d×%d%s" % [
+		prefix,
+		resolution.x,
+		resolution.y,
+		" · 全屏" if fullscreen else " · 窗口",
+	]
