@@ -6,9 +6,9 @@ const HOVER_BG := Color("EAE3D0")
 const PRESSED_BORDER_FACTOR := 0.7
 const DEFAULT_ICON_COLOR := Color("2C241C")
 
-@export_enum("回字", "云", "折角", "竹节") var pattern_style: String = "回字":
+@export_enum("hui", "回字", "云", "折角", "竹节") var pattern_style: String = "hui":
 	set(value):
-		pattern_style = value
+		pattern_style = _normalize_pattern_style(value)
 		queue_redraw()
 
 @export var corner_size: int = 18:
@@ -112,18 +112,22 @@ func _ensure_content() -> void:
 	_content_row.name = "ContentRow"
 	_content_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_content_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	_content_row.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_content_row.add_theme_constant_override("separation", 8)
 	_content_margin.add_child(_content_row)
 
 	_icon_holder = Control.new()
 	_icon_holder.name = "IconHolder"
 	_icon_holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_icon_holder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_content_row.add_child(_icon_holder)
 
 	_icon_placeholder = ColorRect.new()
 	_icon_placeholder.name = "IconPlaceholder"
 	_icon_placeholder.color = DEFAULT_ICON_COLOR
 	_icon_placeholder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_icon_placeholder.set_anchors_preset(Control.PRESET_CENTER)
+	_icon_placeholder.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_icon_holder.add_child(_icon_placeholder)
 
 	_icon_texture_rect = TextureRect.new()
@@ -131,6 +135,8 @@ func _ensure_content() -> void:
 	_icon_texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_icon_texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_icon_texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_icon_texture_rect.set_anchors_preset(Control.PRESET_CENTER)
+	_icon_texture_rect.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_icon_holder.add_child(_icon_texture_rect)
 
 	_text_label = Label.new()
@@ -139,6 +145,7 @@ func _ensure_content() -> void:
 	_text_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_text_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	_text_label.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	_text_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_content_row.add_child(_text_label)
 
 	_apply_text_theme()
@@ -161,9 +168,9 @@ func _refresh_layout() -> void:
 	_icon_holder.size = Vector2(icon_size, icon_size)
 
 	var icon_rect: Rect2 = Rect2(Vector2.ZERO, Vector2(icon_size, icon_size))
-	_icon_placeholder.position = icon_rect.position
+	_icon_placeholder.position = (Vector2(icon_size, icon_size) - icon_rect.size) * 0.5
 	_icon_placeholder.size = icon_rect.size
-	_icon_texture_rect.position = icon_rect.position
+	_icon_texture_rect.position = (Vector2(icon_size, icon_size) - icon_rect.size) * 0.5
 	_icon_texture_rect.custom_minimum_size = icon_rect.size
 	_icon_texture_rect.size = icon_rect.size
 
@@ -190,6 +197,12 @@ func _apply_text_theme() -> void:
 func _sync_text() -> void:
 	if is_instance_valid(_text_label) and _text_label.text != text:
 		_text_label.text = text
+
+
+func _normalize_pattern_style(value: String) -> String:
+	if value == "回字":
+		return "hui"
+	return value
 
 
 func _resolve_background_color() -> Color:
