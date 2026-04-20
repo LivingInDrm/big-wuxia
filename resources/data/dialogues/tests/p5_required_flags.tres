@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/dialogue_data.gd" id="1_dialogue_data"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_node.gd" id="2_dialogue_node"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_choice.gd" id="3_dialogue_choice"]
+
+[sub_resource type="Resource" id="DialogueChoice_visible"]
+script = ExtResource("3_dialogue_choice")
+text = "走可见分支"
+next_node_id = "choice_ok"
+required_flags = Array[String]([])
+forbidden_flags = Array[String](["tests.hide_choice"])
+actions = Array[Resource]([])
+
+[sub_resource type="Resource" id="DialogueNode_start"]
+script = ExtResource("2_dialogue_node")
+node_id = "start"
+speaker_id = "hong_xixiang"
+speaker_name_override = ""
+text = "这一句应该因 required_flags 被跳过。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = "filtered_choice"
+on_enter_actions = Array[Resource]([])
+on_exit_actions = Array[Resource]([])
+required_flags = Array[String](["tests.need_skip_gate"])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_filtered_choice"]
+script = ExtResource("2_dialogue_node")
+node_id = "filtered_choice"
+speaker_id = "hong_xixiang"
+speaker_name_override = ""
+text = "这里只应显示 1 个选项。"
+choices = Array[ExtResource("3_dialogue_choice")]([SubResource("DialogueChoice_visible")])
+next_node_id = ""
+on_enter_actions = Array[Resource]([])
+on_exit_actions = Array[Resource]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_choice_ok"]
+script = ExtResource("2_dialogue_node")
+node_id = "choice_ok"
+speaker_id = "hong_xixiang"
+speaker_name_override = ""
+text = "你进入了可见分支。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = ""
+on_enter_actions = Array[Resource]([])
+on_exit_actions = Array[Resource]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[resource]
+script = ExtResource("1_dialogue_data")
+id = "tests.p5_required_flags"
+entry_node_id = "start"
+nodes = Array[ExtResource("2_dialogue_node")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_filtered_choice"), SubResource("DialogueNode_choice_ok")])
+meta = {
+"author": "codex",
+"revision": 1
+}
