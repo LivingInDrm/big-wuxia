@@ -30,9 +30,9 @@ func _populate_resolution_options() -> void:
 
 
 func _load_current_settings() -> void:
-	var settings_bootstrap := _settings_bootstrap()
-	var current_size := settings_bootstrap.get_window_size()
-	var selected_index := 0
+	var settings_bootstrap: Node = _settings_bootstrap()
+	var current_size: Vector2i = settings_bootstrap.get_window_size()
+	var selected_index: int = 0
 	for index in range(RESOLUTION_OPTIONS.size()):
 		if RESOLUTION_OPTIONS[index] == current_size:
 			selected_index = index
@@ -49,7 +49,7 @@ func _load_current_settings() -> void:
 
 func _on_apply_pressed() -> void:
 	var resolution: Vector2i = RESOLUTION_OPTIONS[resolution_option.get_selected_id()]
-	var fullscreen := fullscreen_toggle.button_pressed
+	var fullscreen: bool = fullscreen_toggle.button_pressed
 	_settings_bootstrap().apply_settings(resolution, fullscreen, true)
 	status_label.text = "已应用：%d×%d%s" % [
 		resolution.x,
