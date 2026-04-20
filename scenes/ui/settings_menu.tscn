@@ -129,6 +129,34 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_constants/separation = 16
 
+[node name="DialogueSpeedRow" type="HBoxContainer" parent="Center/Panel/Margin/VBox/Body"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="DialogueSpeedLabel" type="Label" parent="Center/Panel/Margin/VBox/Body/DialogueSpeedRow"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 28
+text = "文字速度"
+vertical_alignment = 1
+
+[node name="DialogueSpeedOption" type="OptionButton" parent="Center/Panel/Margin/VBox/Body/DialogueSpeedRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.180392, 0.129412, 0.0901961, 1)
+theme_override_colors/font_hover_color = Color(0.180392, 0.129412, 0.0901961, 1)
+theme_override_colors/font_pressed_color = Color(0.180392, 0.129412, 0.0901961, 1)
+theme_override_colors/font_focus_color = Color(0.180392, 0.129412, 0.0901961, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_field_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_field_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_field_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_field_focus")
+
 [node name="ResolutionRow" type="HBoxContainer" parent="Center/Panel/Margin/VBox/Body"]
 layout_mode = 2
 theme_override_constants/separation = 18
@@ -190,7 +218,7 @@ text = "启用全屏"
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_font")
 theme_override_font_sizes/font_size = 18
-text = "F11 可随时切换全屏。应用后会保存到 user://settings.cfg。"
+text = "F11 可随时切换全屏。显示与文字速度都会保存到 user://settings.cfg。"
 horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="Center/Panel/Margin/VBox"]

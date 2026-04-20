@@ -4,14 +4,19 @@ const SETTINGS_PATH := "user://settings.cfg"
 const DEFAULT_WIDTH := 1600
 const DEFAULT_HEIGHT := 900
 const DEFAULT_FULLSCREEN := false
+const DEFAULT_DIALOGUE_CHAR_SPEED := 25
+
+signal settings_changed(window_size: Vector2i, fullscreen: bool, dialogue_char_speed: int)
 
 var _window_size: Vector2i = Vector2i(DEFAULT_WIDTH, DEFAULT_HEIGHT)
 var _fullscreen: bool = DEFAULT_FULLSCREEN
+var _dialogue_char_speed: int = DEFAULT_DIALOGUE_CHAR_SPEED
 
 
 func _ready() -> void:
 	_load_settings()
 	_apply_display(_window_size, _fullscreen)
+	settings_changed.emit(_window_size, _fullscreen, _dialogue_char_speed)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -35,6 +40,10 @@ func is_fullscreen_enabled() -> bool:
 	return _fullscreen
 
 
+func get_dialogue_char_speed() -> int:
+	return _dialogue_char_speed
+
+
 func is_embedded_window_mode() -> bool:
 	var tree := get_tree()
 	if tree == null or tree.root == null:
@@ -52,17 +61,19 @@ func is_embedded_window_mode() -> bool:
 	return false
 
 
-func apply_settings(window_size: Vector2i, fullscreen: bool, persist: bool = false) -> bool:
+func apply_settings(window_size: Vector2i, fullscreen: bool, persist: bool = false, dialogue_char_speed: int = _dialogue_char_speed) -> bool:
 	_window_size = window_size
 	_fullscreen = fullscreen
+	_dialogue_char_speed = max(dialogue_char_speed, 0)
 	var applied_to_window := _apply_display(_window_size, _fullscreen)
 	if persist:
 		save_settings()
+	settings_changed.emit(_window_size, _fullscreen, _dialogue_char_speed)
 	return applied_to_window
 
 
 func toggle_fullscreen() -> void:
-	apply_settings(_window_size, not _fullscreen, true)
+	apply_settings(_window_size, not _fullscreen, true, _dialogue_char_speed)
 
 
 func save_settings() -> int:
@@ -70,6 +81,7 @@ func save_settings() -> int:
 	cfg.set_value("display", "width", _window_size.x)
 	cfg.set_value("display", "height", _window_size.y)
 	cfg.set_value("display", "fullscreen", _fullscreen)
+	cfg.set_value("dialogue", "char_speed", _dialogue_char_speed)
 	return cfg.save(SETTINGS_PATH)
 
 
@@ -84,6 +96,7 @@ func _load_settings() -> void:
 	var height := int(cfg.get_value("display", "height", DEFAULT_HEIGHT))
 	_window_size = Vector2i(maxi(width, 640), maxi(height, 360))
 	_fullscreen = bool(cfg.get_value("display", "fullscreen", DEFAULT_FULLSCREEN))
+	_dialogue_char_speed = max(int(cfg.get_value("dialogue", "char_speed", DEFAULT_DIALOGUE_CHAR_SPEED)), 0)
 
 
 func _apply_display(window_size: Vector2i, fullscreen: bool) -> bool:

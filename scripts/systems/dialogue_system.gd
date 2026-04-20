@@ -17,6 +17,7 @@ signal node_changed(node: DialogueNode)
 signal action_executed(action: DialogueAction)
 
 var char_speed: int = 25
+var instant_mode: bool = false
 var current_dialogue_id: String = ""
 var current_dialogue: DialogueData = null
 var current_node: DialogueNode = null
@@ -34,6 +35,11 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	set_process(true)
 	set_process_unhandled_input(true)
+	var settings_bootstrap := get_node_or_null("/root/SettingsBootstrap")
+	if settings_bootstrap != null:
+		_apply_char_speed_from_settings(settings_bootstrap.get_dialogue_char_speed())
+		if not settings_bootstrap.settings_changed.is_connected(_on_settings_changed):
+			settings_bootstrap.settings_changed.connect(_on_settings_changed)
 
 
 func _process(delta: float) -> void:
@@ -42,6 +48,9 @@ func _process(delta: float) -> void:
 
 	var total_characters: int = int(_dialogue_box.get_total_character_count())
 	if total_characters <= 0:
+		_complete_text_reveal()
+		return
+	if _is_instant_mode():
 		_complete_text_reveal()
 		return
 
@@ -65,14 +74,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 		if key_event.keycode == KEY_SPACE or key_event.keycode == KEY_ENTER or key_event.keycode == KEY_KP_ENTER:
-			if _visible_choices.is_empty():
-				advance()
+			if _handle_advance_input():
 				get_viewport().set_input_as_handled()
 			return
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton
-		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed and _visible_choices.is_empty():
-			advance()
+		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed and _handle_advance_input():
 			get_viewport().set_input_as_handled()
 
 
@@ -270,7 +277,7 @@ func _refresh_box_for_current_node() -> void:
 	_typing_elapsed_ms = 0.0
 
 	var total_characters: int = int(_dialogue_box.get_total_character_count())
-	if total_characters <= 0:
+	if total_characters <= 0 or _is_instant_mode():
 		_complete_text_reveal()
 	else:
 		_text_fully_visible = false
@@ -297,6 +304,18 @@ func _complete_text_reveal() -> void:
 func _reveal_text_immediately() -> void:
 	_typing_elapsed_ms = 0.0
 	_complete_text_reveal()
+
+
+func _handle_advance_input() -> bool:
+	if current_node == null:
+		return false
+	if not _text_fully_visible:
+		_reveal_text_immediately()
+		return true
+	if not _visible_choices.is_empty():
+		return false
+	advance()
+	return true
 
 
 func _execute_actions(actions: Array[DialogueAction]) -> void:
@@ -416,3 +435,16 @@ func _load_texture_from_file(path: String) -> Texture2D:
 	if err == OK:
 		return ImageTexture.create_from_image(image)
 	return null
+
+
+func _apply_char_speed_from_settings(new_char_speed: int) -> void:
+	char_speed = max(new_char_speed, 0)
+	instant_mode = char_speed <= 0
+
+
+func _is_instant_mode() -> bool:
+	return instant_mode or char_speed <= 0
+
+
+func _on_settings_changed(_window_size: Vector2i, _fullscreen: bool, dialogue_char_speed: int) -> void:
+	_apply_char_speed_from_settings(dialogue_char_speed)
