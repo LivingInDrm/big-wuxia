@@ -12,14 +12,6 @@ const CARD_BORDER := Color(0.29, 0.23, 0.17, 0.7)
 const OVERLAY_BG := Color(0.94, 0.91, 0.84, 0.84)
 const BUFF_TEXT := Color("#D7A33D")
 
-const TOP_HINTS := [
-	{"keys": ["Esc"], "desc": "菜单"},
-	{"keys": ["Q", "E"], "desc": "快速选择人物"},
-	{"keys": ["ASD"], "desc": "移动光标"},
-	{"keys": ["Alt"], "desc": "查看详情"},
-	{"keys": ["Tab"], "desc": "显示血量和移动顺序"},
-]
-
 const RIGHT_ACTIONS := [
 	{"key": "V", "icon": Color("#8B5C32"), "label": "武功"},
 	{"key": "B", "icon": Color("#7A6A46"), "label": "道具"},
@@ -28,8 +20,8 @@ const RIGHT_ACTIONS := [
 	{"key": "R", "icon": Color("#6D4B3A"), "label": "逃跑"},
 ]
 
-var _turn_number_label: Label
 var _hint_label: Label
+var _character_card_container: Control
 var _portrait_rect: TextureRect
 var _buffs_box: VBoxContainer
 var _name_label: Label
@@ -41,6 +33,8 @@ var _qg_label: Label
 var _mp_bar: ProgressBar
 var _mp_value_label: Label
 var _vm = null
+var _character_card_tween: Tween
+var _character_card_target_visible: bool = false
 
 
 func _ready() -> void:
@@ -49,7 +43,7 @@ func _ready() -> void:
 
 
 func apply_mock(data: Dictionary) -> void:
-	if _turn_number_label == null:
+	if _name_label == null:
 		return
 
 	_apply_state(data)
@@ -81,7 +75,6 @@ func refresh() -> void:
 
 
 func _apply_state(data: Dictionary) -> void:
-	_turn_number_label.text = str(data.get("turn", 1))
 	_name_label.text = str(data.get("char_name", data.get("name", "李淳罡")))
 	_exp_label.text = "经验  %s/%s" % [data.get("exp", data.get("exp_current", 0)), data.get("exp_max", 1)]
 	_level_label.text = "等级  ·  %s/%s" % [data.get("level", 1), data.get("level_max", 100)]
@@ -115,87 +108,11 @@ func _build_ui() -> void:
 	for child in get_children():
 		child.queue_free()
 
-	add_child(_build_top_bar())
 	add_child(_build_right_menu())
 	add_child(_build_character_card())
 	add_child(_build_bottom_hint())
 	_apply_mouse_passthrough(self)
-
-
-func _build_top_bar() -> Control:
-	var shell := PanelContainer.new()
-	shell.name = "TopBar"
-	shell.theme_type_variation = &"tooltip"
-	shell.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	shell.offset_left = 22.0
-	shell.offset_top = 14.0
-	shell.offset_right = -22.0
-	shell.offset_bottom = 122.0
-
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 34)
-	margin.add_theme_constant_override("margin_top", 24)
-	margin.add_theme_constant_override("margin_right", 34)
-	margin.add_theme_constant_override("margin_bottom", 18)
-	shell.add_child(margin)
-
-	var row := HBoxContainer.new()
-	row.alignment = BoxContainer.ALIGNMENT_BEGIN
-	row.add_theme_constant_override("separation", 18)
-	margin.add_child(row)
-
-	var turn_box := VBoxContainer.new()
-	turn_box.custom_minimum_size = Vector2(112, 62)
-	turn_box.add_theme_constant_override("separation", -8)
-	row.add_child(turn_box)
-
-	var turn_caption := _label("回合", &"caption")
-	turn_caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	turn_box.add_child(turn_caption)
-
-	_turn_number_label = _label("1", &"title")
-	_turn_number_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	turn_box.add_child(_turn_number_label)
-
-	var hints := HBoxContainer.new()
-	hints.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	hints.add_theme_constant_override("separation", 10)
-	row.add_child(hints)
-
-	for hint_data in TOP_HINTS:
-		hints.add_child(_build_top_hint_item(hint_data["keys"], hint_data["desc"]))
-
-	return shell
-
-
-func _build_top_hint_item(keys: Array, desc: String) -> Control:
-	var item := PanelContainer.new()
-	item.theme_type_variation = &"tooltip"
-	item.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	item.custom_minimum_size = Vector2(0, 72)
-
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 18)
-	margin.add_theme_constant_override("margin_top", 14)
-	margin.add_theme_constant_override("margin_right", 18)
-	margin.add_theme_constant_override("margin_bottom", 12)
-	item.add_child(margin)
-
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	margin.add_child(row)
-
-	for i in range(keys.size()):
-		if i > 0:
-			var dot := _label("·", &"caption")
-			row.add_child(dot)
-		row.add_child(_build_key_box(str(keys[i])))
-
-	var text := _label(desc, &"caption")
-	text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(text)
-	return item
+	set_character_card_visible(false, false)
 
 
 func _build_right_menu() -> Control:
@@ -244,13 +161,18 @@ func _build_action_item(action: Dictionary) -> Control:
 
 
 func _build_character_card() -> Control:
+	_character_card_container = Control.new()
+	_character_card_container.name = "CharacterCardContainer"
+	_character_card_container.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	_character_card_container.offset_left = 24.0
+	_character_card_container.offset_top = -546.0
+	_character_card_container.offset_right = 612.0
+	_character_card_container.offset_bottom = -24.0
+
 	var root := Control.new()
 	root.name = "CharacterCard"
-	root.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	root.offset_left = 24.0
-	root.offset_top = -546.0
-	root.offset_right = 612.0
-	root.offset_bottom = -24.0
+	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_character_card_container.add_child(root)
 
 	_portrait_rect = TextureRect.new()
 	_portrait_rect.name = "Portrait"
@@ -289,15 +211,18 @@ func _build_character_card() -> Control:
 	name_margin.add_child(name_row)
 
 	_name_label = _label("李淳罡", &"body")
+	_name_label.name = "NameLabel"
 	_name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_row.add_child(_name_label)
 
 	_exp_label = _label("经验  5/8050", &"caption")
+	_exp_label.name = "ExpLabel"
 	_exp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_exp_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_row.add_child(_exp_label)
 
 	_level_label = _label("等级  ·  54/100", &"caption")
+	_level_label.name = "LevelLabel"
 	_level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_level_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_row.add_child(_level_label)
@@ -326,7 +251,7 @@ func _build_character_card() -> Control:
 	var mp_row := _build_stat_row("内力", UIColors.JADE_MUTED, false)
 	stats_box.add_child(mp_row)
 
-	return root
+	return _character_card_container
 
 
 func _build_stat_row(label_text: String, fill_color: Color, with_side_stat: bool) -> Control:
@@ -360,6 +285,7 @@ func _build_stat_row(label_text: String, fill_color: Color, with_side_stat: bool
 
 	var value_label := _label("0/0", &"micro")
 	value_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	value_label.name = "HPValueLabel" if with_side_stat else "MPValueLabel"
 	value_label.offset_left = 10.0
 	value_label.offset_top = 2.0
 	value_label.offset_right = -10.0
@@ -370,6 +296,7 @@ func _build_stat_row(label_text: String, fill_color: Color, with_side_stat: bool
 
 	if with_side_stat:
 		var side := _label("轻功  398", &"caption")
+		side.name = "QinggongLabel"
 		side.custom_minimum_size = Vector2(96, 0)
 		side.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		row.add_child(side)
@@ -397,6 +324,39 @@ func _build_bottom_hint() -> Control:
 	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_hint_label.modulate = Color(1, 1, 1, 0.7)
 	return _hint_label
+
+
+func set_character_card_visible(is_visible: bool, animate: bool = true) -> void:
+	if _character_card_container == null:
+		return
+	if _character_card_tween != null and _character_card_tween.is_valid():
+		_character_card_tween.kill()
+	var state_unchanged := _character_card_target_visible == is_visible \
+		and _character_card_container.visible == is_visible
+	_character_card_target_visible = is_visible
+	if not animate:
+		_character_card_container.visible = is_visible
+		_character_card_container.modulate.a = 1.0 if is_visible else 0.0
+		return
+	if state_unchanged:
+		_character_card_container.modulate.a = 1.0 if is_visible else 0.0
+		return
+	if is_visible:
+		_character_card_container.visible = true
+		_character_card_container.modulate.a = minf(_character_card_container.modulate.a, 1.0)
+		_character_card_tween = create_tween()
+		_character_card_tween.tween_property(_character_card_container, "modulate:a", 1.0, 0.2)
+		return
+	_character_card_tween = create_tween()
+	_character_card_tween.tween_property(_character_card_container, "modulate:a", 0.0, 0.2)
+	_character_card_tween.finished.connect(func() -> void:
+		if is_instance_valid(_character_card_container):
+			_character_card_container.visible = false
+	)
+
+
+func is_character_card_visible() -> bool:
+	return _character_card_container != null and _character_card_container.visible
 
 
 func _apply_mouse_passthrough(node: Node) -> void:

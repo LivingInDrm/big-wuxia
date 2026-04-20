@@ -94,7 +94,7 @@ func _ready() -> void:
 	hud_v3.bind_vm(hud_vm)
 	if not hud_v3.emit_menu_action.is_connected(_on_hud_menu_action):
 		hud_v3.emit_menu_action.connect(_on_hud_menu_action)
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility(false)
 	turn_manager.start_battle()
 
 
@@ -222,7 +222,7 @@ func _select_unit(unit: Unit) -> void:
 	ui.show_skills(unit)
 	ui.refresh_items()
 	ui.set_message("选中 %s — 点击高亮格移动" % unit.unit_data.unit_name)
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 
 
 func _cancel_selection() -> void:
@@ -240,7 +240,7 @@ func _cancel_selection() -> void:
 	range_overlay.clear()
 	ui.hide_actions()
 	ui.set_message("")
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 
 
 func _execute_move(unit: Unit, target: Vector2i) -> void:
@@ -271,7 +271,7 @@ func _execute_move(unit: Unit, target: Vector2i) -> void:
 	select_state = SelectState.MOVED_AWAIT_ACTION
 	ui.show_skills(unit)
 	ui.set_message("选择攻击目标或点击空格结束")
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 
 
 func _execute_attack(attacker: Unit, defender: Unit) -> void:
@@ -287,7 +287,7 @@ func _execute_attack(attacker: Unit, defender: Unit) -> void:
 		VFX.spawn_damage_number(parent_node, defender.global_position + Vector2(0, -40), "MISS", false)
 		ui.set_message("%s 的攻击落空" % attacker.unit_data.unit_name)
 	_finish_unit_action(attacker)
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 
 
 func _finish_unit_action(unit: Unit) -> void:
@@ -308,7 +308,7 @@ func _finish_unit_action(unit: Unit) -> void:
 	range_overlay.clear()
 	ui.hide_actions()
 	ui.set_message("")
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 	if _check_battle_end():
 		return
 
@@ -334,12 +334,12 @@ func _on_turn_started(turn_num: int) -> void:
 		u.tick_cooldowns()
 		if turn_num > 1:
 			u.restore_mp(u.get_qi_regen_amount())
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 
 
 func _on_phase_changed(phase: TurnManager.Phase) -> void:
 	ui.set_turn(turn_manager.current_turn, TurnManager.phase_label(phase))
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 	if phase == TurnManager.Phase.ENEMY_TURN and not _battle_ended:
 		_run_enemy_phase()
 
@@ -371,7 +371,7 @@ func _on_unit_died(unit: Unit) -> void:
 	if selected_unit == unit:
 		selected_unit = null
 	_check_battle_end()
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 
 
 func _all_acted(units: Array[Unit]) -> bool:
@@ -421,7 +421,7 @@ func _on_skill_button_pressed(idx: int) -> void:
 	)
 	ui.show_skills(selected_unit)
 	ui.set_message("选择 %s 的目标格" % skill.skill_name)
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 
 
 func _execute_skill(caster: Unit, skill, target: Vector2i) -> void:
@@ -436,7 +436,7 @@ func _execute_skill(caster: Unit, skill, target: Vector2i) -> void:
 		select_state = SelectState.UNIT_SELECTED
 		ui.show_skills(caster)
 		ui.set_message("轻功发动 — 选择新的落点")
-		_refresh_battle_hud()
+		_refresh_battle_hud_visibility()
 		return
 	range_overlay.clear()
 	if skill.effect_type == 0:
@@ -457,7 +457,7 @@ func _restore_after_skill_cancel() -> void:
 	select_state = _skill_return_state
 	ui.show_skills(selected_unit)
 	ui.refresh_items()
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 
 
 func _on_item_button_pressed() -> void:
@@ -470,7 +470,7 @@ func _on_item_button_pressed() -> void:
 		return
 	ui.show_item_panel(consumables)
 	ui.set_message("选择一个消耗品")
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 
 
 func _on_item_selected(item_id: String) -> void:
@@ -490,7 +490,7 @@ func _on_item_selected(item_id: String) -> void:
 	ui.hide_item_panel()
 	ui.show_skills(selected_unit)
 	ui.set_message("选择 %s 的目标单位" % item.name)
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 
 
 func _on_item_panel_closed() -> void:
@@ -529,7 +529,7 @@ func _restore_after_item_cancel() -> void:
 	select_state = _item_return_state
 	ui.show_skills(selected_unit)
 	ui.refresh_items()
-	_refresh_battle_hud()
+	_refresh_battle_hud_visibility()
 
 
 func _can_target_with_item(unit: Unit) -> bool:
@@ -717,16 +717,24 @@ func _spawn_unit_entry(entry: Dictionary, is_enemy: bool) -> void:
 		player_units.append(unit)
 
 
-func _refresh_battle_hud() -> void:
+func _refresh_battle_hud_visibility(animate: bool = true) -> void:
 	if hud_vm == null or hud_v3 == null:
+		return
+	var should_show := selected_unit != null \
+		and select_state == SelectState.UNIT_SELECTED \
+		and turn_manager.current_phase != TurnManager.Phase.ENEMY_TURN \
+		and not selected_unit.acted
+	if not should_show:
+		hud_v3.set_character_card_visible(false, animate)
 		return
 	hud_vm.refresh(selected_unit, self)
 	hud_v3.refresh()
+	hud_v3.set_character_card_visible(true, animate)
 
 
 func _on_unit_hud_state_changed(unit: Unit) -> void:
 	if unit == selected_unit:
-		_refresh_battle_hud()
+		_refresh_battle_hud_visibility()
 
 
 func _handle_hud_shortcut(event: InputEvent) -> bool:
