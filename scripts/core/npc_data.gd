@@ -8,6 +8,7 @@ class_name NPCData
 @export_group("Visual")
 @export var unit_id: String = ""
 @export var sprite_frames: SpriteFrames
+@export var overworld_texture: Texture2D
 @export var modulate: Color = Color.WHITE
 
 @export_group("Dialogue")
