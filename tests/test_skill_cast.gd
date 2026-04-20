@@ -33,7 +33,7 @@ func _test_cross_skill_on_empty_cell() -> void:
 	for _i in 120:
 		await process_frame
 
-	var skill_button: Button = battle.ui.skill_buttons[1]
+	var skill_button: Button = await _open_skill_submenu_and_get_button(battle, 1)
 	_assert(skill_button.visible, "T1 技能按钮可见")
 	await _click_control(skill_button)
 	await process_frame
@@ -66,7 +66,7 @@ func _test_cross_skill_on_enemy_unit() -> void:
 	for _i in 120:
 		await process_frame
 
-	var skill_button: Button = battle.ui.skill_buttons[1]
+	var skill_button: Button = await _open_skill_submenu_and_get_button(battle, 1)
 	await _click_control(skill_button)
 	await process_frame
 	_assert(battle.select_state == 3, "T4 进入 SKILL_TARGETING（点敌兵释放前）")
@@ -111,6 +111,26 @@ func _click_empty_cell(world_pos: Vector2, battle) -> void:
 
 func _click_control(control: Control) -> void:
 	await _click_screen(control.global_position + control.size * 0.5)
+
+
+func _open_skill_submenu_and_get_button(battle, skill_index: int) -> Button:
+	# v3 HUD 下，技能按钮是点击 action menu 的“武功”按钮后懒创建的 submenu 子节点。
+	# 这里通过 HUD 的 action 信号打开子面板，再按 skill_index 取对应按钮。
+	var hud = battle.ui.get_battle_hud_v3()
+	var martial_button: Button = hud._action_buttons.get(&"martial") as Button
+	assert(martial_button != null, "未找到武功按钮")
+	await _click_control(martial_button)
+	for _i in 10:
+		await process_frame
+	var entries: Array = hud._skill_entries
+	var child_index := -1
+	for i in entries.size():
+		var entry = entries[i]
+		if entry is Dictionary and int(entry.get("index", -1)) == skill_index:
+			child_index = i
+			break
+	assert(child_index >= 0, "技能条目未找到 skill_index=%d" % skill_index)
+	return hud._submenu_list.get_child(child_index) as Button
 
 
 func _click_screen(screen_pos: Vector2) -> void:
