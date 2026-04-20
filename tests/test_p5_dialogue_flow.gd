@@ -31,19 +31,26 @@ func _run() -> void:
 	_assert(dialogue_system.current_node != null, "T1b 能获取第一个节点")
 	if dialogue_system.current_node != null:
 		_assert(dialogue_system.current_node.node_id == "start", "T1c 当前节点为 start")
-	_assert(game_state.get_flag("wudang.met_hong", false) == true, "T1d set_flag on_enter 已执行")
+	_assert(game_state.get_flag("wudang.hong_met", false) == false, "T1d 初遇开场不提前写 hong_met")
 
 	dialogue_system.advance()
 	await process_frame
 	_assert(dialogue_system.current_node != null and dialogue_system.current_node.node_id == "start", "T2a 第一次 advance 仅跳过逐字显示")
 
+	dialogue_system.advance()
+	await process_frame
+	dialogue_system.advance()
+	await process_frame
+	dialogue_system.advance()
+	await process_frame
 	dialogue_system.select_choice(0)
 	await process_frame
-	_assert(dialogue_system.current_node != null and dialogue_system.current_node.node_id == "reply", "T3a select_choice(0) 跳到 reply")
+	_assert(dialogue_system.current_node != null and dialogue_system.current_node.node_id == "ask_kungfu", "T3a select_choice(0) 跳到 ask_kungfu")
+	_assert(game_state.get_flag("wudang.hong_met", false) == true, "T3b 问武功分支会写 hong_met")
 
 	dialogue_system.end(false)
 	await process_frame
-	_assert(dialogue_system.current_node == null, "T3b end(false) 清空当前节点")
+	_assert(dialogue_system.current_node == null, "T3c end(false) 清空当前节点")
 
 	game_state.reset()
 	dialogue_system.char_speed = 1

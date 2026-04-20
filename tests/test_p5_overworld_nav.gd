@@ -95,6 +95,36 @@ func _run() -> void:
 	await process_frame
 	var restored_position: Vector2 = scene_restored.get_node("Player").global_position
 	_assert(restored_position == Vector2(777, 333), "T3b overworld_player_position 可恢复")
+	root.remove_child(scene_restored)
+	scene_restored.queue_free()
+	await process_frame
+
+	game_state.reset()
+	dialogue_registry.reload()
+	var poi_packed := load("res://scenes/overworld/poi_map_wudang.tscn") as PackedScene
+	var poi_scene := poi_packed.instantiate()
+	game_state.return_context = {
+		"battle_result": "victory",
+		"entry_spawn_name": "EntrySpawn",
+		"from_battle": true,
+		"on_victory_dialogue": "wudang.hong_after_battle",
+		"return_to_poi": "wudang"
+	}
+	root.add_child(poi_scene)
+	await process_frame
+	await process_frame
+	_assert(game_state.get_flag("qingliang.unlocked", false) == true, "T4a hong_after_battle 自动触发后写入 qingliang.unlocked")
+	var dialogue_system = root.get_node("/root/DialogueSystem")
+	dialogue_system.end(false)
+	root.remove_child(poi_scene)
+	poi_scene.queue_free()
+	await process_frame
+
+	var scene_unlocked := packed.instantiate()
+	root.add_child(scene_unlocked)
+	await process_frame
+	await process_frame
+	_assert(scene_unlocked.get_node("POINodes/POI_Qingliang").visible == true, "T4b after_battle 解锁后 overworld 可见 qingliang")
 
 	_finish()
 

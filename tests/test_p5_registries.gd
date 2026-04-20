@@ -41,7 +41,7 @@ func _run() -> void:
 	if hong != null:
 		_assert(hong.default_dialogue_id == "wudang.hong_first_meet", "T1f hong_xixiang 默认对话正确")
 	if dialogue != null:
-		_assert(dialogue.nodes.size() == 2, "T1g 样例对话节点数=2")
+		_assert(dialogue.nodes.size() >= 5, "T1g 正式主线对话节点数>=5")
 
 	game_state.reset()
 	game_state.set_flag("test.x", true)
