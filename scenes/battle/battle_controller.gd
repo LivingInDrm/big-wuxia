@@ -760,6 +760,20 @@ func debug_move(unit: Unit, target: Vector2i) -> void:
 	await _execute_move(unit, target)
 
 
+func debug_force_victory() -> void:
+	if _battle_ended:
+		return
+	_battle_ended = true
+	trigger_victory()
+
+
+func debug_force_defeat() -> void:
+	if _battle_ended:
+		return
+	_battle_ended = true
+	trigger_defeat()
+
+
 func debug_attack(attacker: Unit, defender: Unit) -> void:
 	await _execute_attack(attacker, defender)
 
