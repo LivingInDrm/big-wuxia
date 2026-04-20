@@ -1,7 +1,7 @@
 extends SceneTree
 
 const BATTLE_SCENE := "res://scenes/battle/battle.tscn"
-const OUTPUT_PATH := "tools/screenshots/battle_with_char_panel.png"
+const OUTPUT_PATH := "tools/screenshots/battle_with_char_panel_v2.png"
 const VIEWPORT := Vector2i(1280, 720)
 
 
@@ -33,8 +33,7 @@ func _run() -> void:
 
 	controller.debug_select(players[0])
 
-	for _i in 12:
-		await process_frame
+	await create_timer(1.0).timeout
 
 	var image: Image = root.get_texture().get_image()
 	if image == null:

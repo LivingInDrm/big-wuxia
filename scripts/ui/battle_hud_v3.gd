@@ -202,11 +202,11 @@ func _build_action_item(action: Dictionary) -> Control:
 func _build_character_card() -> Control:
 	_character_card_container = Control.new()
 	_character_card_container.name = "CharacterCardContainer"
-	_character_card_container.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	_character_card_container.offset_left = 24.0
-	_character_card_container.offset_top = -240.0
-	_character_card_container.offset_right = 960.0
-	_character_card_container.offset_bottom = -24.0
+	_character_card_container.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	_character_card_container.offset_left = 0.0
+	_character_card_container.offset_top = -280.0
+	_character_card_container.offset_right = 0.0
+	_character_card_container.offset_bottom = 0.0
 	_character_card_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_character_status_panel = CHARACTER_STATUS_PANEL.instantiate()
 	_character_card_container.add_child(_character_status_panel)
