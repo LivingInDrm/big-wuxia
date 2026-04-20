@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/ui/character_status_panel.gd" id="1_panel"]
 [ext_resource type="Script" path="res://resources/ui/controls/wuxia_frame.gd" id="2_frame"]
-[ext_resource type="Script" path="res://resources/ui/controls/themed_bar.gd" id="3_bar"]
+[ext_resource type="Script" path="res://resources/ui/controls/simple_bar.gd" id="3_bar"]
 [ext_resource type="Texture2D" path="res://resources/ui/portraits/half/li_chungang.png" id="4_portrait"]
 
 [node name="CharacterStatusPanel" type="Control"]
@@ -61,7 +61,7 @@ custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 script = ExtResource("2_frame")
 border_width = 2.0
-corner_style = "emphasis"
+corner_style = "regular"
 
 [node name="NameRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/NameFrame"]
 layout_mode = 2
@@ -112,13 +112,12 @@ theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="ExpBar" type="Range" parent="BottomAnchor/PanelRoot/MainStack/ExpFrame/ExpMargin"]
+[node name="ExpBar" type="Control" parent="BottomAnchor/PanelRoot/MainStack/ExpFrame/ExpMargin"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
-theme_type_variation = &"bar_exp"
 script = ExtResource("3_bar")
-fill_tint_override = Color(0.721569, 0.533333, 0.247059, 1)
+fill_color = Color(0.721569, 0.533333, 0.247059, 1)
 max_value = 8050.0
 value = 5.0
 
@@ -128,7 +127,7 @@ layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("2_frame")
 border_width = 2.0
-corner_style = "emphasis"
+corner_style = "regular"
 
 [node name="DataRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame"]
 layout_mode = 2
@@ -189,14 +188,13 @@ theme_type_variation = &"caption"
 theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 1)
 text = "气血"
 
-[node name="HpBar" type="Range" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/HPFrame/HPMargin/HPRow"]
+[node name="HpBar" type="Control" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/HPFrame/HPMargin/HPRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"bar_hp"
 script = ExtResource("3_bar")
-fill_tint_override = Color(0.658824, 0.25098, 0.211765, 1)
+fill_color = Color(0.658824, 0.25098, 0.211765, 1)
 max_value = 2877.0
 value = 2877.0
 
@@ -234,14 +232,13 @@ theme_type_variation = &"caption"
 theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 1)
 text = "内力"
 
-[node name="MpBar" type="Range" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/MPFrame/MPMargin/MPRow"]
+[node name="MpBar" type="Control" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataRow/StatsColumn/MPFrame/MPMargin/MPRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"bar_mp"
 script = ExtResource("3_bar")
-fill_tint_override = Color(0.290196, 0.419608, 0.478431, 1)
+fill_color = Color(0.290196, 0.419608, 0.478431, 1)
 max_value = 3765.0
 value = 3765.0
 

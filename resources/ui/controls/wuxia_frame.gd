@@ -61,6 +61,7 @@ var _last_content_pad: int = -1
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	clip_contents = false
+	add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	_refresh_layout()
 
 
