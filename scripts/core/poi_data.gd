@@ -11,6 +11,7 @@ class_name POIData
 @export var marker_sprite: Texture2D
 @export var marker_label_offset: Vector2 = Vector2.ZERO
 @export var required_flags: Array[String] = []
+@export var unlock_flag: String = ""
 @export var initial_visible: bool = true
 @export var entry_spawn_point: String = ""
 @export var overworld_return_offset: Vector2 = Vector2.ZERO

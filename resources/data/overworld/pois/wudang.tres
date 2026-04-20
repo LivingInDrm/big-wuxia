@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="POIData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/poi_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = "wudang"
+display_name = "武当山"
+position_on_overworld = Vector2(960, 280)
+scene_path = "res://scenes/overworld/poi_map_wudang.tscn"
+marker_label_offset = Vector2(0, -48)
+required_flags = Array[String]([])
+unlock_flag = ""
+initial_visible = true
+entry_spawn_point = "EntrySpawn"
+overworld_return_offset = Vector2(96, 0)

@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="NPCData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/npc_data.gd" id="1_script"]
+[ext_resource type="SpriteFrames" path="res://resources/data/units/warrior_sprite_frames.tres" id="2_frames"]
+
+[resource]
+script = ExtResource("1_script")
+id = "hong_xixiang"
+display_name = "洪洗象"
+unit_id = ""
+sprite_frames = ExtResource("2_frames")
+default_dialogue_id = "wudang.hong_first_meet"
+conditional_dialogues = Array[Dictionary]([])
+interaction_range = 64.0
+modulate = Color(1, 1, 1, 1)

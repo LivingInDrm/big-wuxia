@@ -1,0 +1,58 @@
+[gd_resource type="Resource" script_class="DialogueData" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/dialogue_data.gd" id="1_dialogue_data"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_node.gd" id="2_dialogue_node"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_choice.gd" id="3_dialogue_choice"]
+[ext_resource type="Script" path="res://scripts/core/dialogue_action.gd" id="4_dialogue_action"]
+
+[sub_resource type="Resource" id="DialogueAction_start_flag"]
+script = ExtResource("4_dialogue_action")
+type = "set_flag"
+payload = {
+"flag": "wudang.met_hong",
+"value": true
+}
+
+[sub_resource type="Resource" id="DialogueChoice_ask_name"]
+script = ExtResource("3_dialogue_choice")
+text = "请问小道长尊姓大名？"
+next_node_id = "reply"
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+actions = Array[ExtResource("4_dialogue_action")]([])
+
+[sub_resource type="Resource" id="DialogueNode_start"]
+script = ExtResource("2_dialogue_node")
+node_id = "start"
+speaker_id = "hong_xixiang"
+speaker_name_override = ""
+text = "山门风大，公子从哪儿来？"
+choices = Array[ExtResource("3_dialogue_choice")]([SubResource("DialogueChoice_ask_name")])
+next_node_id = ""
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([SubResource("DialogueAction_start_flag")])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[sub_resource type="Resource" id="DialogueNode_reply"]
+script = ExtResource("2_dialogue_node")
+node_id = "reply"
+speaker_id = "hong_xixiang"
+speaker_name_override = ""
+text = "洪洗象。若公子愿意，改日可在山上再会。"
+choices = Array[ExtResource("3_dialogue_choice")]([])
+next_node_id = ""
+on_enter_actions = Array[ExtResource("4_dialogue_action")]([])
+on_exit_actions = Array[ExtResource("4_dialogue_action")]([])
+required_flags = Array[String]([])
+forbidden_flags = Array[String]([])
+
+[resource]
+script = ExtResource("1_dialogue_data")
+id = "wudang.hong_first_meet"
+entry_node_id = "start"
+nodes = Array[ExtResource("2_dialogue_node")]([SubResource("DialogueNode_start"), SubResource("DialogueNode_reply")])
+meta = {
+"author": "codex",
+"revision": 1
+}

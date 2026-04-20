@@ -40,6 +40,9 @@ func _run() -> void:
 	await _finish_battle_with_li_ultimate()
 	await _wait_for_scene_ready("Victory")
 	_save_step(7)
+	if current_scene != null:
+		current_scene.queue_free()
+		await process_frame
 	quit(0)
 
 
@@ -154,7 +157,17 @@ func _wait_frames(count: int) -> void:
 
 func _save_step(step: int) -> void:
 	var abs_path := ProjectSettings.globalize_path("%s/e2e_step_%02d.png" % [SCREENSHOT_DIR, step])
-	var image: Image = root.get_texture().get_image()
+	if DisplayServer.get_name() == "headless":
+		push_warning("[e2e_full_playthrough] skip screenshot step=%d in headless display server" % step)
+		return
+	var viewport_texture := root.get_texture()
+	if viewport_texture == null:
+		push_warning("[e2e_full_playthrough] skip screenshot step=%d in headless/dummy renderer" % step)
+		return
+	var image: Image = viewport_texture.get_image()
+	if image == null:
+		push_warning("[e2e_full_playthrough] skip screenshot step=%d because viewport image is null" % step)
+		return
 	var err := image.save_png(abs_path)
 	if err != OK:
 		push_error("[e2e_full_playthrough] save_png failed step=%d err=%s path=%s" % [step, err, abs_path])
