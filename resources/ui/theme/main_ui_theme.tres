@@ -1,12 +1,12 @@
 [gd_resource type="Theme" format=3 uid="uid://jxaglfd1r2m5"]
 
 [ext_resource type="FontFile" uid="uid://cwxwvmrose854" path="res://resources/fonts/NotoSerifCJKsc-Regular.otf" id="1_7hlbw"]
-[ext_resource type="Texture2D" uid="uid://v3kxuq6oqwxj" path="res://resources/ui/textures/wuxia/button_regular.png" id="2_btn_regular"]
-[ext_resource type="Texture2D" uid="uid://bwjsbq03x6dtq" path="res://resources/ui/textures/wuxia/button_pressed.png" id="3_btn_pressed"]
-[ext_resource type="Texture2D" uid="uid://c8nuwymnfbjnj" path="res://resources/ui/textures/wuxia/main_panel.png" id="4_panel_main"]
-[ext_resource type="Texture2D" uid="uid://c65cq7kpf0ohn" path="res://resources/ui/textures/wuxia/button_danger.png" id="5_btn_danger"]
-[ext_resource type="Texture2D" uid="uid://xcx4xjbwsrq6" path="res://resources/ui/textures/wuxia/tooltip_panel.png" id="6_panel_tooltip"]
-[ext_resource type="Texture2D" uid="uid://dhg16vahukck1" path="res://resources/ui/textures/wuxia/slot_frame.png" id="7_slot_frame"]
+[ext_resource type="Texture2D" uid="uid://bow4pu81ken7d" path="res://resources/ui/textures/wuxia/button_regular.png" id="2_btn_regular"]
+[ext_resource type="Texture2D" uid="uid://1ln4rlm0t16h" path="res://resources/ui/textures/wuxia/button_pressed.png" id="3_btn_pressed"]
+[ext_resource type="Texture2D" uid="uid://b13fpbdspnrr3" path="res://resources/ui/textures/wuxia/main_panel.png" id="4_panel_main"]
+[ext_resource type="Texture2D" uid="uid://bff7lymfq53c4" path="res://resources/ui/textures/wuxia/button_danger.png" id="5_btn_danger"]
+[ext_resource type="Texture2D" uid="uid://wxi81ihr8iti" path="res://resources/ui/textures/wuxia/tooltip_panel.png" id="6_panel_tooltip"]
+[ext_resource type="Texture2D" uid="uid://bn55f2pdrwgo7" path="res://resources/ui/textures/wuxia/slot_frame.png" id="7_slot_frame"]
 [ext_resource type="Texture2D" uid="uid://mtn14k5mrtme" path="res://resources/ui/textures/wuxia/bar_base.png" id="8_bar_base"]
 [ext_resource type="Texture2D" uid="uid://cdl5e5hr0i175" path="res://resources/ui/textures/wuxia/bar_fill_neutral.png" id="9_bar_fill"]
 [ext_resource type="Texture2D" uid="uid://bvo0axjj3lvvi" path="res://resources/ui/textures/wuxia/avatar_frame.png" id="10_avatar"]
@@ -21,8 +21,6 @@ texture_margin_left = 35.0
 texture_margin_top = 72.0
 texture_margin_right = 75.0
 texture_margin_bottom = 72.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 modulate_color = Color(0.72, 0.72, 0.72, 0.74)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_557jt"]
@@ -37,8 +35,6 @@ texture_margin_left = 35.0
 texture_margin_top = 72.0
 texture_margin_right = 75.0
 texture_margin_bottom = 72.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 modulate_color = Color(0.9607843, 0.9411765, 0.8784314, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_uxuuv"]
@@ -51,8 +47,6 @@ texture_margin_left = 35.0
 texture_margin_top = 72.0
 texture_margin_right = 75.0
 texture_margin_bottom = 72.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_o4421"]
 content_margin_left = 12.0
@@ -64,8 +58,6 @@ texture_margin_left = 68.0
 texture_margin_top = 75.0
 texture_margin_right = 68.0
 texture_margin_bottom = 75.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_si26j"]
 content_margin_left = 8.0
@@ -134,8 +126,6 @@ texture_margin_left = 133.0
 texture_margin_top = 351.0
 texture_margin_right = 200.0
 texture_margin_bottom = 352.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_dvrk4"]
 content_margin_left = 12.0
@@ -147,8 +137,6 @@ texture_margin_left = 72.0
 texture_margin_top = 71.0
 texture_margin_right = 71.0
 texture_margin_bottom = 71.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 modulate_color = Color(0.72, 0.72, 0.72, 0.74)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_n7xyc"]
@@ -163,8 +151,6 @@ texture_margin_left = 72.0
 texture_margin_top = 71.0
 texture_margin_right = 71.0
 texture_margin_bottom = 71.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 modulate_color = Color(0.9607843, 0.9411765, 0.8784314, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_cs76k"]
@@ -177,8 +163,6 @@ texture_margin_left = 72.0
 texture_margin_top = 71.0
 texture_margin_right = 71.0
 texture_margin_bottom = 71.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_4mpu2"]
 content_margin_left = 12.0
@@ -190,8 +174,6 @@ texture_margin_left = 72.0
 texture_margin_top = 71.0
 texture_margin_right = 71.0
 texture_margin_bottom = 71.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tkuev"]
 content_margin_left = 16.0
@@ -203,8 +185,6 @@ texture_margin_left = 133.0
 texture_margin_top = 351.0
 texture_margin_right = 200.0
 texture_margin_bottom = 352.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_avatar"]
 content_margin_left = 0.0
@@ -216,8 +196,6 @@ texture_margin_left = 176.0
 texture_margin_top = 167.0
 texture_margin_right = 176.0
 texture_margin_bottom = 170.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_pxycj"]
 content_margin_left = 6.0
@@ -229,8 +207,6 @@ texture_margin_left = 84.0
 texture_margin_top = 82.0
 texture_margin_right = 83.0
 texture_margin_bottom = 83.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_l2ir0"]
 content_margin_left = 8.0
@@ -242,8 +218,6 @@ texture_margin_left = 194.0
 texture_margin_top = 182.0
 texture_margin_right = 185.0
 texture_margin_bottom = 187.0
-axis_stretch_horizontal = 0
-axis_stretch_vertical = 0
 
 [resource]
 default_font = ExtResource("1_7hlbw")

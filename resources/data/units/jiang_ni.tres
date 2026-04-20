@@ -1,31 +1,26 @@
 [gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://bwxunit0002"]
 
 [ext_resource type="Script" uid="uid://djynxol3vtqtc" path="res://scripts/core/unit_data.gd" id="1_script"]
-[ext_resource type="SpriteFrames" path="res://resources/data/units/monk_sprite_frames.tres" id="2_sf"]
+[ext_resource type="SpriteFrames" uid="uid://baa5retu0yr4v" path="res://resources/data/units/monk_sprite_frames.tres" id="2_sf"]
 [ext_resource type="Script" path="res://scripts/core/attribute_set.gd" id="3_attr_script"]
 
 [sub_resource type="Resource" id="Resource_jiang_ni_attr"]
 script = ExtResource("3_attr_script")
-constitution = 5
 strength = 4
 agility = 7
 insight = 8
 fortune = 7
 base_hp = 25
 base_mp = 15
+move_range = 5
 spec_medicine = 7
 spec_poison = 2
-move_range = 5
 
 [resource]
 script = ExtResource("1_script")
 unit_id = "jiang_ni"
 unit_name = "姜泥"
-is_enemy = false
 attributes = SubResource("Resource_jiang_ni_attr")
 weapon_type = 3
-weapon_range = 1
 skill_ids = Array[String](["nei_gong_zhang", "hui_chun_shu", "qing_gong"])
 sprite_frames = ExtResource("2_sf")
-sprite_offset = Vector2(0, -32)
-modulate = Color(1.0, 1.0, 1.0, 1.0)

@@ -1,11 +1,27 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene format=3 uid="uid://cn0fjxxuwnwtx"]
 
-[ext_resource type="Script" path="res://scripts/ui/character_status_panel.gd" id="1_panel"]
-[ext_resource type="Script" path="res://resources/ui/controls/wuxia_frame.gd" id="2_frame"]
-[ext_resource type="Script" path="res://resources/ui/controls/simple_bar.gd" id="3_bar"]
-[ext_resource type="Texture2D" path="res://resources/ui/portraits/half/li_chungang.png" id="4_portrait"]
+[ext_resource type="Script" uid="uid://dg6shuu1rgx2e" path="res://scripts/ui/character_status_panel.gd" id="1_panel"]
+[ext_resource type="Script" uid="uid://d1wt7e5mjlwmk" path="res://resources/ui/controls/wuxia_frame.gd" id="2_frame"]
+[ext_resource type="Script" uid="uid://b7387pjnc3xqw" path="res://resources/ui/controls/simple_bar.gd" id="3_bar"]
+[ext_resource type="Texture2D" uid="uid://b2pg1gtdoa2k5" path="res://resources/ui/portraits/half/li_chungang.png" id="4_portrait"]
 
-[node name="CharacterStatusPanel" type="Control"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fb3qc"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vwcpl"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nhiut"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0m7ul"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3q4ge"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jsx5i"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_t01hw"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0qjh3"]
+
+[node name="CharacterStatusPanel" type="Control" unique_id=1131603060]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,7 +30,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_panel")
 
-[node name="BottomAnchor" type="MarginContainer" parent="."]
+[node name="BottomAnchor" type="MarginContainer" parent="." unique_id=354575151]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -31,23 +47,24 @@ theme_override_constants/margin_top = 0
 theme_override_constants/margin_right = 0
 theme_override_constants/margin_bottom = 0
 
-[node name="PanelRoot" type="Control" parent="BottomAnchor"]
+[node name="PanelRoot" type="Control" parent="BottomAnchor" unique_id=439739011]
 custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="BuffsBox" type="VBoxContainer" parent="BottomAnchor/PanelRoot"]
+[node name="BuffsBox" type="VBoxContainer" parent="BottomAnchor/PanelRoot" unique_id=1436815642]
 unique_name_in_owner = true
+z_index = 2
+custom_minimum_size = Vector2(274, 78)
+layout_mode = 0
 offset_left = 18.0
 offset_top = -92.0
 offset_right = 292.0
 offset_bottom = -8.0
-z_index = 2
-custom_minimum_size = Vector2(274, 78)
 theme_override_constants/separation = 8
 
-[node name="MainStack" type="VBoxContainer" parent="BottomAnchor/PanelRoot"]
+[node name="MainStack" type="VBoxContainer" parent="BottomAnchor/PanelRoot" unique_id=1167883340]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -56,14 +73,15 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 
-[node name="NameFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack"]
+[node name="NameFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack" unique_id=1927396045]
 custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_fb3qc")
 script = ExtResource("2_frame")
 border_width = 2.0
-corner_style = "regular"
 
-[node name="NameMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/NameFrame"]
+[node name="NameMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/NameFrame" unique_id=1338383266]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/margin_left = 24
@@ -71,11 +89,11 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 8
 
-[node name="NameRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameMargin"]
+[node name="NameRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameMargin" unique_id=1283642562]
 layout_mode = 2
 theme_override_constants/separation = 18
 
-[node name="NameLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameMargin/NameRow"]
+[node name="NameLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameMargin/NameRow" unique_id=1683519274]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -84,60 +102,65 @@ theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 1)
 theme_override_font_sizes/font_size = 28
 text = "李淳罡"
 
-[node name="Spacer" type="Control" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameMargin/NameRow"]
+[node name="Spacer" type="Control" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameMargin/NameRow" unique_id=645950849]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MetaRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameMargin/NameRow"]
+[node name="MetaRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameMargin/NameRow" unique_id=30877201]
 layout_mode = 2
-alignment = 2
 theme_override_constants/separation = 18
+alignment = 2
 
-[node name="ExpLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameMargin/NameRow/MetaRow"]
+[node name="ExpLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameMargin/NameRow/MetaRow" unique_id=722219541]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"caption"
 theme_override_colors/font_color = Color(0.721569, 0.564706, 0.313726, 1)
 text = "经验 5/8050"
 
-[node name="LevelLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameMargin/NameRow/MetaRow"]
+[node name="LevelLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/NameFrame/NameMargin/NameRow/MetaRow" unique_id=519718827]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"caption"
 theme_override_colors/font_color = Color(0.721569, 0.564706, 0.313726, 1)
 text = "等级 54/100"
 
-[node name="ExpFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack"]
+[node name="ExpFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack" unique_id=2070089168]
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_vwcpl")
 script = ExtResource("2_frame")
 corner_style = "plain"
 
-[node name="ExpMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/ExpFrame"]
+[node name="ExpMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/ExpFrame" unique_id=1412255626]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="ExpBar" type="Control" parent="BottomAnchor/PanelRoot/MainStack/ExpFrame/ExpMargin"]
+[node name="ExpBar" type="Control" parent="BottomAnchor/PanelRoot/MainStack/ExpFrame/ExpMargin" unique_id=1734774251]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
+mouse_filter = 2
 script = ExtResource("3_bar")
-fill_color = Color(0.721569, 0.533333, 0.247059, 1)
 max_value = 8050.0
 value = 5.0
+fill_color = Color(0.721569, 0.533333, 0.247059, 1)
 
-[node name="DataFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack"]
+[node name="DataFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack" unique_id=1166291649]
 custom_minimum_size = Vector2(0, 210)
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_nhiut")
 script = ExtResource("2_frame")
 border_width = 2.0
 corner_style = "plain"
 
-[node name="DataMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame"]
+[node name="DataMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame" unique_id=973091650]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -146,26 +169,28 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 16
 
-[node name="DataRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin"]
+[node name="DataRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin" unique_id=485151550]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 16
 
-[node name="PortraitFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow"]
+[node name="PortraitFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow" unique_id=635702213]
 custom_minimum_size = Vector2(110, 0)
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_0m7ul")
 script = ExtResource("2_frame")
 corner_style = "plain"
 
-[node name="PortraitMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/PortraitFrame"]
+[node name="PortraitMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/PortraitFrame" unique_id=180398696]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="PortraitRect" type="TextureRect" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/PortraitFrame/PortraitMargin"]
+[node name="PortraitRect" type="TextureRect" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/PortraitFrame/PortraitMargin" unique_id=806972411]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(102, 166)
 layout_mode = 2
@@ -174,137 +199,147 @@ texture = ExtResource("4_portrait")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="StatsColumn" type="VBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow"]
+[node name="StatsColumn" type="VBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow" unique_id=912349077]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 34
 
-[node name="HPFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn"]
+[node name="HPFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn" unique_id=453345626]
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_3q4ge")
 script = ExtResource("2_frame")
 corner_style = "plain"
 
-[node name="HPMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/HPFrame"]
+[node name="HPMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/HPFrame" unique_id=129971565]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="HPRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/HPFrame/HPMargin"]
+[node name="HPRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/HPFrame/HPMargin" unique_id=1095989678]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 12
+alignment = 1
 
-[node name="HPLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/HPFrame/HPMargin/HPRow"]
-layout_mode = 2
+[node name="HPLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/HPFrame/HPMargin/HPRow" unique_id=1406858102]
 custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
 theme_type_variation = &"caption"
 theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 1)
 text = "气血"
 
-[node name="HpBar" type="Control" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/HPFrame/HPMargin/HPRow"]
+[node name="HpBar" type="Control" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/HPFrame/HPMargin/HPRow" unique_id=303361776]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
+mouse_filter = 2
 script = ExtResource("3_bar")
-fill_color = Color(0.658824, 0.25098, 0.211765, 1)
 max_value = 2877.0
 value = 2877.0
+fill_color = Color(0.658824, 0.25098, 0.211765, 1)
 
-[node name="HpValueLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/HPFrame/HPMargin/HPRow"]
+[node name="HpValueLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/HPFrame/HPMargin/HPRow" unique_id=1548750722]
 unique_name_in_owner = true
-layout_mode = 2
 custom_minimum_size = Vector2(124, 0)
+layout_mode = 2
 theme_type_variation = &"caption"
 theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 1)
-horizontal_alignment = 2
 text = "2877/2877"
+horizontal_alignment = 2
 
-[node name="MPFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn"]
+[node name="MPFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn" unique_id=1905597893]
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_jsx5i")
 script = ExtResource("2_frame")
 corner_style = "plain"
 
-[node name="MPMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/MPFrame"]
+[node name="MPMargin" type="MarginContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/MPFrame" unique_id=1848590018]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="MPRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/MPFrame/MPMargin"]
+[node name="MPRow" type="HBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/MPFrame/MPMargin" unique_id=2125461562]
 layout_mode = 2
-alignment = 1
 theme_override_constants/separation = 12
+alignment = 1
 
-[node name="MPLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/MPFrame/MPMargin/MPRow"]
-layout_mode = 2
+[node name="MPLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/MPFrame/MPMargin/MPRow" unique_id=76256524]
 custom_minimum_size = Vector2(54, 0)
+layout_mode = 2
 theme_type_variation = &"caption"
 theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 1)
 text = "内力"
 
-[node name="MpBar" type="Control" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/MPFrame/MPMargin/MPRow"]
+[node name="MpBar" type="Control" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/MPFrame/MPMargin/MPRow" unique_id=1708307565]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
+mouse_filter = 2
 script = ExtResource("3_bar")
-fill_color = Color(0.290196, 0.419608, 0.478431, 1)
 max_value = 3765.0
 value = 3765.0
+fill_color = Color(0.290196, 0.419608, 0.478431, 1)
 
-[node name="MpValueLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/MPFrame/MPMargin/MPRow"]
+[node name="MpValueLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/StatsColumn/MPFrame/MPMargin/MPRow" unique_id=1909123578]
 unique_name_in_owner = true
-layout_mode = 2
 custom_minimum_size = Vector2(124, 0)
+layout_mode = 2
 theme_type_variation = &"caption"
 theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 1)
-horizontal_alignment = 2
 text = "3765/3765"
+horizontal_alignment = 2
 
-[node name="QinggongColumn" type="VBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow"]
+[node name="QinggongColumn" type="VBoxContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow" unique_id=587293814]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 34
 
-[node name="QinggongLabelFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/QinggongColumn"]
+[node name="QinggongLabelFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/QinggongColumn" unique_id=674547271]
 custom_minimum_size = Vector2(110, 72)
 layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_t01hw")
 script = ExtResource("2_frame")
 corner_style = "plain"
 
-[node name="QinggongLabelCenter" type="CenterContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/QinggongColumn/QinggongLabelFrame"]
+[node name="QinggongLabelCenter" type="CenterContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/QinggongColumn/QinggongLabelFrame" unique_id=710624034]
 layout_mode = 2
 
-[node name="QinggongLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/QinggongColumn/QinggongLabelFrame/QinggongLabelCenter"]
+[node name="QinggongLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/QinggongColumn/QinggongLabelFrame/QinggongLabelCenter" unique_id=1325657541]
 layout_mode = 2
 theme_type_variation = &"micro"
 theme_override_colors/font_color = Color(0.94902, 0.929412, 0.862745, 0.9)
-horizontal_alignment = 1
 text = "轻功"
+horizontal_alignment = 1
 
-[node name="QinggongValueFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/QinggongColumn"]
+[node name="QinggongValueFrame" type="PanelContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/QinggongColumn" unique_id=1073213153]
 custom_minimum_size = Vector2(110, 72)
 layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_0qjh3")
 script = ExtResource("2_frame")
 corner_style = "plain"
 
-[node name="QinggongValueCenter" type="CenterContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/QinggongColumn/QinggongValueFrame"]
+[node name="QinggongValueCenter" type="CenterContainer" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/QinggongColumn/QinggongValueFrame" unique_id=1706813519]
 layout_mode = 2
 
-[node name="QinggongValueLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/QinggongColumn/QinggongValueFrame/QinggongValueCenter"]
+[node name="QinggongValueLabel" type="Label" parent="BottomAnchor/PanelRoot/MainStack/DataFrame/DataMargin/DataRow/QinggongColumn/QinggongValueFrame/QinggongValueCenter" unique_id=971582656]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"body"
 theme_override_colors/font_color = Color(0.721569, 0.533333, 0.247059, 1)
 theme_override_font_sizes/font_size = 34
-horizontal_alignment = 1
 text = "398"
+horizontal_alignment = 1

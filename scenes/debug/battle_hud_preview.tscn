@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://cbwxbattlehudprev"]
+[gd_scene format=3 uid="uid://bb3lwxfxnc5vh"]
 
 [ext_resource type="Script" path="res://scenes/debug/battle_hud_preview.gd" id="1_preview"]
 

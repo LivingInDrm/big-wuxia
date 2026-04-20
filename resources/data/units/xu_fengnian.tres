@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://bwxunit0001"]
 
 [ext_resource type="Script" uid="uid://djynxol3vtqtc" path="res://scripts/core/unit_data.gd" id="1_script"]
-[ext_resource type="SpriteFrames" path="res://resources/data/units/warrior_sprite_frames.tres" id="2_sf"]
+[ext_resource type="SpriteFrames" uid="uid://cqe1kd388jjwx" path="res://resources/data/units/warrior_sprite_frames.tres" id="2_sf"]
 [ext_resource type="Script" path="res://scripts/core/attribute_set.gd" id="3_attr_script"]
 
 [sub_resource type="Resource" id="Resource_xu_fengnian_attr"]
@@ -11,22 +11,16 @@ strength = 8
 agility = 8
 insight = 6
 fortune = 9
-base_hp = 30
-base_mp = 10
 spec_fist = 2
 spec_blade = 8
 spec_sword = 3
-move_range = 4
 
 [resource]
 script = ExtResource("1_script")
 unit_id = "xu_fengnian"
 unit_name = "徐凤年"
-is_enemy = false
 attributes = SubResource("Resource_xu_fengnian_attr")
 weapon_type = 1
-weapon_range = 1
 skill_ids = Array[String](["chun_qiu_dao_fa", "liang_xiu_qing_she"])
 sprite_frames = ExtResource("2_sf")
-sprite_offset = Vector2(0, -32)
-modulate = Color(0.55, 0.75, 1.0, 1.0)
+modulate = Color(0.55, 0.75, 1, 1)

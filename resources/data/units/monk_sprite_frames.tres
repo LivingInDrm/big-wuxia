@@ -1,8 +1,8 @@
-[gd_resource type="SpriteFrames" format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://baa5retu0yr4v"]
 
-[ext_resource type="Texture2D" path="res://resources/sprites/units/monk/heal.png" id="1_sru60"]
-[ext_resource type="Texture2D" path="res://resources/sprites/units/monk/idle.png" id="2_qg52s"]
-[ext_resource type="Texture2D" path="res://resources/sprites/units/monk/run.png" id="3_fttjk"]
+[ext_resource type="Texture2D" uid="uid://dkiojtemjkaiw" path="res://resources/sprites/units/monk/heal.png" id="1_sru60"]
+[ext_resource type="Texture2D" uid="uid://btytmwe6nt7ey" path="res://resources/sprites/units/monk/idle.png" id="2_qg52s"]
+[ext_resource type="Texture2D" uid="uid://cbyrtjqy8xn8s" path="res://resources/sprites/units/monk/run.png" id="3_fttjk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fk2ne"]
 atlas = ExtResource("1_sru60")
