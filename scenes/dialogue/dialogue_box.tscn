@@ -1,0 +1,147 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scenes/dialogue/dialogue_box.gd" id="1_script"]
+[ext_resource type="Theme" path="res://resources/ui/theme/main_ui_theme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://resources/ui/controls/wuxia_frame.gd" id="3_frame_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_name_tag"]
+bg_color = Color(0.156863, 0.121569, 0.0901961, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.321569, 0.262745, 0.196078, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[node name="DialogueBox" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_script")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+
+[node name="Backdrop" type="ColorRect" parent="Root" unique_name_in_owner="true"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.0823529, 0.0705882, 0.054902, 0.2)
+
+[node name="BottomAnchor" type="CenterContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -278.0
+offset_bottom = -34.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Frame" type="PanelContainer" parent="Root/BottomAnchor" unique_name_in_owner="true"]
+custom_minimum_size = Vector2(956, 230)
+layout_mode = 2
+mouse_filter = 1
+script = ExtResource("3_frame_script")
+bg_color = Color(0.94902, 0.921569, 0.858824, 0.96)
+border_color = Color(0.286275, 0.227451, 0.168627, 0.96)
+border_width = 2.0
+corner_style = "plain"
+corner_color = Color(0.286275, 0.227451, 0.168627, 1)
+
+[node name="Margin" type="MarginContainer" parent="Root/BottomAnchor/Frame"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="Root/BottomAnchor/Frame/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HeaderRow" type="HBoxContainer" parent="Root/BottomAnchor/Frame/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="LeftColumn" type="VBoxContainer" parent="Root/BottomAnchor/Frame/Margin/VBox/HeaderRow"]
+custom_minimum_size = Vector2(124, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="NameTag" type="PanelContainer" parent="Root/BottomAnchor/Frame/Margin/VBox/HeaderRow/LeftColumn" unique_name_in_owner="true"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_name_tag")
+
+[node name="NameLabel" type="Label" parent="Root/BottomAnchor/Frame/Margin/VBox/HeaderRow/LeftColumn/NameTag" unique_name_in_owner="true"]
+layout_mode = 2
+theme_type_variation = &"caption"
+theme_override_colors/font_color = Color(0.956863, 0.933333, 0.882353, 1)
+text = "说话人"
+
+[node name="PortraitFrame" type="PanelContainer" parent="Root/BottomAnchor/Frame/Margin/VBox/HeaderRow/LeftColumn"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+theme_type_variation = &"panel_avatar"
+
+[node name="Portrait" type="TextureRect" parent="Root/BottomAnchor/Frame/Margin/VBox/HeaderRow/LeftColumn/PortraitFrame" unique_name_in_owner="true"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BodyColumn" type="VBoxContainer" parent="Root/BottomAnchor/Frame/Margin/VBox/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="TextLabel" type="RichTextLabel" parent="Root/BottomAnchor/Frame/Margin/VBox/HeaderRow/BodyColumn" unique_name_in_owner="true"]
+custom_minimum_size = Vector2(0, 112)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = false
+scroll_active = false
+selection_enabled = false
+theme_type_variation = &"body"
+text = "对话文本"
+
+[node name="ChoiceList" type="VBoxContainer" parent="Root/BottomAnchor/Frame/Margin/VBox/HeaderRow/BodyColumn" unique_name_in_owner="true"]
+layout_mode = 2
+visible = false
+theme_override_constants/separation = 8
+
+[node name="FooterRow" type="HBoxContainer" parent="Root/BottomAnchor/Frame/Margin/VBox"]
+layout_mode = 2
+alignment = 2
+
+[node name="ContinueIndicator" type="Label" parent="Root/BottomAnchor/Frame/Margin/VBox/FooterRow" unique_name_in_owner="true"]
+layout_mode = 2
+theme_type_variation = &"title"
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.286275, 0.227451, 0.168627, 1)
+text = "▼"
