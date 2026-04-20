@@ -29,15 +29,15 @@ theme_override_constants/separation = 26
 layout_mode = 2
 theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
 theme_override_font_sizes/font_size = 28
-text = "WuxiaFrame 角饰对比"
+text = "WuxiaFrame 变体对比"
 
 [node name="LargeRow" type="HBoxContainer" parent="Board/Layout"]
-custom_minimum_size = Vector2(0, 244)
+custom_minimum_size = Vector2(0, 232)
 layout_mode = 2
 theme_override_constants/separation = 36
 
 [node name="EmphasisLargeCard" type="VBoxContainer" parent="Board/Layout/LargeRow"]
-custom_minimum_size = Vector2(600, 0)
+custom_minimum_size = Vector2(360, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
@@ -48,9 +48,10 @@ theme_override_font_sizes/font_size = 24
 text = "强调型（emphasis）"
 
 [node name="Frame" type="PanelContainer" parent="Board/Layout/LargeRow/EmphasisLargeCard"]
-custom_minimum_size = Vector2(600, 200)
+custom_minimum_size = Vector2(360, 180)
 layout_mode = 2
 script = ExtResource("1_wuxia_frame")
+border_width = 2.0
 corner_style = "emphasis"
 
 [node name="Center" type="CenterContainer" parent="Board/Layout/LargeRow/EmphasisLargeCard/Frame"]
@@ -60,10 +61,10 @@ layout_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 30
-text = "大 600×200"
+text = "大 360×180"
 
 [node name="RegularLargeCard" type="VBoxContainer" parent="Board/Layout/LargeRow"]
-custom_minimum_size = Vector2(600, 0)
+custom_minimum_size = Vector2(360, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
@@ -74,9 +75,10 @@ theme_override_font_sizes/font_size = 24
 text = "普通型（regular）"
 
 [node name="Frame" type="PanelContainer" parent="Board/Layout/LargeRow/RegularLargeCard"]
-custom_minimum_size = Vector2(600, 200)
+custom_minimum_size = Vector2(360, 180)
 layout_mode = 2
 script = ExtResource("1_wuxia_frame")
+border_width = 2.0
 corner_style = "regular"
 
 [node name="Center" type="CenterContainer" parent="Board/Layout/LargeRow/RegularLargeCard/Frame"]
@@ -86,7 +88,33 @@ layout_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 30
-text = "大 600×200"
+text = "大 360×180"
+
+[node name="PlainLargeCard" type="VBoxContainer" parent="Board/Layout/LargeRow"]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Board/Layout/LargeRow/PlainLargeCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
+theme_override_font_sizes/font_size = 24
+text = "素面型（plain）"
+
+[node name="Frame" type="PanelContainer" parent="Board/Layout/LargeRow/PlainLargeCard"]
+custom_minimum_size = Vector2(360, 180)
+layout_mode = 2
+script = ExtResource("1_wuxia_frame")
+corner_style = "plain"
+
+[node name="Center" type="CenterContainer" parent="Board/Layout/LargeRow/PlainLargeCard/Frame"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Layout/LargeRow/PlainLargeCard/Frame/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 30
+text = "大 360×180"
 
 [node name="MediumRow" type="HBoxContainer" parent="Board/Layout"]
 custom_minimum_size = Vector2(0, 124)
@@ -94,7 +122,7 @@ layout_mode = 2
 theme_override_constants/separation = 36
 
 [node name="EmphasisMediumCard" type="VBoxContainer" parent="Board/Layout/MediumRow"]
-custom_minimum_size = Vector2(320, 0)
+custom_minimum_size = Vector2(260, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
@@ -105,9 +133,10 @@ theme_override_font_sizes/font_size = 24
 text = "强调型（emphasis）"
 
 [node name="Frame" type="PanelContainer" parent="Board/Layout/MediumRow/EmphasisMediumCard"]
-custom_minimum_size = Vector2(320, 80)
+custom_minimum_size = Vector2(260, 80)
 layout_mode = 2
 script = ExtResource("1_wuxia_frame")
+border_width = 2.0
 corner_style = "emphasis"
 
 [node name="Center" type="CenterContainer" parent="Board/Layout/MediumRow/EmphasisMediumCard/Frame"]
@@ -117,10 +146,10 @@ layout_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 20
-text = "中 320×80"
+text = "中 260×80"
 
 [node name="RegularMediumCard" type="VBoxContainer" parent="Board/Layout/MediumRow"]
-custom_minimum_size = Vector2(320, 0)
+custom_minimum_size = Vector2(260, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
@@ -131,9 +160,10 @@ theme_override_font_sizes/font_size = 24
 text = "普通型（regular）"
 
 [node name="Frame" type="PanelContainer" parent="Board/Layout/MediumRow/RegularMediumCard"]
-custom_minimum_size = Vector2(320, 80)
+custom_minimum_size = Vector2(260, 80)
 layout_mode = 2
 script = ExtResource("1_wuxia_frame")
+border_width = 2.0
 corner_style = "regular"
 
 [node name="Center" type="CenterContainer" parent="Board/Layout/MediumRow/RegularMediumCard/Frame"]
@@ -143,7 +173,33 @@ layout_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 20
-text = "中 320×80"
+text = "中 260×80"
+
+[node name="PlainMediumCard" type="VBoxContainer" parent="Board/Layout/MediumRow"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Board/Layout/MediumRow/PlainMediumCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
+theme_override_font_sizes/font_size = 24
+text = "素面型（plain）"
+
+[node name="Frame" type="PanelContainer" parent="Board/Layout/MediumRow/PlainMediumCard"]
+custom_minimum_size = Vector2(260, 80)
+layout_mode = 2
+script = ExtResource("1_wuxia_frame")
+corner_style = "plain"
+
+[node name="Center" type="CenterContainer" parent="Board/Layout/MediumRow/PlainMediumCard/Frame"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Layout/MediumRow/PlainMediumCard/Frame/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 20
+text = "中 260×80"
 
 [node name="SmallRow" type="HBoxContainer" parent="Board/Layout"]
 custom_minimum_size = Vector2(0, 94)
@@ -151,7 +207,7 @@ layout_mode = 2
 theme_override_constants/separation = 36
 
 [node name="EmphasisSmallCard" type="VBoxContainer" parent="Board/Layout/SmallRow"]
-custom_minimum_size = Vector2(260, 0)
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
@@ -165,6 +221,7 @@ text = "强调型（emphasis）"
 custom_minimum_size = Vector2(180, 50)
 layout_mode = 2
 script = ExtResource("1_wuxia_frame")
+border_width = 2.0
 corner_style = "emphasis"
 
 [node name="Center" type="CenterContainer" parent="Board/Layout/SmallRow/EmphasisSmallCard/Frame"]
@@ -177,7 +234,7 @@ theme_override_font_sizes/font_size = 16
 text = "小 180×50"
 
 [node name="RegularSmallCard" type="VBoxContainer" parent="Board/Layout/SmallRow"]
-custom_minimum_size = Vector2(260, 0)
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
@@ -191,12 +248,39 @@ text = "普通型（regular）"
 custom_minimum_size = Vector2(180, 50)
 layout_mode = 2
 script = ExtResource("1_wuxia_frame")
+border_width = 2.0
 corner_style = "regular"
 
 [node name="Center" type="CenterContainer" parent="Board/Layout/SmallRow/RegularSmallCard/Frame"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="Board/Layout/SmallRow/RegularSmallCard/Frame/Center"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
+theme_override_font_sizes/font_size = 16
+text = "小 180×50"
+
+[node name="PlainSmallCard" type="VBoxContainer" parent="Board/Layout/SmallRow"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Board/Layout/SmallRow/PlainSmallCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.129412, 0.101961, 0.0745098, 1)
+theme_override_font_sizes/font_size = 24
+text = "素面型（plain）"
+
+[node name="Frame" type="PanelContainer" parent="Board/Layout/SmallRow/PlainSmallCard"]
+custom_minimum_size = Vector2(180, 50)
+layout_mode = 2
+script = ExtResource("1_wuxia_frame")
+corner_style = "plain"
+
+[node name="Center" type="CenterContainer" parent="Board/Layout/SmallRow/PlainSmallCard/Frame"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Board/Layout/SmallRow/PlainSmallCard/Frame/Center"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.913725, 0.890196, 0.85098, 1)
 theme_override_font_sizes/font_size = 16

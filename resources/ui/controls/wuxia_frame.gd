@@ -6,6 +6,7 @@ const DEFAULT_BG := Color("1F1914")
 const DEFAULT_BORDER := Color("B89050")
 const STYLE_EMPHASIS := "emphasis"
 const STYLE_REGULAR := "regular"
+const STYLE_PLAIN := "plain"
 const LEGACY_STYLE_HUI_DOUBLE := "hui_double"
 const LEGACY_STYLE_HUI_DOUBLE_HOLLOW := "hui_double_hollow"
 
@@ -19,9 +20,15 @@ const LEGACY_STYLE_HUI_DOUBLE_HOLLOW := "hui_double_hollow"
 		border_color = value
 		queue_redraw()
 
-@export var border_width: float = 2.0:
+@export var border_width: float = 1.5:
 	set(value):
 		border_width = maxf(value, 1.0)
+		_refresh_layout()
+		queue_redraw()
+
+@export var corner_radius: float = 14.0:
+	set(value):
+		corner_radius = maxf(value, 2.0)
 		_refresh_layout()
 		queue_redraw()
 
@@ -31,7 +38,7 @@ const LEGACY_STYLE_HUI_DOUBLE_HOLLOW := "hui_double_hollow"
 		_refresh_layout()
 		queue_redraw()
 
-@export_enum("emphasis", "regular")
+@export_enum("emphasis", "regular", "plain")
 var corner_style: String = STYLE_REGULAR:
 	set(value):
 		corner_style = _normalize_corner_style(value)
@@ -64,6 +71,10 @@ func _draw() -> void:
 
 	var frame_rect := rect.grow(-0.5)
 	var outline_width := _effective_border_width()
+	if corner_style == STYLE_PLAIN:
+		_draw_plain_frame(frame_rect, outline_width)
+		return
+
 	var outline_half := outline_width * 0.5
 	var ornament_width := _ornament_stroke_width()
 	var ornament_inset := maxf(outline_width, ornament_width * 0.6) + 1.0
@@ -95,6 +106,8 @@ func _normalize_corner_style(value: String) -> String:
 			return STYLE_EMPHASIS
 		STYLE_REGULAR:
 			return STYLE_REGULAR
+		STYLE_PLAIN:
+			return STYLE_PLAIN
 		LEGACY_STYLE_HUI_DOUBLE:
 			return STYLE_EMPHASIS
 		LEGACY_STYLE_HUI_DOUBLE_HOLLOW:
@@ -107,8 +120,63 @@ func _draw_corner_pattern(anchor: Vector2, direction: Vector2) -> void:
 	match corner_style:
 		STYLE_EMPHASIS:
 			_draw_emphasis_corner(anchor, direction)
+		STYLE_PLAIN:
+			return
 		_:
 			_draw_regular_corner(anchor, direction)
+
+
+func _draw_plain_frame(frame_rect: Rect2, outline_width: float) -> void:
+	var radius := _effective_corner_radius(frame_rect)
+	var fill_points := PackedVector2Array(_build_rounded_rect_points(frame_rect, radius, 8))
+	if fill_points.size() >= 3:
+		draw_colored_polygon(fill_points, bg_color)
+
+	var stroke_inset := outline_width * 0.5
+	var stroke_rect := frame_rect.grow(-stroke_inset)
+	var stroke_radius := maxf(_effective_corner_radius(stroke_rect), 1.0)
+	var stroke_points := PackedVector2Array(_build_rounded_rect_points(stroke_rect, stroke_radius, 10))
+	if stroke_points.is_empty():
+		return
+	stroke_points.append(stroke_points[0])
+	draw_polyline(stroke_points, border_color, outline_width, true)
+
+
+func _build_rounded_rect_points(rect: Rect2, radius: float, segments_per_corner: int) -> Array[Vector2]:
+	var clamped_radius := clampf(radius, 0.0, minf(rect.size.x, rect.size.y) * 0.5)
+	if clamped_radius <= 0.0:
+		return [
+			rect.position,
+			Vector2(rect.end.x, rect.position.y),
+			rect.end,
+			Vector2(rect.position.x, rect.end.y),
+		]
+
+	var points: Array[Vector2] = []
+	var centers := [
+		Vector2(rect.end.x - clamped_radius, rect.position.y + clamped_radius),
+		Vector2(rect.end.x - clamped_radius, rect.end.y - clamped_radius),
+		Vector2(rect.position.x + clamped_radius, rect.end.y - clamped_radius),
+		Vector2(rect.position.x + clamped_radius, rect.position.y + clamped_radius),
+	]
+	var angle_ranges := [
+		Vector2(-PI * 0.5, 0.0),
+		Vector2(0.0, PI * 0.5),
+		Vector2(PI * 0.5, PI),
+		Vector2(PI, PI * 1.5),
+	]
+
+	for corner_index in centers.size():
+		var center: Vector2 = centers[corner_index]
+		var angle_range: Vector2 = angle_ranges[corner_index]
+		for step in range(segments_per_corner + 1):
+			if corner_index > 0 and step == 0:
+				continue
+			var t := float(step) / float(segments_per_corner)
+			var angle := lerpf(angle_range.x, angle_range.y, t)
+			points.append(center + Vector2(cos(angle), sin(angle)) * clamped_radius)
+
+	return points
 
 
 func _draw_emphasis_corner(anchor: Vector2, direction: Vector2) -> void:
@@ -158,6 +226,11 @@ func _effective_corner_size() -> float:
 	return clampf(float(corner_size), 16.0, shortest * 0.42)
 
 
+func _effective_corner_radius(rect: Rect2 = Rect2(Vector2.ZERO, size)) -> float:
+	var shortest := minf(rect.size.x, rect.size.y)
+	return clampf(corner_radius, 2.0, maxf(2.0, shortest * 0.45))
+
+
 func _effective_border_width() -> float:
 	var shortest := minf(size.x, size.y)
 	return clampf(border_width, 1.0, maxf(1.0, shortest * 0.08))
@@ -169,4 +242,6 @@ func _ornament_stroke_width() -> float:
 
 
 func _content_padding() -> float:
+	if corner_style == STYLE_PLAIN:
+		return _effective_corner_radius() + _effective_border_width() + 8.0
 	return _effective_corner_size() + _effective_border_width() + 12.0
