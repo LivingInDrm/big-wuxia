@@ -1,6 +1,8 @@
 extends Node2D
 
 const DEFAULT_SPAWN := Vector2(520, 720)
+const POI_NAME_SHOW_DISTANCE := 150.0
+const POI_NAME_FADE_DURATION := 0.2
 const ReturnToMenuHelper = preload("res://scripts/ui/return_to_menu_helper.gd")
 
 @onready var player: CharacterBody2D = get_node("Player")
@@ -10,17 +12,21 @@ const ReturnToMenuHelper = preload("res://scripts/ui/return_to_menu_helper.gd")
 @onready var interaction_hint_label: Label = get_node("UILayer/InteractionHintFrame/InteractionHintLabel")
 
 var _current_poi_id: String = ""
+var _poi_markers: Array[Node] = []
 
 
 func _ready() -> void:
 	GameState.location = "overworld"
 	interaction_hint_frame.visible = false
 	poi_name_label.visible = false
+	poi_name_label.modulate.a = 0.0
 	_restore_player_position()
 	camera.position_smoothing_enabled = true
 	camera.enabled = true
 
+	_poi_markers.clear()
 	for marker in get_node("POINodes").get_children():
+		_poi_markers.append(marker)
 		if marker.has_method("refresh_visibility"):
 			marker.refresh_visibility()
 		if marker.has_signal("player_entered"):
@@ -29,9 +35,10 @@ func _ready() -> void:
 			marker.player_exited.connect(_on_poi_player_exited)
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if camera != null and player != null:
 		camera.global_position = player.global_position
+	_update_poi_name_label(delta)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -82,8 +89,6 @@ func _on_poi_player_entered(poi_id: String) -> void:
 	if poi_data == null:
 		return
 	_current_poi_id = poi_id
-	poi_name_label.text = poi_data.display_name
-	poi_name_label.visible = true
 	interaction_hint_label.text = "按 E / 点击进入 %s" % poi_data.display_name
 	interaction_hint_frame.visible = true
 
@@ -92,5 +97,30 @@ func _on_poi_player_exited(poi_id: String) -> void:
 	if _current_poi_id != poi_id:
 		return
 	_current_poi_id = ""
-	poi_name_label.visible = false
 	interaction_hint_frame.visible = false
+
+
+func _update_poi_name_label(delta: float) -> void:
+	if player == null:
+		return
+
+	var nearest_name := ""
+	var nearest_distance := INF
+	for marker in _poi_markers:
+		if marker == null or not is_instance_valid(marker) or not marker.visible:
+			continue
+		var distance := player.global_position.distance_to(marker.global_position)
+		if distance < nearest_distance:
+			nearest_distance = distance
+			var poi_id = marker.get("poi_id")
+			var poi_data: POIData = POIRegistry.get_data(String(poi_id))
+			if poi_data != null:
+				nearest_name = poi_data.display_name
+
+	var should_show := nearest_distance < POI_NAME_SHOW_DISTANCE and not nearest_name.is_empty()
+	if should_show:
+		poi_name_label.text = nearest_name
+
+	var fade_step := delta / POI_NAME_FADE_DURATION
+	poi_name_label.modulate.a = move_toward(poi_name_label.modulate.a, 1.0 if should_show else 0.0, fade_step)
+	poi_name_label.visible = should_show or poi_name_label.modulate.a > 0.01
