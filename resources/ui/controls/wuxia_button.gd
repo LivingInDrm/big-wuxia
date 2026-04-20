@@ -84,16 +84,18 @@ func _draw() -> void:
 	var rect := Rect2(Vector2.ZERO, size)
 	var fill := _resolve_background_color()
 	var border_width := 3.0 if _is_pressed_visual else 2.0
+	var stroke_width := _corner_stroke_width()
+	var corner_inset := maxf(border_width, stroke_width * 0.5) + 1.0
 	var effective_border := _resolve_pressed_color(border_color) if _is_pressed_visual else border_color
 	var effective_pattern := _resolve_pressed_color(pattern_color) if _is_pressed_visual else pattern_color
 
-	draw_rect(rect, fill, true)
-	draw_rect(rect.grow(-border_width * 0.5), effective_border, false, border_width)
+	draw_rect(rect, fill, true, -1.0, true)
+	draw_rect(rect.grow(-border_width * 0.5), effective_border, false, border_width, true)
 
-	_draw_corner_pattern(Vector2.ZERO, Vector2(1, 1), effective_pattern)
-	_draw_corner_pattern(Vector2(size.x, 0.0), Vector2(-1, 1), effective_pattern)
-	_draw_corner_pattern(Vector2(0.0, size.y), Vector2(1, -1), effective_pattern)
-	_draw_corner_pattern(Vector2(size.x, size.y), Vector2(-1, -1), effective_pattern)
+	_draw_corner_pattern(Vector2(corner_inset, corner_inset), Vector2(1, 1), effective_pattern)
+	_draw_corner_pattern(Vector2(size.x - corner_inset, corner_inset), Vector2(-1, 1), effective_pattern)
+	_draw_corner_pattern(Vector2(corner_inset, size.y - corner_inset), Vector2(1, -1), effective_pattern)
+	_draw_corner_pattern(Vector2(size.x - corner_inset, size.y - corner_inset), Vector2(-1, -1), effective_pattern)
 
 
 func _ensure_content() -> void:
@@ -147,7 +149,7 @@ func _refresh_layout() -> void:
 		return
 
 	var icon_size: int = _icon_size()
-	var horizontal_pad: int = maxi(corner_size + 14, 24)
+	var horizontal_pad: int = maxi(int(ceil(_effective_corner_size())) + 14, 24)
 	var vertical_pad: int = clampi(int((size.y - icon_size) * 0.5), 4, 18)
 
 	_content_margin.add_theme_constant_override("margin_left", horizontal_pad)
@@ -219,11 +221,11 @@ func _draw_corner_pattern(anchor: Vector2, direction: Vector2, color: Color) -> 
 
 
 func _draw_hui_corner(anchor: Vector2, direction: Vector2, color: Color) -> void:
-	var outer: float = float(corner_size)
-	var inner_offset: float = round(outer * 0.28)
-	var inner: float = round(outer * 0.52)
-	var notch: float = round(inner * 0.42)
-	var width: float = 2.0
+	var outer := _effective_corner_size()
+	var inner_offset := outer * 0.28
+	var inner := outer * 0.52
+	var notch := inner * 0.42
+	var width := _corner_stroke_width()
 
 	_draw_segment(anchor, direction * Vector2(outer, 0.0), color, width)
 	_draw_segment(anchor, direction * Vector2(0.0, outer), color, width)
@@ -250,41 +252,61 @@ func _draw_hui_corner(anchor: Vector2, direction: Vector2, color: Color) -> void
 
 
 func _draw_cloud_corner(anchor: Vector2, direction: Vector2, color: Color) -> void:
-	var radius_outer: float = float(corner_size) * 0.62
-	var radius_inner: float = float(corner_size) * 0.34
-	var center_outer: Vector2 = anchor + direction * Vector2(radius_outer, radius_outer)
-	var center_inner: Vector2 = anchor + direction * Vector2(radius_outer * 1.15, radius_inner * 1.15)
-	var start_outer: float = PI if direction.x > 0.0 else 0.0
-	var end_outer: float = PI * 1.5 if direction.y > 0.0 else PI * 0.5
-	var start_inner: float = PI * 1.1 if direction.x > 0.0 else -PI * 0.1
-	var end_inner: float = PI * 1.9 if direction.y > 0.0 else PI * 0.9
-	draw_arc(center_outer, radius_outer, start_outer, end_outer, 10, color, 2.0, true)
-	draw_arc(center_inner, radius_inner, start_inner, end_inner, 8, color, 2.0, true)
+	var outer := _effective_corner_size()
+	var width := _corner_stroke_width()
+	var center := anchor + direction * Vector2(outer * 0.72, outer * 0.72)
+	var outer_radius := outer * 0.68
+	var bump_radius := outer * 0.15
+	var bump_start := anchor + direction * Vector2(outer * 0.28, outer * 0.20)
+	var bump_step := outer * 0.18
+	var bump_lift := outer * 0.06
+
+	# 如意云头: 外侧大弧 + 三个内侧云头凸起，避免旧版两段弧线的拼凑感。
+	draw_arc(center, outer_radius, PI, PI * 1.5, 24, color, width, true)
+
+	for index in 3:
+		var bump_center := bump_start + direction * Vector2(bump_step * float(index), -bump_lift * float(abs(index - 1) - 1))
+		draw_arc(bump_center, bump_radius, PI, TAU, 12, color, width, true)
+
+	var tail_center := anchor + direction * Vector2(outer * 0.62, outer * 0.34)
+	draw_arc(tail_center, outer * 0.2, PI * 0.95, PI * 1.78, 16, color, width, true)
 
 
 func _draw_ink_corner(anchor: Vector2, direction: Vector2, color: Color) -> void:
-	var length: float = float(corner_size)
-	var dot_offset: float = round(length * 0.58)
-	var dot_radius: float = clampf(length * 0.17, 2.0, 3.6)
-	var splash_offset: float = round(length * 0.26)
-	_draw_segment(anchor, direction * Vector2(length, 0.0), color, 2.0)
-	_draw_segment(anchor, direction * Vector2(0.0, length), color, 2.0)
+	var length := _effective_corner_size()
+	var width := _corner_stroke_width()
+	var dot_offset := length * 0.58
+	var dot_radius := clampf(length * 0.17, 2.2, 4.0)
+	var splash_offset := length * 0.26
+	_draw_segment(anchor, direction * Vector2(length, 0.0), color, width)
+	_draw_segment(anchor, direction * Vector2(0.0, length), color, width)
 	draw_circle(anchor + direction * Vector2(dot_offset, dot_offset), dot_radius, color)
 	draw_circle(anchor + direction * Vector2(splash_offset, length - 2.0), dot_radius * 0.5, color)
 
 
 func _draw_bamboo_corner(anchor: Vector2, direction: Vector2, color: Color) -> void:
-	var stem: float = float(corner_size) * 0.94
-	var inset: float = round(float(corner_size) * 0.24)
-	var node_spacing: float = round(float(corner_size) * 0.28)
-	_draw_segment(anchor, direction * Vector2(stem, 0.0), color, 2.0)
-	_draw_segment(anchor + direction * Vector2(inset, 0.0), direction * Vector2(0.0, stem), color, 2.0)
-	_draw_segment(anchor + direction * Vector2(inset - 3.0, node_spacing), direction * Vector2(6.0, 0.0), color, 2.0)
-	_draw_segment(anchor + direction * Vector2(inset - 3.0, node_spacing * 1.9), direction * Vector2(6.0, 0.0), color, 2.0)
+	var corner := _effective_corner_size()
+	var width := _corner_stroke_width()
+	var stem := corner * 0.94
+	var inset := corner * 0.24
+	var node_spacing := corner * 0.28
+	var node_width := maxf(6.0, corner * 0.33)
+	_draw_segment(anchor, direction * Vector2(stem, 0.0), color, width)
+	_draw_segment(anchor + direction * Vector2(inset, 0.0), direction * Vector2(0.0, stem), color, width)
+	_draw_segment(anchor + direction * Vector2(inset - node_width * 0.5, node_spacing), direction * Vector2(node_width, 0.0), color, width)
+	_draw_segment(anchor + direction * Vector2(inset - node_width * 0.5, node_spacing * 1.9), direction * Vector2(node_width, 0.0), color, width)
 
 
 func _draw_segment(from: Vector2, delta: Vector2, color: Color, width: float) -> void:
 	draw_line(from, from + delta, color, width, true)
+
+
+func _effective_corner_size() -> float:
+	return clampf(float(corner_size), 16.0, size.y * 0.7)
+
+
+func _corner_stroke_width() -> float:
+	return maxf(2.0, _effective_corner_size() * 0.12)
 
 
 func _on_mouse_entered() -> void:
