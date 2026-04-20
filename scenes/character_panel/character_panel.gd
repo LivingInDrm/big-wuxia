@@ -13,14 +13,10 @@ const UnitData = preload("res://scripts/core/unit_data.gd")
 const WeaponTypes = preload("res://scripts/core/weapon_types.gd")
 const AttributeResolver = preload("res://scripts/systems/attribute_resolver.gd")
 const UI_FONT: FontFile = preload("res://resources/fonts/NotoSerifCJKsc-Regular.otf")
-const XU_FENGNIAN = preload("res://resources/data/units/xu_fengnian.tres")
-const JIANG_NI = preload("res://resources/data/units/jiang_ni.tres")
-const LI_CHUNGANG = preload("res://resources/data/units/li_chungang.tres")
-
-const CHARACTER_ORDER: Array[UnitData] = [
-	XU_FENGNIAN,
-	JIANG_NI,
-	LI_CHUNGANG,
+const PLAYER_CHAR_IDS: Array[String] = [
+	"xu_fengnian",
+	"jiang_ni",
+	"li_chungang",
 ]
 
 const SLOT_ORDER := [
@@ -80,7 +76,7 @@ func _ready() -> void:
 	_build_specialty_stats()
 	_create_preview_unit()
 	_connect_game_state()
-	_select_character(XU_FENGNIAN.unit_id)
+	_select_character(PLAYER_CHAR_IDS[0])
 
 
 func _exit_tree() -> void:
@@ -94,7 +90,7 @@ func _build_character_buttons() -> void:
 		child.queue_free()
 	_character_buttons_by_id.clear()
 
-	for unit_data in CHARACTER_ORDER:
+	for unit_data in _get_character_order():
 		if unit_data == null:
 			continue
 		var button := Button.new()
@@ -445,10 +441,22 @@ func get_slot_button(slot: int) -> Button:
 
 
 func _get_current_unit_data() -> UnitData:
-	for unit_data in CHARACTER_ORDER:
+	for unit_data in _get_character_order():
 		if unit_data != null and unit_data.unit_id == _current_character_id:
 			return unit_data
 	return null
+
+
+func _get_character_order() -> Array[UnitData]:
+	var out: Array[UnitData] = []
+	var registry := get_node_or_null("/root/UnitRegistry")
+	if registry == null:
+		return out
+	for char_id in PLAYER_CHAR_IDS:
+		var data: UnitData = registry.get_data(char_id)
+		if data != null:
+			out.append(data)
+	return out
 
 
 func _slot_label(slot: int) -> String:

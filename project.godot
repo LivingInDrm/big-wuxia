@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+UnitRegistry="*res://scripts/systems/registries/unit_registry.gd"
 GameState="*res://autoload/game_state.gd"
 GameBalance="*res://autoload/game_balance.gd"
 SceneManager="*res://autoload/scene_manager.gd"

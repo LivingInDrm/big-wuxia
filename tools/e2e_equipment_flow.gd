@@ -9,7 +9,6 @@ const UNIT_SCENE: PackedScene = preload("res://scenes/unit/unit.tscn")
 const ItemData = preload("res://scripts/core/item_data.gd")
 const ItemInstance = preload("res://scripts/core/item_instance.gd")
 const AttributeResolver = preload("res://scripts/systems/attribute_resolver.gd")
-const JIANG_NI = preload("res://resources/data/units/jiang_ni.tres")
 const SHOT_PANEL_BEFORE := "res://tools/screenshots/p3_e2e_equipment_01_before.png"
 const SHOT_PANEL_AFTER := "res://tools/screenshots/p3_e2e_equipment_02_after.png"
 
@@ -126,7 +125,7 @@ func _exercise_xu_weapon_toggle(panel: Node, game_state: Node) -> void:
 
 func _exercise_jiang_accessory(panel: Node, game_state: Node) -> void:
 	game_state.inventory.add("jade_pendant")
-	var jiang_unit := await _spawn_monitor_unit(JIANG_NI)
+	var jiang_unit := await _spawn_monitor_unit(root.get_node("/root/UnitRegistry").get_data("jiang_ni"))
 	_assert(jiang_unit != null, "T3a 姜泥监视 Unit 可实例化")
 	if jiang_unit == null:
 		return

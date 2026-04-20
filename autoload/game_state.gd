@@ -10,7 +10,6 @@ const ItemData = preload("res://scripts/core/item_data.gd")
 const ItemInstance = preload("res://scripts/core/item_instance.gd")
 const UnitData = preload("res://scripts/core/unit_data.gd")
 const WeaponTypes = preload("res://scripts/core/weapon_types.gd")
-const UNIT_DIR := "res://resources/data/units/"
 const STARTING_EQUIPMENT := {
 	"xu_fengnian": {
 		"item_id": "iron_blade",
@@ -125,7 +124,12 @@ func _create_empty_slots() -> Dictionary:
 
 
 func _load_unit_data(char_id: String) -> UnitData:
-	var path := "%s%s.tres" % [UNIT_DIR, char_id]
+	# 优先走 UnitRegistry 单例；_init 阶段自身尚未入树，直接回退到 load。
+	if is_inside_tree():
+		var registry := get_node_or_null("/root/UnitRegistry")
+		if registry != null:
+			return registry.get_data(char_id)
+	var path := "res://resources/data/units/%s.tres" % char_id
 	if not ResourceLoader.exists(path):
 		return null
 	return load(path) as UnitData
