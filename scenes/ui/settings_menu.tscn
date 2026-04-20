@@ -1,0 +1,142 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/settings_menu.gd" id="1_script"]
+[ext_resource type="Theme" path="res://resources/ui/theme/main_ui_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" uid="uid://buis1cgjfnf4u" path="res://resources/sprites/backgrounds/mountain_bg.png" id="3_bg"]
+[ext_resource type="Script" path="res://resources/ui/controls/wuxia_frame.gd" id="4_frame"]
+[ext_resource type="FontFile" uid="uid://cwxwvmrose854" path="res://resources/fonts/NotoSerifCJKsc-Regular.otf" id="5_font"]
+
+[node name="SettingsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(680, 0)
+layout_mode = 2
+script = ExtResource("4_frame")
+border_width = 2.0
+corner_style = "emphasis"
+
+[node name="Margin" type="MarginContainer" parent="Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 42
+text = "设置"
+horizontal_alignment = 1
+
+[node name="Body" type="VBoxContainer" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="ResolutionRow" type="HBoxContainer" parent="Center/Panel/Margin/VBox/Body"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="ResolutionLabel" type="Label" parent="Center/Panel/Margin/VBox/Body/ResolutionRow"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 28
+text = "分辨率"
+vertical_alignment = 1
+
+[node name="ResolutionOption" type="OptionButton" parent="Center/Panel/Margin/VBox/Body/ResolutionRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 24
+
+[node name="FullscreenRow" type="HBoxContainer" parent="Center/Panel/Margin/VBox/Body"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="FullscreenLabel" type="Label" parent="Center/Panel/Margin/VBox/Body/FullscreenRow"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 28
+text = "全屏"
+vertical_alignment = 1
+
+[node name="FullscreenToggle" type="CheckButton" parent="Center/Panel/Margin/VBox/Body/FullscreenRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 24
+text = "启用全屏"
+
+[node name="HintLabel" type="Label" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 18
+text = "F11 可随时切换全屏。应用后会保存到 user://settings.cfg。"
+horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="Center/Panel/Margin/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 18
+text = "当前：1600×900 · 窗口"
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 18
+
+[node name="ApplyButton" type="Button" parent="Center/Panel/Margin/VBox/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 64)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 28
+text = "应用"
+
+[node name="BackButton" type="Button" parent="Center/Panel/Margin/VBox/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 64)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("5_font")
+theme_override_font_sizes/font_size = 28
+text = "返回"

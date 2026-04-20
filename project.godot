@@ -21,9 +21,12 @@ config/icon="res://icon.svg"
 GameState="*res://autoload/game_state.gd"
 GameBalance="*res://autoload/game_balance.gd"
 SceneManager="*res://autoload/scene_manager.gd"
+SettingsBootstrap="*res://autoload/settings_bootstrap.gd"
 
 [display]
 
+window/size/window_width_override=1600
+window/size/window_height_override=900
 window/size/viewport_width=1366
 window/size/viewport_height=768
 window/stretch/mode="canvas_items"
