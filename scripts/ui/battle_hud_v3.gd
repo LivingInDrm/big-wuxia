@@ -119,6 +119,7 @@ func _build_ui() -> void:
 	add_child(_build_right_menu())
 	add_child(_build_character_card())
 	add_child(_build_bottom_hint())
+	_apply_mouse_passthrough(self)
 
 
 func _build_top_bar() -> Control:
@@ -396,6 +397,17 @@ func _build_bottom_hint() -> Control:
 	_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_hint_label.modulate = Color(1, 1, 1, 0.7)
 	return _hint_label
+
+
+func _apply_mouse_passthrough(node: Node) -> void:
+	if node is Control:
+		var control := node as Control
+		# v3 HUD is display-only for now. Future clickable controls can opt out
+		# by setting `retain_mouse_filter` before this runs.
+		if not bool(control.get_meta("retain_mouse_filter", false)):
+			control.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for child in node.get_children():
+		_apply_mouse_passthrough(child)
 
 
 func _build_buff_tag(buff: Dictionary) -> Control:
