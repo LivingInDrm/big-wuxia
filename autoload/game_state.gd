@@ -36,6 +36,10 @@ signal equipment_changed(char_id: String)
 var current_level: String = ""
 var selected_characters: Array[String] = []
 var completed_levels: Array[String] = []
+var dialogue_flags: Dictionary = {}
+var location: String = ""
+var overworld_player_position: Vector2 = Vector2.ZERO
+var return_context: Dictionary = {}
 var inventory: Inventory
 var equipped: Dictionary = {}
 
@@ -56,6 +60,22 @@ func complete_level(level_name: String) -> void:
 
 func is_level_completed(level_name: String) -> bool:
 	return level_name in completed_levels
+
+
+func set_flag(key: String, value: Variant = true) -> void:
+	dialogue_flags[key] = value
+
+
+func get_flag(key: String, default: Variant = null) -> Variant:
+	return dialogue_flags.get(key, default)
+
+
+func has_flag(key: String) -> bool:
+	return dialogue_flags.has(key)
+
+
+func clear_flag(key: String) -> void:
+	dialogue_flags.erase(key)
 
 
 func equip(char_id: String, slot: ItemData.EquipSlot, item_instance: ItemInstance) -> bool:
@@ -99,6 +119,10 @@ func reset() -> void:
 	current_level = ""
 	selected_characters = []
 	completed_levels = []
+	dialogue_flags = {}
+	location = ""
+	overworld_player_position = Vector2.ZERO
+	return_context = {}
 	inventory = Inventory.new()
 	equipped = {}
 	for char_id in PLAYER_CHAR_IDS:
