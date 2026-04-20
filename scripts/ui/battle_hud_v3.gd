@@ -28,15 +28,15 @@ const RIGHT_MENU_BOTTOM_MARGIN := 28.0
 const RIGHT_MENU_TOP_MARGIN := 48.0
 const ACTION_BUTTON_WIDTH := 332.0
 const SUBMENU_PANEL_WIDTH := 332.0
+const SUBMENU_MAX_HEIGHT := 280.0
 const WUXIA_BUTTON_MIN_SIZE := Vector2(120, 32)
 
 var _hint_label: Label
 var _character_card_container: Control
 var _action_menu_container: Control
-var _action_menu_title: Label
 var _action_menu_box: VBoxContainer
-var _submenu_panel: PanelContainer
-var _submenu_title: Label
+var _submenu_panel: Control
+var _submenu_scroll: ScrollContainer
 var _submenu_list: VBoxContainer
 var _portrait_rect: TextureRect
 var _buffs_box: VBoxContainer
@@ -152,15 +152,6 @@ func _build_right_menu() -> Control:
 	shell.add_theme_constant_override("separation", 10)
 	_action_menu_container.add_child(shell)
 
-	var title_panel := PanelContainer.new()
-	title_panel.custom_minimum_size = Vector2(0, 42)
-	title_panel.add_theme_stylebox_override("panel", _flat_style(CARD_BG, CARD_BORDER, 2, 4))
-	shell.add_child(title_panel)
-
-	_action_menu_title = _label("战术指令", &"caption")
-	_action_menu_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title_panel.add_child(_action_menu_title)
-
 	_action_menu_box = VBoxContainer.new()
 	_action_menu_box.add_theme_constant_override("separation", 8)
 	shell.add_child(_action_menu_box)
@@ -168,29 +159,26 @@ func _build_right_menu() -> Control:
 	for action in ACTION_SPECS:
 		_action_menu_box.add_child(_build_action_item(action))
 
-	_submenu_panel = PanelContainer.new()
-	_submenu_panel.custom_minimum_size = Vector2(SUBMENU_PANEL_WIDTH, 132)
+	_submenu_panel = Control.new()
+	_submenu_panel.custom_minimum_size = Vector2(SUBMENU_PANEL_WIDTH, 0)
 	_submenu_panel.visible = false
-	_submenu_panel.add_theme_stylebox_override("panel", _flat_style(CARD_BG, CARD_BORDER, 2, 4))
 	shell.add_child(_submenu_panel)
 
-	var submenu_margin := MarginContainer.new()
-	submenu_margin.add_theme_constant_override("margin_left", 14)
-	submenu_margin.add_theme_constant_override("margin_top", 12)
-	submenu_margin.add_theme_constant_override("margin_right", 14)
-	submenu_margin.add_theme_constant_override("margin_bottom", 12)
-	_submenu_panel.add_child(submenu_margin)
-
-	var submenu_box := VBoxContainer.new()
-	submenu_box.add_theme_constant_override("separation", 8)
-	submenu_margin.add_child(submenu_box)
-
-	_submenu_title = _label("子面板", &"caption")
-	submenu_box.add_child(_submenu_title)
+	_submenu_scroll = ScrollContainer.new()
+	_submenu_scroll.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	_submenu_scroll.custom_minimum_size = Vector2(SUBMENU_PANEL_WIDTH, SUBMENU_MAX_HEIGHT)
+	_submenu_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_submenu_scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	_submenu_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_submenu_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	_submenu_scroll.clip_contents = true
+	_submenu_panel.add_child(_submenu_scroll)
 
 	_submenu_list = VBoxContainer.new()
+	_submenu_list.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_submenu_list.offset_right = SUBMENU_PANEL_WIDTH
 	_submenu_list.add_theme_constant_override("separation", 6)
-	submenu_box.add_child(_submenu_list)
+	_submenu_scroll.add_child(_submenu_list)
 
 	return _action_menu_container
 
@@ -381,8 +369,6 @@ func set_action_menu_visible(is_visible: bool, title: String = "战术指令") -
 	if _action_menu_container == null:
 		return
 	_action_menu_container.visible = is_visible
-	if _action_menu_title != null:
-		_action_menu_title.text = title
 	if not is_visible:
 		hide_submenu()
 
@@ -427,6 +413,8 @@ func hide_submenu(expected_kind: StringName = &"") -> void:
 	var previous_kind := _submenu_kind
 	_submenu_kind = &""
 	_submenu_panel.visible = false
+	if _action_menu_box != null:
+		_action_menu_box.visible = true
 	for child in _submenu_list.get_children():
 		child.queue_free()
 	if previous_kind != &"":
@@ -491,16 +479,24 @@ func _rebuild_submenu() -> void:
 	var entries: Array[Dictionary] = []
 	match _submenu_kind:
 		&"skill":
-			_submenu_title.text = "武功"
 			entries = _skill_entries
 		&"item":
-			_submenu_title.text = "道具"
 			entries = _item_entries
 		_:
 			_submenu_panel.visible = false
+			if _action_menu_box != null:
+				_action_menu_box.visible = true
 			return
 	for entry in entries:
 		_submenu_list.add_child(_build_submenu_button(entry))
+	if _action_menu_box != null:
+		_action_menu_box.visible = false
+	var button_count: int = maxi(entries.size(), 1)
+	var content_height: float = button_count * 58.0 + maxi(button_count - 1, 0) * 6.0
+	var panel_height: float = minf(content_height, SUBMENU_MAX_HEIGHT)
+	_submenu_scroll.custom_minimum_size = Vector2(SUBMENU_PANEL_WIDTH, panel_height)
+	_submenu_scroll.size = Vector2(SUBMENU_PANEL_WIDTH, panel_height)
+	_submenu_panel.custom_minimum_size = Vector2(SUBMENU_PANEL_WIDTH, panel_height)
 	_submenu_panel.visible = true
 
 
