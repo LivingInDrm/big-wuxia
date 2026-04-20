@@ -22,6 +22,12 @@ const ACTION_SPECS := [
 	{"id": &"wait", "key": "Z", "icon": Color("#5E6C43"), "label": "待机"},
 	{"id": &"cancel_move", "key": "Esc", "icon": Color("#4A6B7A"), "label": "取消移动"},
 ]
+const RIGHT_MENU_WIDTH := 360.0
+const RIGHT_MENU_RIGHT_MARGIN := 28.0
+const RIGHT_MENU_BOTTOM_MARGIN := 28.0
+const RIGHT_MENU_TOP_MARGIN := 48.0
+const ACTION_BUTTON_WIDTH := 332.0
+const SUBMENU_PANEL_WIDTH := 332.0
 
 var _hint_label: Label
 var _character_card_container: Control
@@ -134,12 +140,13 @@ func _build_right_menu() -> Control:
 	_action_menu_container = Control.new()
 	_action_menu_container.name = "RightMenu"
 	_action_menu_container.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	_action_menu_container.offset_left = -344.0
-	_action_menu_container.offset_top = -428.0
-	_action_menu_container.offset_right = -28.0
-	_action_menu_container.offset_bottom = -28.0
+	_action_menu_container.offset_left = -RIGHT_MENU_WIDTH - RIGHT_MENU_RIGHT_MARGIN
+	_action_menu_container.offset_top = -(768.0 - RIGHT_MENU_TOP_MARGIN - RIGHT_MENU_BOTTOM_MARGIN)
+	_action_menu_container.offset_right = -RIGHT_MENU_RIGHT_MARGIN
+	_action_menu_container.offset_bottom = -RIGHT_MENU_BOTTOM_MARGIN
 
 	var shell := VBoxContainer.new()
+	shell.name = "MenuStack"
 	shell.set_anchors_preset(Control.PRESET_FULL_RECT)
 	shell.add_theme_constant_override("separation", 10)
 	_action_menu_container.add_child(shell)
@@ -161,7 +168,7 @@ func _build_right_menu() -> Control:
 		_action_menu_box.add_child(_build_action_item(action))
 
 	_submenu_panel = PanelContainer.new()
-	_submenu_panel.custom_minimum_size = Vector2(0, 132)
+	_submenu_panel.custom_minimum_size = Vector2(SUBMENU_PANEL_WIDTH, 132)
 	_submenu_panel.visible = false
 	_submenu_panel.add_theme_stylebox_override("panel", _flat_style(CARD_BG, CARD_BORDER, 2, 4))
 	shell.add_child(_submenu_panel)
@@ -191,7 +198,7 @@ func _build_action_item(action: Dictionary) -> Control:
 	var item := Button.new()
 	item.set_meta("retain_mouse_filter", true)
 	item.mouse_filter = Control.MOUSE_FILTER_STOP
-	item.custom_minimum_size = Vector2(292, 70)
+	item.custom_minimum_size = Vector2(ACTION_BUTTON_WIDTH, 70)
 	item.flat = true
 	item.add_theme_stylebox_override("normal", _flat_style(CARD_BG, CARD_BORDER, 2, 4))
 	item.add_theme_stylebox_override("hover", _flat_style(Color(0.98, 0.95, 0.88, 0.98), CARD_BORDER, 2, 4))
@@ -532,19 +539,46 @@ func _build_submenu_button(entry: Dictionary) -> Control:
 	button.mouse_filter = Control.MOUSE_FILTER_STOP
 	button.flat = true
 	button.focus_mode = Control.FOCUS_NONE
-	button.custom_minimum_size = Vector2(0, 46)
-	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	button.custom_minimum_size = Vector2(0, 58)
 	button.disabled = bool(entry.get("disabled", false))
 	button.add_theme_stylebox_override("normal", _flat_style(Color(0.98, 0.95, 0.9, 0.92), CARD_BORDER, 1, 3))
 	button.add_theme_stylebox_override("hover", _flat_style(Color(1.0, 0.97, 0.9, 0.98), CARD_BORDER, 1, 3))
 	button.add_theme_stylebox_override("pressed", _flat_style(Color(0.9, 0.86, 0.77, 0.98), CARD_BORDER, 1, 3))
 	button.add_theme_stylebox_override("disabled", _flat_style(Color(0.84, 0.82, 0.78, 0.86), CARD_BORDER, 1, 3))
+
+	var margin := MarginContainer.new()
+	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_top", 10)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_bottom", 10)
+	button.add_child(margin)
+
+	var row := HBoxContainer.new()
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", 10)
+	margin.add_child(row)
+
 	var key_text := String(entry.get("key", ""))
 	var label_text := String(entry.get("label", ""))
 	var detail_text := String(entry.get("detail", ""))
-	button.text = "%s  %s" % [key_text, label_text] if not key_text.is_empty() else label_text
+	if not key_text.is_empty():
+		row.add_child(_build_key_box(key_text))
+
+	var text_box := VBoxContainer.new()
+	text_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	text_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	text_box.add_theme_constant_override("separation", 2)
+	row.add_child(text_box)
+
+	var label := _label(label_text, &"body")
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	text_box.add_child(label)
 	if not detail_text.is_empty():
-		button.text += "    %s" % detail_text
+		var detail := _label(detail_text, &"micro")
+		detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		detail.modulate = Color(1, 1, 1, 0.72)
+		text_box.add_child(detail)
 	if entry.get("type") == &"skill":
 		button.pressed.connect(_on_skill_entry_pressed.bind(int(entry.get("index", -1))))
 	else:
