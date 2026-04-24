@@ -24,3 +24,9 @@ Thumbs.db
 # Screenshots（截图作为验收证据提交，所以 screenshots/ 下的 png 要被追踪；
 # 但临时调试图可放 tools/screenshots/_tmp/ 下忽略）
 tools/screenshots/_tmp/
+
+
+# Python bytecode (importer tools)
+__pycache__/
+*.pyc
+

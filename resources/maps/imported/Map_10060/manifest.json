@@ -1,0 +1,43 @@
+{
+  "atlas_sources": [
+    "atlas/block_62x32_0.png",
+    "atlas/ground_66x43_1.png",
+    "atlas/tall_76x128_2.png",
+    "atlas/wall_66x36_3.png",
+    "atlas/placeholder.png"
+  ],
+  "blocked_count": 7693,
+  "bounds_max": [
+    98,
+    106
+  ],
+  "bounds_min": [
+    -1,
+    -4
+  ],
+  "bounds_size": [
+    100,
+    111
+  ],
+  "layer_cell_counts": {
+    "DebugBlockLayer": 7366,
+    "DecorationLayer": 0,
+    "GroundBaseLayer": 9550,
+    "GroundDetailLayer": 566,
+    "ObstacleLayer": 730,
+    "RoofOverlayLayer": 7765,
+    "_skipped_spr": 0
+  },
+  "map_id": "Map_10060",
+  "pixel_size": [
+    6501,
+    4235
+  ],
+  "spr_per_layer": {
+    "Ground1": 246,
+    "Ground2": 85
+  },
+  "unique_sprites_used": 21,
+  "walkable_count": 1981,
+  "walkable_ratio": 0.17846846846846848
+}

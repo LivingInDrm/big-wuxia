@@ -76,7 +76,12 @@ func _ready() -> void:
 
 	grid = GridSystem.new()
 	add_child(grid)
-	grid.init_from_tilemap(terrain_layer)
+	if current_level_data != null \
+			and current_level_data is LevelData \
+			and (current_level_data as LevelData).walkable_cells.size() > 0:
+		grid.init_from_level_data(current_level_data)
+	else:
+		grid.init_from_tilemap(terrain_layer)
 
 	_spawn_units()
 
@@ -101,6 +106,15 @@ func _ready() -> void:
 
 
 func _paint_map() -> void:
+	if current_level_data != null \
+			and current_level_data is LevelData \
+			and (current_level_data as LevelData).map_scene != null:
+		_paint_map_from_scene(current_level_data as LevelData)
+	else:
+		_paint_map_from_terrain()
+
+
+func _paint_map_from_terrain() -> void:
 	terrain_layer.clear()
 	var cells: Array[Vector2i] = []
 	if current_level_data != null:
@@ -112,6 +126,45 @@ func _paint_map() -> void:
 				cells.append(Vector2i(x, y))
 	map_bounds = _compute_bounds(cells)
 	terrain_layer.set_cells_terrain_connect(cells, TERRAIN_SET_ID, GRASS_TERRAIN_ID, true)
+
+
+func _paint_map_from_scene(level_data: LevelData) -> void:
+	# Instantiate the imported battle map scene (contains GroundBaseLayer /
+	# GroundDecorLayer / YSortRoot with ObstacleLayer + DecorationLayer /
+	# optional TopRoof). Becomes a sibling of UnitsContainer in the tree.
+	var map_node: Node2D = level_data.map_scene.instantiate() as Node2D
+	if map_node == null:
+		push_error("[BattleController] map_scene instantiate returned non-Node2D; falling back to terrain paint")
+		_paint_map_from_terrain()
+		return
+	map_node.name = "ImportedMap"
+	add_child(map_node)
+	move_child(map_node, 0)  # keep it behind overlays/units visually
+
+	# Re-parent UnitsContainer under YSortRoot so units ysort alongside
+	# obstacle/decoration sprites.
+	var ysort_root: Node2D = map_node.get_node_or_null("YSortRoot") as Node2D
+	if ysort_root != null and units_container.get_parent() != ysort_root:
+		var old_parent := units_container.get_parent()
+		if old_parent != null:
+			old_parent.remove_child(units_container)
+		ysort_root.add_child(units_container)
+
+	# Point terrain_layer at GroundBaseLayer if present (for code paths that
+	# still poke at terrain_layer, e.g. grid init fallback).
+	var ground_base: TileMapLayer = map_node.get_node_or_null("GroundBaseLayer") as TileMapLayer
+	if ground_base != null:
+		terrain_layer = ground_base
+
+	# Compute bounds from the walkable set (so camera centering still works).
+	var cells: Array[Vector2i] = []
+	for v in level_data.walkable_cells:
+		cells.append(Vector2i(int(v.x), int(v.y)))
+	for v in level_data.blocked_cells:
+		cells.append(Vector2i(int(v.x), int(v.y)))
+	if cells.is_empty():
+		cells.append(Vector2i.ZERO)
+	map_bounds = _compute_bounds(cells)
 
 
 func _spawn_units() -> void:

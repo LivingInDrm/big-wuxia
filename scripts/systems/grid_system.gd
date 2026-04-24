@@ -71,6 +71,35 @@ func init_from_tilemap(tilemap: TileMapLayer) -> void:
 	print("[GridSystem] initialized %d tiles from TileMapLayer" % tiles.size())
 
 
+## 从 LevelData 初始化（新式，优先使用 walkable_cells + terrain_by_cell）。
+## 若 walkable_cells 为空，退回 map_layout（legacy 路径）。未知 terrain 回退
+## 到 grass + warning。
+func init_from_level_data(level_data: LevelData) -> void:
+	if level_data == null:
+		push_error("[GridSystem] init_from_level_data: level_data is null")
+		return
+	_load_terrain_library()
+	tiles.clear()
+
+	var cells: PackedVector2Array = level_data.ensure_map_layout()
+	var grass: TerrainTileData = _terrain_library.get("grass")
+	if grass == null:
+		push_error("[GridSystem] grass terrain missing; cannot init from level_data")
+		return
+
+	for v in cells:
+		var coord := Vector2i(int(v.x), int(v.y))
+		var tid_variant = level_data.terrain_by_cell.get(coord, "grass")
+		var tid: String = str(tid_variant) if tid_variant != null else "grass"
+		var terrain: TerrainTileData = _terrain_library.get(tid)
+		if terrain == null:
+			push_warning("[GridSystem] unknown terrain '%s' at %s (using grass)" % [tid, coord])
+			terrain = grass
+		tiles[coord] = GridTile.new(coord, terrain)
+
+	print("[GridSystem] initialized %d tiles from LevelData (map_id=%s)" % [tiles.size(), level_data.map_id])
+
+
 ## ============ 查询 API ============
 
 func get_tile(coord: Vector2i) -> GridTile:
