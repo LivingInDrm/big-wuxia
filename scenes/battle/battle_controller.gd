@@ -377,7 +377,7 @@ func _handle_back_action() -> bool:
 
 func _execute_attack(attacker: Unit, defender: Unit) -> void:
 	range_overlay.clear()
-	await attacker.play_attack(defender.position)
+	await attacker.play_attack(defender.current_position)
 	var result: Dictionary = CombatSystem.calculate_attack(attacker, defender, grid)
 	if result.hit:
 		defender.take_damage(result.damage)

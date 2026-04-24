@@ -16,6 +16,10 @@ const AttributeResolver = preload("res://scripts/systems/attribute_resolver.gd")
 const StatusEffect = preload("res://scripts/core/status_effect.gd")
 const TraitData = preload("res://scripts/core/trait_data.gd")
 const ItemData = preload("res://scripts/core/item_data.gd")
+const Facing = preload("res://scripts/core/facing.gd")
+
+## 语义动画名（SpriteFrames 里需要有 `b_<sem>` + `z_<sem>` 或无前缀回退版本）。
+const ANIM_SEMANTICS := ["idle", "run", "attack", "hit", "die", "skill"]
 
 @export var unit_data: UnitData
 
@@ -32,7 +36,8 @@ var current_mp: int = 0
 var max_mp: int = 0
 var current_position: Vector2i = Vector2i.ZERO
 var acted: bool = false
-var facing: int = 1
+## isometric 4 向：值取自 Facing.Dir 枚举（SW=0/SE=1/NE=2/NW=3）。
+var facing: int = Facing.Dir.SW
 var _hurt_feedback_running: bool = false
 var skills: Array = []
 var temp_move_bonus: int = 0
@@ -66,11 +71,11 @@ func _ready() -> void:
 	# 动画
 	anim_sprite.sprite_frames = unit_data.sprite_frames
 	anim_sprite.offset = unit_data.sprite_offset
-	facing = -1 if unit_data.is_enemy else 1
+	# 阵营默认朝向：玩家 SW（面向镜头偏左）/ 敌方 NE（背对镜头偏右，朝向玩家）。
+	facing = Facing.Dir.NE if unit_data.is_enemy else Facing.Dir.SW
 	_refresh_sprite_modulate()
 	_apply_facing()
-	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("idle"):
-		anim_sprite.play("idle")
+	play_anim("idle")
 
 	# 运行时资源
 	_initialize_runtime_resources()
@@ -216,10 +221,13 @@ func restore_mp(amount: int) -> void:
 func move_along_path(path: Array[Vector2i]) -> void:
 	if path.is_empty():
 		return
-	_update_facing(path.back().x - current_position.x)
-	# 播放 run 动画
-	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("run"):
-		anim_sprite.play("run")
+	# 起手：按整条路径的净位移一次性定方向，全程不变（避免曲折路抖动）。
+	var end_cell: Vector2i = path[path.size() - 1]
+	_update_facing_from_grid(
+		end_cell.x - current_position.x,
+		end_cell.y - current_position.y
+	)
+	play_anim("run")
 
 	for step in path:
 		var target_px := Vector2(
@@ -231,46 +239,47 @@ func move_along_path(path: Array[Vector2i]) -> void:
 		await tw.finished
 		current_position = step
 
-	# 恢复 idle + 恢复朝向
-	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("idle"):
-		anim_sprite.play("idle")
+	# 恢复 idle + 恢复朝向（facing 不变，只让 sprite 贴合）
+	play_anim("idle")
 	_apply_facing()
 
 
 ## 播放 attack 动画（Coroutine：await unit.play_attack()）。
+## defender_cell 给 grid 坐标（Vector2i）；Vector2i.MAX 表示不调整朝向。
 ## 若没 attack animation 则退化为 idle 一帧后返回。
-func play_attack(target_world_pos: Vector2 = Vector2.ZERO) -> void:
-	# 调整朝向到目标
-	if target_world_pos != Vector2.ZERO:
-		_update_facing(signi(int(round(target_world_pos.x - position.x))))
-	var anim_name := "attack" if anim_sprite.sprite_frames != null \
-		and anim_sprite.sprite_frames.has_animation("attack") else "idle"
-	anim_sprite.play(anim_name)
+func play_attack(defender_cell: Vector2i = Vector2i.MAX) -> void:
+	if defender_cell != Vector2i.MAX:
+		_update_facing_from_grid(
+			defender_cell.x - current_position.x,
+			defender_cell.y - current_position.y
+		)
+	var anim_name := "attack" if _has_semantic("attack") else "idle"
+	play_anim(anim_name)
 	# 等待 attack 动画一个循环
 	if anim_name == "attack":
 		await anim_sprite.animation_finished
 	else:
 		await get_tree().create_timer(0.25).timeout
 	# 回到 idle
-	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("idle"):
-		anim_sprite.play("idle")
+	play_anim("idle")
 	_apply_facing()
 
 
-func play_skill(animation_key: String = "skill", target_world_pos: Vector2 = Vector2.ZERO) -> void:
-	if target_world_pos != Vector2.ZERO:
-		_update_facing(signi(int(round(target_world_pos.x - position.x))))
+func play_skill(animation_key: String = "skill", defender_cell: Vector2i = Vector2i.MAX) -> void:
+	if defender_cell != Vector2i.MAX:
+		_update_facing_from_grid(
+			defender_cell.x - current_position.x,
+			defender_cell.y - current_position.y
+		)
 	var anim_name := animation_key
-	if anim_sprite.sprite_frames == null or not anim_sprite.sprite_frames.has_animation(anim_name):
-		anim_name = "attack" if anim_sprite.sprite_frames != null \
-			and anim_sprite.sprite_frames.has_animation("attack") else "idle"
-	anim_sprite.play(anim_name)
+	if not _has_semantic(anim_name):
+		anim_name = "attack" if _has_semantic("attack") else "idle"
+	play_anim(anim_name)
 	if anim_name != "idle":
 		await anim_sprite.animation_finished
 	else:
 		await get_tree().create_timer(0.2).timeout
-	if anim_sprite.sprite_frames != null and anim_sprite.sprite_frames.has_animation("idle"):
-		anim_sprite.play("idle")
+	play_anim("idle")
 	_apply_facing()
 
 
@@ -291,17 +300,79 @@ func _on_area_input(_viewport: Node, event: InputEvent, _shape_idx: int) -> void
 		get_viewport().set_input_as_handled()
 
 
-func _update_facing(dx: int) -> void:
-	if dx < 0:
-		facing = -1
-	elif dx > 0:
-		facing = 1
+## 按 grid 位移 (dx, dy) 更新 facing 到 Facing.Dir，然后贴 sprite。
+## 仅由 move/attack/skill 的"起手"调用，idle/hurt/die 不调用。
+func _update_facing_from_grid(dx: int, dy: int) -> void:
+	facing = Facing.from_grid_delta(dx, dy, facing)
 	_apply_facing()
 
 
+## 旧 1D wrapper：只看 dx，保留给尚未迁移到 2D 的调用点。
+## 新代码请直接调用 `_update_facing_from_grid(dx, dy)`。
+func _update_facing(dx: int) -> void:
+	_update_facing_from_grid(dx, 0)
+
+
+## 依据当前 facing 决定 flip_h 与 b_/z_ 前缀；唯一允许写 `flip_h` 的地方。
 func _apply_facing() -> void:
-	if anim_sprite != null:
-		anim_sprite.flip_h = facing < 0
+	if anim_sprite == null:
+		return
+	var new_flip := Facing.flip_h(facing)
+	var new_back := Facing.is_back(facing)
+	_rebind_current_anim(new_back)
+	anim_sprite.flip_h = new_flip
+
+
+## 切换当前动画的 b_/z_ 前缀，同时保留帧进度避免闪帧。
+## 若 SpriteFrames 没有对应前缀版本（LEGACY 无前缀资源），就保持当前动画不切。
+func _rebind_current_anim(new_is_back: bool) -> void:
+	if anim_sprite == null:
+		return
+	var sf: SpriteFrames = anim_sprite.sprite_frames
+	if sf == null:
+		return
+	var cur := String(anim_sprite.animation)
+	if cur == "":
+		return
+	var semantic := cur
+	if cur.begins_with("b_") or cur.begins_with("z_"):
+		semantic = cur.substr(2)
+	var prefix := "b" if new_is_back else "z"
+	var target := "%s_%s" % [prefix, semantic]
+	if target == cur:
+		return
+	if not sf.has_animation(target):
+		# LEGACY 回退：无前缀资源没有 b_/z_ 版本，保持当前动画。
+		return
+	var frame_idx: int = anim_sprite.frame
+	var frame_progress: float = anim_sprite.frame_progress
+	anim_sprite.play(target)
+	anim_sprite.frame = frame_idx
+	anim_sprite.frame_progress = frame_progress
+
+
+## 播放语义动画；按当前 facing 自动选 b_ / z_ 前缀，找不到时回退到无前缀版本。
+func play_anim(semantic: String) -> void:
+	if anim_sprite == null:
+		return
+	var sf: SpriteFrames = anim_sprite.sprite_frames
+	if sf == null:
+		return
+	var full := "%s_%s" % [Facing.prefix(facing), semantic]
+	if sf.has_animation(full):
+		anim_sprite.play(full)
+	elif sf.has_animation(semantic):
+		# LEGACY 回退：老资源（warrior / monk / enemy_soldier / yang_yuanzan）
+		# 只有无前缀动画，直接播原名。
+		anim_sprite.play(semantic)
+
+
+func _has_semantic(semantic: String) -> bool:
+	var sf: SpriteFrames = anim_sprite.sprite_frames if anim_sprite != null else null
+	if sf == null:
+		return false
+	var full := "%s_%s" % [Facing.prefix(facing), semantic]
+	return sf.has_animation(full) or sf.has_animation(semantic)
 
 
 func _refresh_sprite_modulate() -> void:
@@ -377,7 +448,10 @@ func _play_hurt_feedback() -> void:
 	_hurt_feedback_running = true
 	var base_pos := position
 	var base_color := unit_data.modulate * (Color(0.6, 0.6, 0.6, 1.0) if acted else Color.WHITE)
-	var shake_offset := Vector2(-6.0 * float(facing), 0.0)
+	# TODO(step-1-2): shake_offset 应按 2D facing 在 isometric 正反斜方向抖。
+	# 当前沿用旧的 1D 水平抖（按 flip_h 决定左右），不影响手感。
+	var facing_sign := -1.0 if Facing.flip_h(facing) else 1.0
+	var shake_offset := Vector2(-6.0 * facing_sign, 0.0)
 	anim_sprite.modulate = Color(1.0, 0.3, 0.3, 1.0)
 	hurt_started.emit(self)
 

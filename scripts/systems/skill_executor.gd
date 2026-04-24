@@ -86,7 +86,7 @@ static func execute_skill(caster: Unit, skill, target_pos: Vector2i, grid: GridS
 		return affected_units
 
 	var affected_cells: Array[Vector2i] = get_affected_cells(caster, skill, target_pos, grid)
-	await caster.play_skill(skill.animation_key, _coord_to_world(target_pos))
+	await caster.play_skill(skill.animation_key, target_pos)
 	await _spawn_skill_vfx(caster, skill, target_pos, affected_cells)
 
 	for coord in affected_cells:

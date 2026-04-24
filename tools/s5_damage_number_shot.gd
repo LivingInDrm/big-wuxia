@@ -124,7 +124,7 @@ func _capture_miss_screenshot() -> void:
 		await process_frame
 
 	CombatSystem.reset_roll_seed(4)
-	await xu.play_attack(enemy.position)
+	await xu.play_attack(enemy.current_position)
 	CombatSystem.resolve_attack(xu, enemy, battle.get_grid())
 	for _i in 12:
 		await process_frame

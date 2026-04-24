@@ -7,22 +7,20 @@ extends SceneTree
 ##   T1  unit.tscn 可加载
 ##   T2  instantiate + setup(data) + add_child 后 _ready 正确初始化：
 ##        - current_hp == get_max_hp()
-##        - anim_sprite.animation == "idle"
+##        - anim_sprite.animation 为 idle 语义（b_idle 或 z_idle 或 idle）
 ##        - anim_sprite.modulate == unit_data.modulate
-##        - facing 初始按阵营设置
+##        - facing 初始按阵营设置（玩家 SW / 敌方 NE）
 ##        - health_bar.max_value / value 正确
-##   T3  HP 条按阈值染色：
-##        ratio > 0.5 → 绿 (0.3,0.85,0.35)
-##        0.2 < ratio <= 0.5 → 黄 (0.95,0.82,0.25)
-##        ratio <= 0.2 → 红 (0.9,0.25,0.25)
-##   T4  敌方初始 facing=-1 / flip_h=true
-##   T5  move_along_path 后保持最后一次移动朝向
-##   T6  play_attack 后保持目标方向
+##   T3  HP 条按阈值染色
+##   T4  敌方初始 facing=NE / flip_h=true
+##   T5  move_along_path 向左下走后 facing=SW
+##   T6  play_attack 右上目标后 facing=NE
 ##   T7  take_damage 触发受击反馈，并恢复基础颜色与位置
 ##
 ## 退出码：0 = 全部通过，1 = 有失败
 
 const UNIT_SCENE := "res://scenes/unit/unit.tscn"
+const Facing = preload("res://scripts/core/facing.gd")
 
 var _pass: int = 0
 var _fail: int = 0
@@ -57,13 +55,13 @@ func _run() -> void:
 	_assert(u.get_max_mp() == 42, "T2a4 徐凤年运行时 max_mp=42 (实际=%d)" % u.get_max_mp())
 	_assert(u.anim_sprite != null, "T2b anim_sprite 非 null")
 	if u.anim_sprite != null:
-		_assert(u.anim_sprite.animation == &"idle",
-			"T2c animation == idle (实际=%s)" % u.anim_sprite.animation)
+		_assert(_anim_semantic(u) == "idle",
+			"T2c animation 语义 == idle (实际=%s)" % u.anim_sprite.animation)
 		_assert(u.anim_sprite.modulate == data_xu.modulate,
 			"T2d modulate 与 data 一致")
 		_assert(u.anim_sprite.flip_h == false,
-			"T2d2 玩家 flip_h=false (实际=%s)" % u.anim_sprite.flip_h)
-	_assert(u.facing == 1, "T2d3 玩家 facing=1 (实际=%d)" % u.facing)
+			"T2d2 玩家默认 SW flip_h=false (实际=%s)" % u.anim_sprite.flip_h)
+	_assert(u.facing == Facing.Dir.SW, "T2d3 玩家默认 facing=SW (实际=%d)" % u.facing)
 	_assert(u.health_bar.max_value == float(u.get_max_hp()),
 		"T2e health_bar.max_value")
 	_assert(u.health_bar.value == float(u.get_max_hp()),
@@ -77,31 +75,31 @@ func _run() -> void:
 	u.queue_free()
 	await process_frame
 
-	# T4: 敌方 flip_h=true
+	# T4: 敌方默认 NE (B 面 + flip_h)
 	var data_enemy: UnitData = load("res://resources/data/units/enemy_soldier.tres")
 	var e: Unit = packed.instantiate()
 	e.setup(data_enemy, Vector2i(5, 5))
 	root.add_child(e)
 	await process_frame
 	_assert(e.anim_sprite.flip_h == true,
-		"T4a 敌方 flip_h=true (实际=%s)" % e.anim_sprite.flip_h)
-	_assert(e.facing == -1, "T4b 敌方 facing=-1 (实际=%d)" % e.facing)
+		"T4a 敌方默认 NE flip_h=true (实际=%s)" % e.anim_sprite.flip_h)
+	_assert(e.facing == Facing.Dir.NE, "T4b 敌方默认 facing=NE (实际=%d)" % e.facing)
 
-	# T5: move 后保持最终朝向
+	# T5: move 向左 (dx=-2, dy=0) → SW（dy==0 落到 south 分支，east=false）
 	u = packed.instantiate()
 	u.setup(data_xu, Vector2i(4, 4))
 	root.add_child(u)
 	await process_frame
 	await u.move_along_path([Vector2i(3, 4), Vector2i(2, 4)])
-	_assert(u.facing == -1, "T5a 向左移动后 facing=-1 (实际=%d)" % u.facing)
-	_assert(u.anim_sprite.animation == &"idle", "T5b 移动结束后回到 idle")
-	_assert(u.anim_sprite.flip_h == true, "T5c 向左移动后 idle 保持朝左")
+	_assert(u.facing == Facing.Dir.SW, "T5a 向左移动后 facing=SW (实际=%d)" % u.facing)
+	_assert(_anim_semantic(u) == "idle", "T5b 移动结束后回到 idle")
+	_assert(u.anim_sprite.flip_h == false, "T5c SW 不翻转")
 
-	# T6: attack 后保持目标方向
-	await u.play_attack(Vector2(u.position.x + 64.0, u.position.y))
-	_assert(u.facing == 1, "T6a 攻击右侧目标后 facing=1 (实际=%d)" % u.facing)
-	_assert(u.anim_sprite.animation == &"idle", "T6b 攻击结束后回到 idle")
-	_assert(u.anim_sprite.flip_h == false, "T6c 攻击右侧后 idle 保持朝右")
+	# T6: play_attack 右上目标（dx=+1, dy=-1） → NE
+	await u.play_attack(u.current_position + Vector2i(1, -1))
+	_assert(u.facing == Facing.Dir.NE, "T6a 攻击右上目标后 facing=NE (实际=%d)" % u.facing)
+	_assert(_anim_semantic(u) == "idle", "T6b 攻击结束后回到 idle")
+	_assert(u.anim_sprite.flip_h == true, "T6c NE flip_h=true")
 
 	# T7: hurt feedback
 	u.current_hp = u.get_max_hp()
@@ -129,6 +127,16 @@ func _run() -> void:
 	await process_frame
 
 	_finish()
+
+
+## 返回当前动画的语义名（剥掉 b_/z_ 前缀）。
+func _anim_semantic(u: Unit) -> String:
+	if u == null or u.anim_sprite == null:
+		return ""
+	var cur := String(u.anim_sprite.animation)
+	if cur.begins_with("b_") or cur.begins_with("z_"):
+		return cur.substr(2)
+	return cur
 
 
 func _check_hp_color(u: Unit, ratio: float, expected: Color, msg: String) -> void:
