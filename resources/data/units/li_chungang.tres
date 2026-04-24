@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="UnitData" format=3 uid="uid://bwxunit0003"]
 
 [ext_resource type="Script" uid="uid://djynxol3vtqtc" path="res://scripts/core/unit_data.gd" id="1_script"]
-[ext_resource type="SpriteFrames" uid="uid://cqe1kd388jjwx" path="res://resources/data/units/warrior_sprite_frames.tres" id="2_sf"]
+[ext_resource type="SpriteFrames" path="res://resources/data/units/li_chungang_sprite_frames.tres" id="2_sf"]
 [ext_resource type="Script" path="res://scripts/core/attribute_set.gd" id="3_attr_script"]
 
 [sub_resource type="Resource" id="Resource_li_chungang_attr"]
@@ -22,4 +22,5 @@ attributes = SubResource("Resource_li_chungang_attr")
 weapon_type = 2
 skill_ids = Array[String](["jian_qi", "jian_qi_ru_lei", "jian_kai_tian_men"])
 sprite_frames = ExtResource("2_sf")
+sprite_offset = Vector2(-1, 1)
 modulate = Color(0.75, 0.55, 1, 1)
