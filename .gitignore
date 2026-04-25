@@ -30,3 +30,7 @@ tools/screenshots/_tmp/
 __pycache__/
 *.pyc
 
+# External asset libraries (not part of project source)
+wulinsh-assets/
+other resource/
+
